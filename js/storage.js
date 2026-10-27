@@ -278,6 +278,103 @@
             "Participante corrupto.",
           );
       }
+      if (s.race?.racingVersion !== undefined) {
+        const r = s.race,
+          finite = Number.isFinite,
+          carIds = new Set(r.entrants.map((a) => a.carId));
+        G.assert(
+          r.racingVersion === 1 &&
+            finite(r.trackWidth) &&
+            r.trackWidth >= 8 &&
+            r.trackWidth <= 20 &&
+            ["green", "yellow"].includes(r.flag) &&
+            finite(r.yellowUntil) &&
+            finite(r.yellowProgress) &&
+            Number.isInteger(r.eventSequence) &&
+            r.eventSequence >= 0,
+          "Estado de dirección de carrera inválido.",
+        );
+        G.assert(
+          Array.isArray(r.events) &&
+            r.events.length <= 80 &&
+            Array.isArray(r.cautions) &&
+            r.cautions.length <= 8,
+          "El registro de carrera está dañado.",
+        );
+        const seen = new Set();
+        for (const e of r.events) {
+          G.assert(
+            typeof e.id === "string" &&
+              /^race-event-[0-9]+$/.test(e.id) &&
+              !seen.has(e.id) &&
+              finite(e.time) &&
+              e.time >= 0 &&
+              e.time <= r.time + 0.1 &&
+              typeof e.type === "string" &&
+              e.type.length < 32 &&
+              typeof e.text === "string" &&
+              e.text.length < 1000 &&
+              Array.isArray(e.carIds) &&
+              e.carIds.every((id) => carIds.has(id)) &&
+              finite(e.progress),
+            "Evento de pista inválido.",
+          );
+          seen.add(e.id);
+        }
+        for (const c of r.cautions)
+          G.assert(
+            finite(c.progress) && finite(c.until),
+            "Bandera local inválida.",
+          );
+        G.assert(
+          r.encounterCooldowns &&
+            typeof r.encounterCooldowns === "object" &&
+            !Array.isArray(r.encounterCooldowns) &&
+            Object.values(r.encounterCooldowns).every(
+              (e) => e && carIds.has(e.leader) && finite(e.lastEvent),
+            ),
+          "Registro de duelos inválido.",
+        );
+        G.assert(
+          r.eventCounts &&
+            typeof r.eventCounts === "object" &&
+            !Array.isArray(r.eventCounts) &&
+            Object.values(r.eventCounts).every(
+              (n) => Number.isInteger(n) && n >= 0,
+            ),
+          "Contadores de carrera inválidos.",
+        );
+        for (const a of r.entrants)
+          G.assert(
+            finite(a.lateral) &&
+              Math.abs(a.lateral) <= 15 &&
+              finite(a.headingSlip) &&
+              Math.abs(a.headingSlip) < 10 &&
+              finite(a.incidentStarted) &&
+              finite(a.contactCooldown) &&
+              finite(a.errorCooldown) &&
+              finite(a.incidentUntil) &&
+              ["slide", "spin", "contact", null].includes(a.incident) &&
+              (a.slideSide === undefined || [-1, 1].includes(a.slideSide)) &&
+              (!["slide", "spin"].includes(a.incident) ||
+                [-1, 1].includes(a.slideSide)) &&
+              (a.lateralVelocity === undefined || finite(a.lateralVelocity)) &&
+              Number.isInteger(a.collisionCount) &&
+              a.collisionCount >= 0 &&
+              Number.isInteger(a.overtakeCount) &&
+              a.overtakeCount >= 0 &&
+              finite(a.damage) &&
+              a.damage >= 0 &&
+              finite(a.length) &&
+              a.length > 0 &&
+              finite(a.width) &&
+              a.width > 0 &&
+              finite(a.paceFactor) &&
+              typeof a.offTrack === "boolean" &&
+              (a.dnfReason === null || typeof a.dnfReason === "string"),
+            "Dinámica del vehículo inválida.",
+          );
+      }
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);
       if (s.version === 3) G.Workshop.validate(s);

@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.3
+# Racing Company Simulator · 0.3.1
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -17,15 +17,15 @@ Los scripts clásicos y recursos relativos permiten abrir `index.html` directame
 ## Tu primera temporada
 
 1. Funda una compañía y dibuja su logotipo. Hay pincel, borrador, colores, grosor, deshacer/rehacer, transparencia, vista previa y exportación PNG.
-2. Selecciona **Sala de pilotos** en los edificios de la sede. Estudia los currículums y negocia salario, duración y prima. Las ofertas insuficientes reciben una contraoferta; insistir puede pausar la negociación.
+2. Abre **Pilotos** desde la navegación o desde su edificio en la sede. Estudia los currículums y negocia salario, duración y prima. Las ofertas insuficientes reciben una contraoferta; insistir puede pausar la negociación.
 3. Selecciona **Garaje** para consultar el Civic EP3, su estado y su historial. Las revisiones cuestan dinero y duran dos días; los neumáticos estándar cuestan $160. Desde allí puedes abrir el nuevo taller de modificaciones.
-4. En **Estrategia**, inscribe a tu piloto y coche. Cada ronda cuesta $370 con transporte. Puedes hacerlo hasta la jornada de carrera.
+4. En **Competiciones**, inscribe a tu piloto y coche. Cada ronda cuesta $370 con transporte. Puedes hacerlo hasta la jornada de carrera.
 5. Avanza día a día o hasta la próxima prueba. Cada día se procesan las mismas obligaciones. El calendario se detiene en las carreras: solo una renuncia confirmada permite no participar.
-6. Observa el circuito en Canvas. Usa **Atacar / Equilibrado / Conservar**, cambia cámara y velocidad ×1 / ×2 / ×4, o pausa con el botón o la barra espaciadora. Los resultados no están predeterminados.
+6. Sigue la carrera en una retransmisión 2D con cronometraje, radio y telemetría. Usa **Atacar / Equilibrado / Conservar**, selecciona un piloto en la clasificación para seguirlo, cambia entre TV / seguimiento / circuito, ajusta el zoom y la velocidad ×1 / ×2 / ×4, o pausa con el botón o la barra espaciadora. Los resultados no están predeterminados.
 7. Completa las seis pruebas. Los premios, puntos de pilotos/equipos, kilometraje, fatiga, desgaste y reputación se registran al cruzar la meta. Al terminar recibirás una prima de clasificación y la temporada quedará archivada.
 8. Puedes abrir la siguiente temporada. Se conserva el mundo y se contabiliza el descanso hasta el siguiente 5 de enero. Revisa los contratos que vencen.
 
-**Oficina** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $360 netos en tres días, con un máximo de uno cada siete días. Comparte el taller con las revisiones.
+**Finanzas** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $360 netos en tres días, con un máximo de uno cada siete días. Comparte el taller con las revisiones.
 
 ## Alcance entregado
 
@@ -35,11 +35,26 @@ Los scripts clásicos y recursos relativos permiten abrir `index.html` directame
 - Un coche inicial y siete equipos rivales con recursos finitos, flotas y plantillas persistentes. La IA de la 0.2 evalúa compras/ventas, fichajes/traspasos, revisiones, neumáticos, formación, encargos y reducción de gastos según personalidad, necesidad y reserva salarial.
 - Pilotos con 12 atributos, rasgos, potencial oculto, contratos, descanso, formación básica y experiencia de carreras.
 - Copa Club con seis circuitos/rondas, clasificación de equipos y pilotos, resultados e historial de temporadas.
-- Simulación visual de paso fijo: aceleración según potencia/peso, frenada anticipada, velocidad de curvas, habilidades, tráfico y líneas de adelantamiento, ritmo, desgaste y pequeños incidentes dependientes del riesgo. Cámara de circuito y seguimiento.
+- Simulación visual de paso fijo: aceleración según potencia/peso, frenada anticipada, habilidades, rebufo, búsqueda de huecos para adelantar, defensa, ritmo y desgaste. Los contactos dañan sistemas reales; los derrapes y trompos dependen del piloto y del agarre. Los accidentes pueden causar abandono y amarillas locales. Tres cámaras, minimapa y zoom.
 - Periódico de hechos reales del estado de juego, con enlaces a sus entidades y un archivo limitado.
 - Cinco partidas, guardado automático/manual, exportación/importación JSON, validación de formato/versión/entidades, checksum y copia anterior por ranura. Una carrera en curso se guarda con sus participantes y RNG, sin pagar recompensas de nuevo al cargar.
 
 Los nombres de coches son referencias descriptivas. Todas las ilustraciones, circuitos, retratos e identidades son dibujos originales generados localmente con SVG/Canvas. Las cifras son **parámetros de juego**, no datos certificados de fabricantes. Los circuitos son ficticios. No se usan logotipos oficiales.
+
+## Rediseño de la 0.3.1
+
+Toda la presentación cambia: menú, creación de compañía, sede, garaje, pilotos, finanzas, calendario, mercado, compañías, noticias, archivo y taller. La navegación muestra nombres y grupos; la sede destaca la próxima decisión y los pasos para llegar a la parrilla. La interfaz se adapta a escritorio y móvil con textos legibles y controles de guardado accesibles.
+
+El taller separa **Diagnóstico / Instaladas / Almacén / Catálogo**, con búsqueda y filtros por compatibilidad y sistema. Cada compra continúa hacia el almacén para programar el montaje.
+
+La carrera ocupa el centro de la pantalla. La pista conserva su longitud en metros, tiene 12,4 m de ancho y los coches miden unos 4,3 × 1,8 m. El entorno incorpora asfalto, escapatorias, pianos, barreras, señalización de frenada, gradas y paddock. Las carrocerías, cristales, ruedas, luces de freno y daños se dibujan con más detalle.
+
+- **TV** sigue batallas e incidentes; **seguimiento** permite elegir cualquier piloto en el cronometraje; **circuito** ofrece la vista completa. Hay zoom y un minimapa.
+- Los pilotos buscan espacio, aprovechan rebufo y disputan adelantamientos según sus atributos. Control, regularidad, disciplina, neumáticos y órdenes influyen en las pérdidas de control. No hay accidentes obligatorios por tiempo.
+- Los coches tienen volumen: un roce o choque los separa, reduce velocidad y causa daños según el impacto. Un trompo ocupa más ancho; un retirado se aparta gradualmente y puede obstaculizar mientras sigue en pista. Las amarillas reducen el ritmo cerca del peligro. Los daños se conservan en el taller y el resumen final muestra hechos de la carrera.
+- **Activar sonido** habilita un motor sintetizado, neumáticos e impactos; está apagado inicialmente y se silencia al pausar. Funciona localmente, sin descargas de audio.
+
+Es una simulación 2D simplificada de carreras secas. Boxes operativos, clima, repeticiones y compuestos de competición siguen en el plan. Esta actualización de presentación y tráfico se entrega antes de continuar con las negociaciones y patrocinios de la 0.4.
 
 ## Novedades de la 0.2
 
@@ -74,7 +89,7 @@ Los rivales compran e instalan las mismas unidades, respetan plazos y presupuest
 
 Se usa `localStorage`: el volumen actual no requiere IndexedDB. El historial de noticias tiene 200 entradas; cada compañía conserva 600 movimientos recientes, además de acumulados; cada coche conserva 30 hechos. Las temporadas anteriores conservan resúmenes, no pasos de física. El checksum detecta corrupción accidental, no es una firma criptográfica ni un sistema antitrampas.
 
-El navegador guarda por origen y perfil. Si bloquea el almacenamiento o se alcanza su cuota, se informa del fallo; exporta JSON. Borrar los datos del navegador elimina también las partidas y sus copias. No hay almacenamiento en servidor. El esquema actual es la versión 3. Los guardados de las versiones 0.1 y 0.2 (esquemas 1 y 2) se validan y migran sin cambiar sus coches, saldos, contratos ni resultados. Se añaden los sistemas base según el estado anterior y el catálogo de repuestos una única vez. Si hay una carrera antigua en curso, termina con su modelo anterior para conservar el resultado exacto; las siguientes usan el desgaste por componentes. Los trabajos antiguos conservan su plazo y no vuelven a cobrarse. Se mantienen las claves de las cinco ranuras. Las versiones desconocidas se rechazan sin modificar el guardado.
+El navegador guarda por origen y perfil. Si bloquea el almacenamiento o se alcanza su cuota, se informa del fallo; exporta JSON. Borrar los datos del navegador elimina también las partidas y sus copias. No hay almacenamiento en servidor. El esquema actual es la versión 3. Los guardados de las versiones 0.1 y 0.2 (esquemas 1 y 2) se validan y migran sin cambiar sus coches, saldos, contratos ni resultados. Se añaden los sistemas base según el estado anterior y el catálogo de repuestos una única vez. Si hay una carrera antigua en curso, termina con su modelo anterior para conservar el resultado exacto; las siguientes usan el desgaste por componentes y el nuevo tráfico. También se verifica una carrera de la 0.3: conserva exactamente el resultado anterior y las nuevas dinámicas se aplican a la siguiente salida. Los trabajos antiguos conservan su plazo y no vuelven a cobrarse. Se mantienen las claves de las cinco ranuras. Las versiones desconocidas se rechazan sin modificar el guardado.
 
 ## Verificar
 
@@ -90,6 +105,6 @@ Comprobación opcional de navegador con Playwright disponible y el servidor inic
 npm run test:browser
 ```
 
-`CHROMIUM_PATH` permite seleccionar el ejecutable y `GAME_URL` el servidor. Estos recorridos necesitan el paquete de pruebas `playwright`; el juego y `npm test` no lo necesitan. El entorno de desarrollo ya lo proporciona. Capturas y una partida exportada se escriben en `test-results/` (ignorado por Git). El recorrido usa la UI para fundar, dibujar, negociar, inscribirse, dar órdenes y recargar; completa las seis rondas con la API del mismo motor para evitar esperar todas las vueltas en tiempo real. Además comprueba exportación/importación y siete pantallas a 1440, 1024 y 390 px. `tests/browser-business.cjs` añade mercado, traspasos con consentimiento, expediente de activos, garaje vacío y migración real de una partida 0.1, con nueve pantallas a esos tres tamaños. `tests/browser-workshop.cjs` verifica el recorrido real de compra/montaje, guardar un trabajo pendiente, completar el plazo, desmontar, correr con modificaciones, reparar un componente, vender repuestos e importar una carrera 0.2; comprueba diez pantallas a los tres tamaños. La apertura `file://` se marca como omitida si la política del navegador la bloquea.
+`CHROMIUM_PATH` permite seleccionar el ejecutable y `GAME_URL` el servidor. Estos recorridos necesitan el paquete de pruebas `playwright`; el juego y `npm test` no lo necesitan. El entorno de desarrollo ya lo proporciona. Capturas y una partida exportada se escriben en `test-results/` (ignorado por Git). El recorrido usa la UI para fundar, dibujar, negociar, inscribirse, dar órdenes y recargar; completa las seis rondas con la API del mismo motor para evitar esperar todas las vueltas en tiempo real. Además comprueba exportación/importación y siete pantallas a 1440, 1024 y 390 px. `tests/browser-business.cjs` añade mercado, traspasos con consentimiento, expediente de activos, garaje vacío y migración real de una partida 0.1, con nueve pantallas a esos tres tamaños. `tests/browser-workshop.cjs` verifica el recorrido real de compra/montaje, guardar un trabajo pendiente, completar el plazo, desmontar, correr con modificaciones, reparar un componente, vender repuestos e importar una carrera 0.2; comprueba diez pantallas a los tres tamaños. `tests/browser-presentation.cjs` comprueba navegación con etiquetas, búsqueda/compatibilidad, cámaras, selección de piloto, zoom, escala de los seis circuitos, audio y pausa, controles móviles y ausencia de cambios en el RNG al dibujar. La apertura `file://` se marca como omitida si la política del navegador la bloquea.
 
 Consulta [la arquitectura](docs/ARQUITECTURA.md), [el plan por versiones](docs/ROADMAP.md) y [la especificación original](docs/ESPECIFICACION.md).

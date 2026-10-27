@@ -4,27 +4,27 @@
 
 `RCS.createGame(nombre, logo, semilla)` crea el estado versionado. Las entidades tienen identificadores únicos dentro de la partida, generados con un contador persistente. Las relaciones usan esos identificadores, nunca índices de pantalla. Al cargar no se regenera ninguna entidad. La partida usa fechas UTC para que el calendario no dependa de la zona horaria del ordenador.
 
-| Archivo | Responsabilidad |
-| --- | --- |
-| `js/data.js` | Catálogos extensibles, rasgos, reglamento, puntos y trazados |
-| `js/core.js` | Estado inicial, IDs, RNG reproducible, consultas y eventos/noticias |
-| `js/parts.js` | Definiciones, alojamientos, compatibilidad, requisitos y efectos de mejoras |
-| `js/workshop.js` | Inventario físico, reservas, trabajos, configuración, desgaste y migración mecánica |
-| `js/ui-workshop.js` | Diagnóstico, comparador, proveedor, almacén y controles del taller |
-| `js/economy.js` | Única vía de movimiento monetario, libro de caja, servicios y mantenimiento |
-| `js/drivers.js` | Currículums, atributos, negociación, contratos y evolución básica |
-| `js/market.js` | Anuncios finitos y transferencias atómicas de coches y dinero |
-| `js/companies.js` | Alineaciones, fichajes, compensaciones, ofertas, crisis y registro de decisiones |
-| `js/ai.js` | Utilidad de acciones, reservas y personalidades empresariales |
-| `js/world.js` | Inicialización, invariantes del mundo y migración del esquema 1 al 2 |
-| `js/ui-business.js` | Pantallas y controladores del mercado, compañías y traspasos |
-| `js/calendar.js` | Orquestación diaria, bloqueo de carreras, apertura de temporadas |
-| `js/race.js` | Inscripciones, participantes, física y resultados, sin DOM |
-| `js/storage.js` | Serialización, validación, checksum, ranuras y recuperación |
-| `js/render.js` | Dibujos originales de vehículos, sede y circuito |
-| `js/ui.js` | Presentación del estado y composición de pantallas |
-| `js/app.js` | Entrada de usuario, formularios, editor Canvas, bucle y autoguardado |
-| `scripts/server.cjs` | Servidor estático local, sin paquetes externos |
+| Archivo              | Responsabilidad                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `js/data.js`         | Catálogos extensibles, rasgos, reglamento, puntos y trazados                        |
+| `js/core.js`         | Estado inicial, IDs, RNG reproducible, consultas y eventos/noticias                 |
+| `js/parts.js`        | Definiciones, alojamientos, compatibilidad, requisitos y efectos de mejoras         |
+| `js/workshop.js`     | Inventario físico, reservas, trabajos, configuración, desgaste y migración mecánica |
+| `js/ui-workshop.js`  | Diagnóstico, comparador, proveedor, almacén y controles del taller                  |
+| `js/economy.js`      | Única vía de movimiento monetario, libro de caja, servicios y mantenimiento         |
+| `js/drivers.js`      | Currículums, atributos, negociación, contratos y evolución básica                   |
+| `js/market.js`       | Anuncios finitos y transferencias atómicas de coches y dinero                       |
+| `js/companies.js`    | Alineaciones, fichajes, compensaciones, ofertas, crisis y registro de decisiones    |
+| `js/ai.js`           | Utilidad de acciones, reservas y personalidades empresariales                       |
+| `js/world.js`        | Inicialización, invariantes del mundo y migración del esquema 1 al 2                |
+| `js/ui-business.js`  | Pantallas y controladores del mercado, compañías y traspasos                        |
+| `js/calendar.js`     | Orquestación diaria, bloqueo de carreras, apertura de temporadas                    |
+| `js/race.js`         | Inscripciones, participantes, física y resultados, sin DOM                          |
+| `js/storage.js`      | Serialización, validación, checksum, ranuras y recuperación                         |
+| `js/render.js`       | Dibujos originales de vehículos, sede y circuito                                    |
+| `js/ui.js`           | Presentación del estado y composición de pantallas                                  |
+| `js/app.js`          | Entrada de usuario, formularios, editor Canvas, bucle y autoguardado                |
+| `scripts/server.cjs` | Servidor estático local, sin paquetes externos                                      |
 
 Se usan scripts clásicos con un único espacio de nombres `RCS`, en orden explícito. Esto permite ejecutar los mismos sistemas en Node (`vm`) y en navegadores, incluyendo contextos que permiten `file://`, sin empaquetador. Los archivos de simulación no acceden a la interfaz.
 
@@ -57,7 +57,6 @@ Los datos reservan espacios de estado para empleados, investigación y relacione
 
 No se introducirá un sistema de sucursales. Las futuras instalaciones pertenecen a una única sede. La IA de la 0.2 opera sobre estos mismos coches, pilotos y saldos. El plan completo permanece en `ROADMAP.md` y la especificación original.
 
-
 ## Integridad empresarial y migración
 
 El esquema 2 mantiene las mismas claves `localStorage` que la 0.1. Se comprueba el checksum del sobre original, se valida el estado de origen y solo entonces se amplía. No se regenera ningún activo anterior. `World.initialize` añade seis unidades de stock finito y sus anuncios usando un RNG auxiliar derivado de la semilla, y restaura el RNG de partida; no modifica el RNG de una carrera. Una fixture auténtica del commit 0.1 prueba que una carrera reanudada produce exactamente los mismos resultados. Las siguientes cargas del esquema 2 no ejecutan la inicialización otra vez.
@@ -71,7 +70,6 @@ La IA considera reserva salarial, necesidad de asiento/coche, calidad observable
 Las alineaciones rivales se eligen entre unidades propias, legales, no anunciadas y disponibles. La simulación de paso fijo de la 0.1 permanece intacta. Los ingresos de taller solo se cobran al entregar un encargo real después de tres jornadas; el taller no repara y hace encargos a la vez.
 
 Los expedientes conservan 16 decisiones recientes, el mundo 80 transferencias de activos y 30 propuestas recientes. Las compañías quebradas no se eliminan del archivo: sus pilotos quedan libres y sus activos se ponen en liquidación. Las ventas posteriores reducen su déficit sin reactivar la compañía. Las noticias enlazan el activo por ID y muestran su situación actual, aun cuando haya cambiado de propietario desde la publicación.
-
 
 ## Taller y esquema 3
 
@@ -88,3 +86,15 @@ Las carreras nuevas guardan `mechanicalVersion: 3`, una copia de componentes, te
 La migración 1→2→3 valida cada estado anterior y añade los campos de mecánica sin regenerar los activos de 0.2. Una carrera antigua en curso conserva el algoritmo anterior hasta terminar; después se aplica su resultado a los nuevos sistemas y las carreras posteriores usan componentes. Las fixtures auténticas de ambas versiones verifican los resultados finales exactos. Las revisiones antiguas reciben un ID de trabajo conservando fin y coste ya pagado. El esquema 3 se serializa sin repetir la inicialización.
 
 La IA compara piezas compatibles que realmente existen, considera su reserva salarial y plazo hasta la prueba, compra la unidad y la instala en una decisión posterior. No paga una mejora ficticia ni recibe prestaciones antes de que termine el taller. Los objetivos generales de la 0.2 y la negociación del jugador se conservan.
+
+## Presentación y tráfico de la 0.3.1
+
+Las nuevas salidas añaden `racingVersion: 1`, manteniendo el esquema de guardado 3 y las claves de las ranuras. Una carrera en curso sin esa marca conserva su algoritmo anterior. La fixture del commit 0.3 demuestra igualdad exacta de resultados al terminarla. No se regeneran coches, piezas, compañías, finanzas ni contratos.
+
+El tráfico usa desplazamiento lateral, longitud, anchura y orientación en metros sobre el circuito. Los pilotos anticipan frenadas, huecos y defensa; la separación iterativa evita interpenetración en contactos múltiples. Los impactos reducen velocidad y desgastan componentes. Los errores dependen de control, consistencia, disciplina, rasgo, gomas, velocidad y curvatura. Las amarillas tienen sectores y duración, y los abandonados se apartan sin teletransportarse. Todo usa el RNG persistente y el paso fijo de 0,05 s. Eventos limitados a 80, mensajes a 30 y zonas de peligro a ocho; los resultados guardan contadores y hasta doce momentos destacados.
+
+`render.js` transforma la geometría del motor a metros y conserva proporciones entre coches y ancho de pista. Dibuja el paisaje estático en caché (máximo dos circuitos y 3072 px en el lado mayor); las cámaras y efectos visuales no consumen el RNG del juego ni alteran su estado. Las tres cámaras comparten escala, foco y zoom; TV selecciona batallas o incidentes, mientras seguimiento respeta el piloto elegido.
+
+`sound.js` crea audio mediante Web Audio solo tras activar el control. El ruido usa una semilla propia y los impactos proceden del registro real de carrera. La pausa, pestaña oculta y salida de carrera silencian la mezcla. El audio no forma parte de la partida.
+
+La UI mantiene navegación con etiquetas y acciones por `data-action`/`data-go`. Las secciones, búsqueda y filtros de taller se actualizan sin reconstruir la página para conservar foco y desplazamiento. Cámara, sonido y filtros son preferencias de presentación; no modifican las transacciones ni los participantes.

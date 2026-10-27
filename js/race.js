@@ -149,6 +149,16 @@
         finished: false,
         playerSkipped: skip,
         mechanicalVersion: 3,
+        racingVersion: 1,
+        trackWidth: 12.4,
+        events: [],
+        eventSequence: 0,
+        eventCounts: {},
+        flag: "green",
+        yellowUntil: 0,
+        yellowProgress: 0,
+        encounterCooldowns: {},
+        cautions: [],
       };
       for (const c of s.companies.filter((c) => c.status === "active")) {
         if (c.id === s.playerId && skip) continue;
@@ -222,8 +232,26 @@
           ((a.hp / a.weight) * 100 + G.Drivers.rating({ stats: a.stats })),
       );
       r.entrants.forEach((a, i) => {
-        a.progress = -i * 8;
-        a.lane = i % 2 ? -0.006 : 0.006;
+        a.progress = -Math.floor(i / 2) * 9.2 - (i % 2) * 2.5;
+        a.lateral = i % 2 ? -2.2 : 2.2;
+        a.width =
+          a.shape === "roadster" ? 1.74 : a.shape === "coupe" ? 1.82 : 1.79;
+        a.length =
+          a.shape === "roadster" ? 3.98 : a.shape === "coupe" ? 4.42 : 4.16;
+        a.headingSlip = 0;
+        a.incident = null;
+        a.incidentUntil = 0;
+        a.incidentStarted = 0;
+        a.offTrack = false;
+        a.damage = 0;
+        a.collisionCount = 0;
+        a.overtakeCount = 0;
+        a.contactCooldown = 0;
+        a.errorCooldown = 0;
+        a.paceFactor = 0.978 + G.random(r) * 0.044;
+        a.braking = false;
+        a.dnfReason = null;
+        a.lane = a.lateral / this.worldScale(r.track);
       });
       r.messages.unshift({
         time: 0,
@@ -260,6 +288,7 @@
     tick(s, steps = 1) {
       const r = s.race;
       if (!r || r.finished) return;
+      if (r.racingVersion === 1) return this.tickRacing(s, steps);
       const def = G.Data.tracks[r.track],
         distance = def.length * def.laps,
         dt = this.dt;
@@ -437,8 +466,31 @@
         points: a.dnf ? 0 : G.Data.points[i] || 0,
         prize: a.dnf ? 250 : G.Data.prizes[i] || 500,
         bestLap: a.bestLap,
+        ...(r.racingVersion === 1
+          ? {
+              incidents: a.collisionCount,
+              overtakes: a.overtakeCount,
+              dnfReason: a.dnfReason,
+            }
+          : {}),
       }));
       e.results = results;
+      if (r.racingVersion === 1)
+        e.raceSummary = {
+          duration: r.time,
+          contacts: (r.eventCounts.contact || 0) + (r.eventCounts.crash || 0),
+          crashes: r.eventCounts.crash || 0,
+          overtakes: r.eventCounts.overtake || 0,
+          spins: r.eventCounts.spin || 0,
+          retirements: r.eventCounts.retirement || 0,
+          highlights: G.clone(
+            r.events
+              .filter(
+                (event) => !["finish", "radio", "green"].includes(event.type),
+              )
+              .slice(0, 12),
+          ),
+        };
       e.status = r.playerSkipped ? "skipped" : "completed";
       for (const row of results) {
         const a = r.entrants.find((a) => a.companyId === row.companyId),
@@ -484,15 +536,22 @@
           `Premio · Ronda ${e.round} · ${row.dnf ? "abandono" : row.position + "º"}`,
         );
       }
-      if (results.length)
+      if (results.length) {
+        const noWinner =
+          r.racingVersion === 1 && results.every((row) => row.dnf);
         G.news(
           s,
           "Resultados",
-          `${results[0].team} se impone en ${G.Data.tracks[e.track].name}.`,
-          `${results[0].name} ${results[0].dnf ? "lideró hasta el abandono" : "cruza primero la meta"}. Los puntos, premios y desgaste ya se han registrado.`,
+          noWinner
+            ? `Carrera sin clasificados en ${G.Data.tracks[e.track].name}.`
+            : `${results[0].team} se impone en ${G.Data.tracks[e.track].name}.`,
+          noWinner
+            ? "Todos los participantes han abandonado. No se adjudica una victoria; las ayudas logísticas y daños se han contabilizado."
+            : `${results[0].name} ${results[0].dnf ? "lideró hasta el abandono" : "cruza primero la meta"}. Los puntos, premios y desgaste ya se han registrado.`,
           "competition",
           e.id,
         );
+      }
       if (s.season.events.every((e) => e.status !== "scheduled")) {
         s.season.phase = "complete";
         const board = G.leaderboard(s),
@@ -535,4 +594,634 @@
       return this.finish(s);
     },
   };
+})();
+
+/* Dinámica de pista de la edición visual. Las carreras guardadas anteriores
+   continúan usando tick() clásico hasta cruzar la meta. */
+(() => {
+  const G = RCS,
+    R = G.Race;
+  const signedAngle = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
+  const active = (a) => !a.dnf && a.finishTime === null;
+  Object.assign(R, {
+    worldScale(index) {
+      return (
+        G.Data.tracks[index].length /
+        this.track(index).reduce((n, p) => n + p.segment, 0)
+      );
+    },
+    relative(a, b, length) {
+      return (
+        ((((b.progress - a.progress + length / 2) % length) + length) %
+          length) -
+        length / 2
+      );
+    },
+    event(r, type, text, carIds, progress) {
+      const event = {
+        id: "race-event-" + ++r.eventSequence,
+        time: r.time,
+        type,
+        text,
+        carIds,
+        progress,
+      };
+      r.eventCounts ||= {};
+      r.eventCounts[type] = (r.eventCounts[type] || 0) + 1;
+      r.events.unshift(event);
+      if (r.events.length > 80) r.events.length = 80;
+      r.messages.unshift({ time: r.time, text });
+      if (r.messages.length > 30) r.messages.length = 30;
+      return event;
+    },
+    caution(r, progress, duration = 10) {
+      r.cautions ||= [];
+      r.cautions.push({ progress, until: r.time + duration });
+      if (r.cautions.length > 8) r.cautions.shift();
+      r.yellowProgress = progress;
+      r.yellowUntil = Math.max(r.yellowUntil, r.time + duration);
+      r.flag = "yellow";
+    },
+    underYellow(r, a) {
+      const length = G.Data.tracks[r.track].length;
+      return (r.cautions || []).some(
+        (c) =>
+          c.until > r.time &&
+          this.relative(a, { progress: c.progress }, length) > -40 &&
+          this.relative(a, { progress: c.progress }, length) < 145,
+      );
+    },
+    damageCar(
+      a,
+      body,
+      suspension = body * 0.45,
+      cooling = body * 0.12,
+      engine = body * 0.06,
+    ) {
+      a.components.body = Math.max(0, a.components.body - body * a.bodyWear);
+      a.components.suspension = Math.max(
+        0,
+        a.components.suspension - suspension,
+      );
+      a.components.cooling = Math.max(0, a.components.cooling - cooling);
+      a.components.engine = Math.max(0, a.components.engine - engine);
+      a.damage += body + suspension + cooling + engine;
+      a.condition = G.Workshop.summary(a.components);
+    },
+    errorRate(a, corner, pressure = 0) {
+      const precision =
+        (a.stats.control * 0.55 +
+          a.stats.consistency * 0.3 +
+          a.stats.discipline * 0.15) /
+        100;
+      const style = a.mode === "attack" ? 2.1 : a.mode === "save" ? 0.38 : 1;
+      return (
+        0.0022 *
+        Math.max(0.12, 1.18 - precision) *
+        G.Data.traits[a.trait].risk *
+        style *
+        corner *
+        corner *
+        (1 + pressure * 0.75) *
+        (1 + (100 - a.tires) / 65) *
+        (1 + a.fatigue / 120)
+      );
+    },
+    loseControl(r, a, corner) {
+      if (r.time < a.errorCooldown || !active(a)) return;
+      const gripSkill = (a.stats.control + a.stats.consistency) / 200;
+      const roll = G.random(r);
+      const spin = roll > gripSkill * 0.6 + 0.2;
+      a.incident = spin ? "spin" : "slide";
+      a.incidentStarted = r.time;
+      a.incidentUntil =
+        r.time + (spin ? 4 + G.random(r) * 3 : 1.4 + G.random(r) * 1.7);
+      a.errorCooldown = a.incidentUntil + 12;
+      a.slideSide = G.random(r) < 0.5 ? -1 : 1;
+      a.offTrack = spin || G.random(r) > 0.7;
+      a.tires = Math.max(0, a.tires - (spin ? 3.5 : 1.3));
+      a.components.tires = a.tires;
+      if (a.offTrack) {
+        this.damageCar(a, spin ? 4 : 1.5, spin ? 2 : 1);
+        this.caution(r, a.progress, spin ? 9 : 5);
+      }
+      this.event(
+        r,
+        spin ? "spin" : "slide",
+        spin
+          ? `${a.name} pierde la zaga y hace un trompo. Se reincorpora con precaución.`
+          : `${a.name} corrige un derrape y pierde impulso a la salida de la curva.`,
+        [a.carId],
+        a.progress,
+      );
+    },
+    retire(r, a, reason) {
+      if (a.dnf) return;
+      a.dnf = true;
+      a.dnfReason = reason;
+      a.speed = 0;
+      a.offTrack = true;
+      a.incident = "contact";
+      a.incidentStarted = r.time;
+      a.incidentUntil = r.time + 20;
+      a.retiredAt = r.time;
+      this.caution(r, a.progress, 13);
+      this.event(
+        r,
+        "retirement",
+        `${a.name} abandona: ${reason.toLowerCase()}.`,
+        [a.carId],
+        a.progress,
+      );
+    },
+    dimensions(a) {
+      const c = Math.abs(Math.cos(a.headingSlip || 0)),
+        s = Math.abs(Math.sin(a.headingSlip || 0));
+      return {
+        longitudinal: c * a.length + s * a.width,
+        lateral: c * a.width + s * a.length,
+      };
+    },
+    resolveContacts(r) {
+      const length = G.Data.tracks[r.track].length,
+        cars = r.entrants.filter(
+          (a) =>
+            active(a) ||
+            (a.dnf && Math.abs(a.lateral) < r.trackWidth / 2 + 0.3),
+        );
+      // Una corrección puede empujar un tercer coche: vuelve a separar hasta
+      // despejar la cadena, sin cobrar daños otra vez gracias al cooldown.
+      for (let pass = 0; pass < 8; pass++) {
+        let separations = 0;
+        for (let i = 0; i < cars.length; i++)
+          for (let j = i + 1; j < cars.length; j++) {
+            const a = cars[i],
+              b = cars[j];
+            if (!active(a) && !active(b)) continue;
+            let gap = this.relative(a, b, length),
+              lat = b.lateral - a.lateral;
+            const da = this.dimensions(a),
+              db = this.dimensions(b);
+            const limitX = (da.longitudinal + db.longitudinal) / 2 + 0.04,
+              limitY = (da.lateral + db.lateral) / 2 + 0.04;
+            const overlapX = limitX - Math.abs(gap),
+              overlapY = limitY - Math.abs(lat);
+            if (overlapX <= 0 || overlapY <= 0) continue;
+            separations++;
+            const closing = Math.abs(a.speed - b.speed),
+              lateralClosing = Math.abs(
+                (a.lateralVelocity || 0) - (b.lateralVelocity || 0),
+              );
+            const strong = closing > 1 || lateralClosing > 0.3;
+            // Separación de volúmenes: los coches no se teletransportan uno a través del otro.
+            const lateralSide =
+              lat === 0
+                ? a.carId.localeCompare(b.carId) < 0
+                  ? 1
+                  : -1
+                : Math.sign(lat);
+            const correction = overlapY / 2 + 0.015;
+            const lateralClear =
+              Math.abs(a.lateral - lateralSide * correction) <= 7.8 &&
+              Math.abs(b.lateral + lateralSide * correction) <= 7.8;
+            if (overlapY < overlapX && lateralClear) {
+              const sign =
+                lat === 0
+                  ? a.carId.localeCompare(b.carId) < 0
+                    ? 1
+                    : -1
+                  : Math.sign(lat);
+              a.lateral -= sign * (overlapY / 2 + 0.015);
+              b.lateral += sign * (overlapY / 2 + 0.015);
+              a.lateral = G.clamp(a.lateral, -7.8, 7.8);
+              b.lateral = G.clamp(b.lateral, -7.8, 7.8);
+            } else {
+              if (gap >= 0) {
+                a.progress -= overlapX + 0.015;
+                a.speed = Math.min(a.speed, b.speed * 0.94);
+              } else {
+                b.progress -= overlapX + 0.015;
+                b.speed = Math.min(b.speed, a.speed * 0.94);
+              }
+            }
+            if (
+              !strong ||
+              r.time < Math.max(a.contactCooldown, b.contactCooldown)
+            )
+              continue;
+            const impulse = G.clamp(
+              (closing * closing * 0.018 + lateralClosing * 1.2 + 0.7) *
+                (1.25 - (a.stats.control + b.stats.control) / 500),
+              0.45,
+              30,
+            );
+            this.damageCar(
+              a,
+              impulse,
+              impulse * 0.45,
+              impulse * 0.14,
+              impulse * 0.08,
+            );
+            this.damageCar(
+              b,
+              impulse * 0.78,
+              impulse * 0.35,
+              impulse * 0.1,
+              impulse * 0.04,
+            );
+            for (const x of [a, b]) {
+              x.collisionCount++;
+              x.contactCooldown = r.time + 2.5;
+              x.errorCooldown = Math.max(x.errorCooldown, r.time + 4);
+              x.incident = "contact";
+              x.incidentStarted = r.time;
+              x.incidentUntil = r.time + 1.2;
+              x.speed *= G.clamp(1 - impulse * 0.007, 0.6, 0.99);
+            }
+            this.event(
+              r,
+              impulse >= 9 ? "crash" : "contact",
+              impulse >= 9
+                ? `Colisión entre ${a.name} y ${b.name}. Hay daños y bandera amarilla en el sector.`
+                : `Contacto entre ${a.name} y ${b.name}: ambos continúan con daños leves.`,
+              [a.carId, b.carId],
+              a.progress,
+            );
+            if (impulse >= 7) this.caution(r, a.progress, 12);
+            if (closing > 34) {
+              a.components.cooling = Math.min(a.components.cooling, 18);
+              a.components.suspension = Math.min(a.components.suspension, 28);
+              a.condition = G.Workshop.summary(a.components);
+            }
+            if (closing > 39) {
+              b.components.cooling = Math.min(b.components.cooling, 25);
+              b.components.suspension = Math.min(b.components.suspension, 20);
+              b.condition = G.Workshop.summary(b.components);
+            }
+            if (
+              closing > 34 ||
+              a.components.suspension < 17 ||
+              a.components.body < 12
+            )
+              this.retire(r, a, "Daños tras colisión");
+            if (
+              closing > 39 ||
+              b.components.suspension < 17 ||
+              b.components.body < 12
+            )
+              this.retire(r, b, "Daños tras colisión");
+          }
+        if (!separations) break;
+      }
+    },
+    recordPasses(r) {
+      const cars = r.entrants.filter(active);
+      for (let i = 0; i < cars.length; i++)
+        for (let j = i + 1; j < cars.length; j++) {
+          const a = cars[i],
+            b = cars[j],
+            delta = a.progress - b.progress;
+          if (Math.abs(delta) > 38) continue;
+          const key = [a.carId, b.carId].sort().join("|"),
+            leader = delta >= 0 ? a : b;
+          let encounter = r.encounterCooldowns[key];
+          if (!encounter) {
+            r.encounterCooldowns[key] = {
+              leader: leader.carId,
+              lastEvent: -100,
+            };
+            continue;
+          }
+          if (Math.abs(delta) < 1.4 || encounter.leader === leader.carId)
+            continue;
+          const old = r.entrants.find((x) => x.carId === encounter.leader);
+          encounter.leader = leader.carId;
+          if (
+            r.time - encounter.lastEvent < 9 ||
+            !old ||
+            old.dnf ||
+            this.underYellow(r, leader)
+          )
+            continue;
+          encounter.lastEvent = r.time;
+          leader.overtakeCount++;
+          this.event(
+            r,
+            "overtake",
+            `${leader.name} supera a ${old.name} tras disputar la posición.`,
+            [leader.carId, old.carId],
+            leader.progress,
+          );
+        }
+    },
+    tickRacing(s, steps = 1) {
+      const r = s.race;
+      if (!r || r.finished) return;
+      const def = G.Data.tracks[r.track],
+        distance = def.length * def.laps,
+        dt = this.dt,
+        scale = this.worldScale(r.track);
+      r.cautions ||= [];
+      for (let k = 0; k < steps && !r.finished; k++) {
+        r.time += dt;
+        r.step++;
+        r.cautions = r.cautions.filter((c) => c.until > r.time);
+        const wasYellow = r.flag === "yellow";
+        r.flag = r.cautions.length ? "yellow" : "green";
+        if (wasYellow && r.flag === "green")
+          this.event(
+            r,
+            "green",
+            "Dirección de carrera: sector despejado, se retira la bandera amarilla.",
+            [],
+            r.yellowProgress,
+          );
+        for (const retired of r.entrants.filter((a) => a.dnf)) {
+          const edge =
+            retired.lateral >= 0
+              ? r.trackWidth / 2 + 1.2
+              : -(r.trackWidth / 2 + 1.2);
+          retired.lateral += G.clamp(
+            edge - retired.lateral,
+            -dt * 0.8,
+            dt * 0.8,
+          );
+          retired.lane = retired.lateral / scale;
+        }
+        const snapshots = r.entrants
+          .filter(
+            (a) =>
+              active(a) ||
+              (a.dnf && Math.abs(a.lateral) < r.trackWidth / 2 + 0.3),
+          )
+          .map((a) => ({ ...a, stats: a.stats, components: a.components }));
+        for (const a of r.entrants) {
+          if (!active(a)) continue;
+          const me = snapshots.find((x) => x.carId === a.carId);
+          const ahead = snapshots
+            .filter((b) => b.carId !== a.carId)
+            .map((b) => ({ b, gap: this.relative(me, b, def.length) }))
+            .filter((x) => x.gap > 0 && x.gap < 65)
+            .sort((x, y) => x.gap - y.gap);
+          const front = ahead[0],
+            rear = snapshots
+              .filter((b) => b.carId !== a.carId)
+              .map((b) => ({ b, gap: -this.relative(me, b, def.length) }))
+              .filter((x) => x.gap > 0 && x.gap < 28)
+              .sort((x, y) => x.gap - y.gap)[0];
+          if (a.companyId !== s.playerId) {
+            a.mode =
+              a.tires < 30 || a.components.engine < 45
+                ? "save"
+                : front &&
+                    front.gap < 26 &&
+                    a.tires > 45 &&
+                    (a.trait === 1 || a.trait === 3)
+                  ? "attack"
+                  : "balanced";
+          }
+          const yellow = this.underYellow(r, a),
+            mode = a.mode === "attack" ? 1.037 : a.mode === "save" ? 0.957 : 1;
+          const skill =
+            (0.8 + a.stats.pace / 300) *
+            (1 - a.fatigue * 0.00055) *
+            a.paceFactor;
+          const mech = (0.77 + a.condition * 0.0023) * G.Workshop.mechanical(a);
+          const grip = a.grip * (0.85 + a.components.suspension * 0.0015),
+            brakePower =
+              (4 + a.brakes / 25) * (0.75 + a.components.brakes * 0.0025);
+          const point = this.point(r.track, a.progress),
+            curve = signedAngle(
+              this.point(r.track, a.progress + 20).angle,
+              this.point(r.track, a.progress - 20).angle,
+            );
+          const corner = G.clamp((64 - point.limit) / 46, 0, 1);
+          let limit = 70;
+          for (const look of [0, 25, 55, 85]) {
+            const cornerLimit = this.point(r.track, a.progress + look).limit;
+            const cornerSpeed =
+              cornerLimit *
+              (0.78 + grip / 260) *
+              (0.82 + a.stats.control / 300) *
+              (0.85 + a.tires * 0.0015);
+            limit = Math.min(
+              limit,
+              Math.sqrt(cornerSpeed * cornerSpeed + 2 * brakePower * look),
+            );
+          }
+          let target = Math.min((a.top / 3.6) * skill, limit) * mech * mode;
+          let lateralTarget =
+            Math.abs(curve) > 0.025 ? Math.sign(curve) * 1.15 : 0.15;
+          let drafting = false,
+            preparingPass = false;
+          const passingSkill = G.clamp(a.stats.overtake / 100, 0, 1);
+          if (front) {
+            drafting =
+              front.gap > 5 &&
+              front.gap < 40 &&
+              Math.abs(front.b.lateral - a.lateral) < 1.7;
+            if (drafting && corner < 0.45)
+              target *= 1.012 + (0.5 - a.stats.pace / 200) * 0.012;
+            const tryPass =
+              (!yellow || front.b.dnf) &&
+              front.gap < 20 + passingSkill * 16 &&
+              (target > front.b.speed + 0.7 - passingSkill * 0.5 ||
+                a.mode === "attack") &&
+              r.time > 1.2;
+            if (tryPass) {
+              const passingWidth =
+                (a.width + this.dimensions(front.b).lateral) / 2 + 0.7;
+              const lanes = [
+                front.b.lateral - passingWidth,
+                front.b.lateral + passingWidth,
+              ].map((x) => G.clamp(x, -4.85, 4.85));
+              const options = lanes.filter(
+                (l) =>
+                  Math.abs(l - front.b.lateral) > 2.1 &&
+                  !snapshots.some(
+                    (b) =>
+                      b.carId !== a.carId &&
+                      b.carId !== front.b.carId &&
+                      Math.abs(this.relative(me, b, def.length)) < 9 &&
+                      Math.abs(b.lateral - l) < 2.3,
+                  ),
+              );
+              options.sort(
+                (x, y) => Math.abs(x - a.lateral) - Math.abs(y - a.lateral),
+              );
+              if (options.length) {
+                lateralTarget = options[0];
+                preparingPass = true;
+                // Un piloto menos hábil levanta mientras prepara la maniobra; la
+                // habilidad facilita encontrar el hueco, no aumenta la potencia.
+                if (Math.abs(lateralTarget - a.lateral) > 0.6)
+                  target *= 0.95 + passingSkill * 0.05;
+              }
+            }
+            if (
+              front.gap < 12 &&
+              Math.abs(front.b.lateral - a.lateral) <
+                (a.width + this.dimensions(front.b).lateral) / 2 + 0.3
+            ) {
+              const desiredGap =
+                4.4 + a.speed * (a.mode === "attack" ? 0.1 : 0.16);
+              if (front.gap < desiredGap)
+                target = Math.min(
+                  target,
+                  Math.max(1, front.b.speed - (desiredGap - front.gap) * 1.45),
+                );
+            }
+          }
+          if (
+            !front &&
+            rear &&
+            !yellow &&
+            rear.gap < 21 &&
+            rear.gap > 7 &&
+            corner < 0.7
+          ) {
+            const defense = G.clamp((a.stats.defense - 25) / 65, 0, 1);
+            lateralTarget +=
+              (G.clamp(rear.b.lateral, -2, 2) - lateralTarget) * defense;
+          }
+          // Un piloto disciplinado deja espacio antes de converger sobre un coche emparejado.
+          const beside = snapshots.find(
+            (b) =>
+              b.carId !== a.carId &&
+              Math.abs(this.relative(me, b, def.length)) < a.length + 1 &&
+              Math.abs(b.lateral - lateralTarget) <
+                (this.dimensions(a).lateral + this.dimensions(b).lateral) / 2 +
+                  0.25,
+          );
+          if (beside) {
+            const buffer =
+              (this.dimensions(a).lateral + this.dimensions(beside).lateral) /
+                2 +
+              0.2;
+            const side = a.lateral >= beside.lateral ? 1 : -1;
+            const care = 0.94 + a.stats.discipline / 500;
+            lateralTarget = beside.lateral + side * buffer * care;
+          }
+          if (yellow) target = Math.min(target, front?.b.dnf ? 14 : 24);
+          const beforeLateral = a.lateral;
+          if (a.incident && r.time >= a.incidentUntil) {
+            a.incident = null;
+            a.offTrack = false;
+          }
+          if (a.incident === "spin") {
+            const phase =
+              (r.time - a.incidentStarted) /
+              Math.max(0.1, a.incidentUntil - a.incidentStarted);
+            a.headingSlip = a.slideSide * Math.sin(phase * Math.PI) * 2.7;
+            lateralTarget = a.slideSide * (r.trackWidth / 2 + 1.1);
+            target = Math.min(target, 4 + Math.max(0, phase - 0.65) * 10);
+          } else if (a.incident === "slide") {
+            const phase =
+              (r.time - a.incidentStarted) /
+              Math.max(0.1, a.incidentUntil - a.incidentStarted);
+            a.headingSlip = a.slideSide * Math.sin(phase * Math.PI) * 0.45;
+            lateralTarget =
+              a.slideSide * (a.offTrack ? r.trackWidth / 2 + 0.55 : 3.8);
+            target *= 0.68;
+          } else {
+            a.headingSlip *= Math.max(0, 1 - dt * 5);
+            if (a.incident === "contact") target *= 0.82;
+          }
+          const lateralSpeed =
+            (1.1 +
+              a.stats.control / 90 +
+              (preparingPass ? passingSkill * 0.55 : 0)) *
+            (a.incident === "spin" ? 1.2 : 1);
+          a.lateral += G.clamp(
+            lateralTarget - a.lateral,
+            -lateralSpeed * dt,
+            lateralSpeed * dt,
+          );
+          a.lateral = G.clamp(a.lateral, -7.8, 7.8);
+          a.offTrack = Math.abs(a.lateral) > r.trackWidth / 2 - 0.3;
+          if (a.offTrack) target *= 0.65;
+          a.lateralVelocity = (a.lateral - beforeLateral) / dt;
+          a.braking = a.speed > target + 1;
+          const accel =
+            a.acceleration *
+            (0.85 + a.components.engine * 0.0015) *
+            Math.min(6, (a.hp * 500) / (a.weight * Math.max(a.speed, 12)));
+          a.speed = Math.max(
+            0,
+            a.speed + G.clamp(target - a.speed, -brakePower * dt, accel * dt),
+          );
+          const moved = a.speed * dt;
+          a.progress += moved;
+          a.tires = Math.max(
+            0,
+            a.tires -
+              moved *
+                0.001 *
+                (a.mode === "attack" ? 2 : a.mode === "save" ? 0.55 : 1) *
+                (1.3 - a.stats.tires / 170) *
+                a.tireWear,
+          );
+          G.Workshop.wear(a, moved, dt, a.braking ? 1 : 0);
+          const pressure =
+            front && front.gap < 12 ? 1 : rear && rear.gap < 10 ? 0.7 : 0;
+          if (
+            !a.incident &&
+            r.time > a.errorCooldown &&
+            a.speed > 15 &&
+            corner > 0.25 &&
+            G.random(r) < this.errorRate(a, corner, pressure) * dt
+          )
+            this.loseControl(r, a, corner);
+          if (
+            Math.min(
+              a.components.engine,
+              a.components.transmission,
+              a.components.cooling,
+            ) < 25 &&
+            G.random(r) < dt * 0.003
+          )
+            this.retire(r, a, "Avería mecánica");
+          a.lane = a.lateral / scale;
+        }
+        this.resolveContacts(r);
+        this.recordPasses(r);
+        for (const a of r.entrants) {
+          if (!active(a)) continue;
+          a.lane = a.lateral / scale;
+          const lap = Math.floor(Math.max(0, a.progress) / def.length);
+          if (lap > a.lastLap) {
+            const lapTime = r.time - a.lapStarted;
+            a.bestLap =
+              a.bestLap === null ? lapTime : Math.min(a.bestLap, lapTime);
+            a.lapStarted = r.time;
+            a.lastLap = lap;
+            if (a.companyId === s.playerId && a.tires < 40)
+              this.event(
+                r,
+                "radio",
+                "Piloto: pierdo agarre con estas gomas. Necesito conservar.",
+                [a.carId],
+                a.progress,
+              );
+          }
+          if (a.progress >= distance) {
+            a.finishTime =
+              r.time - (a.progress - distance) / Math.max(a.speed, 1);
+            a.progress = distance;
+            this.event(
+              r,
+              "finish",
+              `${a.name} cruza la línea de meta.`,
+              [a.carId],
+              distance,
+            );
+          }
+        }
+        if (r.time > 1500)
+          for (const a of r.entrants.filter(active))
+            this.retire(r, a, "No puede completar la distancia de carrera");
+        r.finished = r.entrants.every((a) => a.finishTime !== null || a.dnf);
+      }
+    },
+  });
 })();

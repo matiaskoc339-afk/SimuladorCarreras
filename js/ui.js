@@ -29,6 +29,14 @@
       }),
     icon(name) {
       const paths = {
+        garage: "M3 20V8L12 3L21 8V20M6 20V11H18V20M6 15H18M6 18H18",
+        tool: "M14 5L19 2L22 5L19 10L15 10L7 21L3 17L14 8Z",
+        team: "M8 12A4 4 0 1 0 8 4A4 4 0 1 0 8 12M2 21V18Q2 14 8 14Q14 14 14 18V21M17 5Q22 5 22 9Q22 13 17 13M18 16Q23 16 23 20",
+        market: "M3 4H5L8 16H19L22 7H6M10 20H10.1M18 20H18.1",
+        companies:
+          "M3 21V7H11V21M11 21V3H21V21M6 11H8M6 15H8M14 7H18M14 11H18M14 15H18M1 21H23",
+        finance: "M3 21H22M6 17V12M12 17V6M18 17V2M3 9L10 3L15 6L22 1",
+        sound: "M3 9H7L13 4V20L7 15H3ZM17 8Q22 12 17 16M19 4Q28 12 19 20",
         home: "M3 10L12 3L21 10V21H14V14H10V21H3Z",
         news: "M4 3H18V21H4ZM8 7H14M8 11H14M8 15H14M8 18H12M18 7H21V19Q21 21 18 21",
         history: "M3 5V10H8M3 10A9 9 0 1 1 4 18M12 7V12L16 14",
@@ -71,25 +79,44 @@
       } catch {
         slots = [];
       }
-      return `<div class="main-menu"><div class="menu-grid"></div><div class="menu-top"><a class="wordmark">R<span>//</span>C</a><span class="eyebrow">INDEPENDENT MOTORSPORT MANAGEMENT</span>${this.badge("VERSIÓN 0.3 · TALLER Y COMPONENTES")}</div><main class="menu-content"><div class="menu-copy"><span class="kicker"><i></i> LA PRÓXIMA LEYENDA EMPIEZA EN UN GARAJE</span><h1>RACING<br>COMPANY<br><span>SIMULATOR.</span></h1><p>Tu equipo. Tus decisiones. Tu historia.<br>Construye una compañía capaz de llegar a lo más alto.</p><button class="primary large" data-action="new">Fundar mi compañía ${this.icon("arrow")}</button><span class="menu-note">GESTIÓN ESTRATÉGICA · CARRERAS EN TIEMPO REAL · SIN CONEXIÓN</span></div><div class="menu-side"><div class="menu-car">${G.Render.carSVG({ ...G.Data.models[0], id: "menu", color: "#dba64d" })}</div><div class="continue-panel"><span class="eyebrow">TU LEGADO</span><h3>Volver al paddock</h3>${
-        slots.some((x) => !x.empty)
-          ? slots
-              .filter((x) => !x.empty)
-              .map(
-                (x) =>
-                  `<button class="load-card" data-action="load" data-slot="${x.slot}" ${x.error ? "disabled" : ""}><span><b>${this.escape(x.name || "Guardado dañado")}</b><small>${x.error ? this.escape(x.error) : this.date(x.day, true) + " · Temporada " + x.year}</small></span>${this.icon("arrow")}</button>`,
-              )
-              .join("")
-          : '<p class="muted">Tu historia todavía no se ha escrito.<br>Funda una compañía para comenzar.</p>'
-      }<button class="text-button" data-action="saves">Gestionar partidas e importar archivo ↗</button></div></div></main><footer class="menu-footer"><span>01 / DE UN PEQUEÑO GARAJE AL MUNDO</span><span>HTML5 · CANVAS 2D · HECHO PARA PC</span></footer></div>`;
+      const saves = slots.filter((x) => !x.empty);
+      return `<div class="main-menu"><div class="menu-top"><a class="wordmark" aria-label="Racing Company">R<span>//</span>C <em>RACING COMPANY</em></a><span class="eyebrow">EL AUTOMOVILISMO DESDE EL OTRO LADO DEL MURO</span><span class="menu-build">GESTIÓN + COMPETICIÓN</span></div><main class="menu-content"><div class="menu-copy"><span class="kicker"><i></i> TU NOMBRE. TU EQUIPO. TU HISTORIA.</span><h1>HAZ QUE<br>TE <span>RECUERDEN.</span></h1><p>No necesitas ser el más rápido al volante.<br>Necesitas tomar la decisión correcta cuando todo está en juego.</p><button class="primary large" data-action="new">Fundar mi compañía ${this.icon("arrow")}</button><div class="menu-pillars"><div><b>01</b><span>Construye tu equipo</span></div><div><b>02</b><span>Dirige la carrera</span></div><div><b>03</b><span>Deja tu huella</span></div></div><span class="menu-note">RACING COMPANY SIMULATOR · JUEGA SIN CONEXIÓN</span></div><div class="menu-side"><div class="menu-stage"><span class="stage-label">EL PRIMER CAPÍTULO</span><div class="menu-track-lines"></div><div class="menu-car">${G.Render.carSVG({ ...G.Data.models[0], id: "menu", color: "#ed563e" })}</div><span class="stage-model">CIVIC TYPE R <small>UNA MÁQUINA CON LA QUE EMPEZAR.</small></span><span class="stage-number">01</span></div><div class="continue-panel"><div><span class="eyebrow">VOLVER A TU HISTORIA</span><h3>${saves.length ? "El paddock te espera." : "Todo empieza con una decisión."}</h3></div>${saves.length ? saves.map((x) => `<button class="load-card" data-action="load" data-slot="${x.slot}" ${x.error ? "disabled" : ""}><span><b>${this.escape(x.name || "Guardado dañado")}</b><small>${x.error ? this.escape(x.error) : this.date(x.day, true) + " · Temporada " + x.year}</small></span>${this.icon("arrow")}</button>`).join("") : "<p>Aún no tienes una compañía. Empieza desde un pequeño garaje y escribe tu primera temporada.</p>"}<button class="text-button" data-action="saves">Partidas guardadas e importación ${this.icon("arrow")}</button></div></div></main><footer class="menu-footer"><span>RACING COMPANY SIMULATOR</span><span>UNA VIDA EN EL MOTOR. SIN CONDUCCIÓN DIRECTA.</span></footer></div>`;
     },
     shell(s, view, content) {
       const p = G.player(s),
         e = G.nextEvent(s),
-        due = e && e.day <= s.day;
+        due = e && e.day <= s.day,
+        isRace = view === "race";
       const nav = (id, icon, title) =>
-        `<button title="${title}" aria-label="${title}" class="rail-button ${view === id ? "active" : ""}" data-go="${id}">${this.icon(icon)}</button>`;
-      return `<div class="game-shell"><aside class="rail"><button class="wordmark" data-go="hq" aria-label="Sede central">R<span>//</span>C</button><div class="rail-nav">${nav("hq", "home", "Sede central")}${nav("news", "news", "Motor World Daily")}${nav("history", "history", "Archivo histórico")}</div><span class="rail-season">TEMPORADA ${s.season.year}</span><div class="rail-bottom"><button class="rail-button" title="Guardar partida" aria-label="Guardar partida" data-action="save">${this.icon("save")}</button><button class="rail-button" title="Partidas y opciones" aria-label="Partidas y opciones" data-action="saves">${this.icon("settings")}</button></div></aside><div class="game-body"><header class="topbar"><button class="company-brand" data-go="hq">${this.logo(s)}<span><b>${this.escape(p.name)}</b><small>NIVEL ${p.level} / ${G.Data.levels[p.level - 1].toUpperCase()}</small></span></button><div class="top-metrics"><div><small>EFECTIVO</small><b class="${p.balance < 0 ? "negative" : ""}">${this.money(p.balance)}</b></div><div class="reputation"><small>REPUTACIÓN</small><b><span class="gold">✦</span> ${p.reputation.toFixed(1)}<span class="muted"> / 100</span></b></div><div class="date-block"><small>${G.dateAt(s.day).toLocaleDateString("es-ES", { weekday: "long", timeZone: "UTC" }).toUpperCase()}</small><b>${this.date(s.day, true)} <span class="muted">${G.dateAt(s.day).getUTCFullYear()}</span></b></div></div><button class="primary advance" data-action="advance" ${s.race || s.status !== "active" ? "disabled" : ""}>${due ? "Jornada de carrera" : "Avanzar día"} ${this.icon(due ? "flag" : "arrow")}</button></header>${s.status === "bankrupt" ? `<div class="alert danger"><b>La compañía se ha declarado en bancarrota.</b> Tu trayectoria queda archivada. Puedes guardar el legado o iniciar una partida nueva.</div>` : p.balance < 0 ? `<div class="alert danger">Saldo en descubierto · quedan ${14 - p.debtDays} días para recuperarte. Los encargos de taller generan ingresos reales.</div>` : due && !s.race ? `<div class="alert">${this.icon("flag")} Hoy se disputa ${G.Data.tracks[e.track].name}. <button class="text-button" data-go="competition">Preparar la carrera →</button></div>` : ""}<main class="page ${view === "race" ? "race-page" : ""}">${content}</main><footer class="statusbar"><span><i class="live-dot"></i> MUNDO PERSISTENTE <span class="muted">/</span> SEMILLA ${s.seed}</span><span id="save-status">Guardado local · ranura ${G.App.slot || "—"}</span><span>RCS <b>0.3</b></span></footer></div></div>`;
+        `<button title="${title}" aria-label="${title}" aria-current="${view === id ? "page" : "false"}" class="rail-button ${view === id ? "active" : ""}" data-go="${id}">${this.icon(icon)}<span>${title}</span>${view === id ? "<i></i>" : ""}</button>`;
+      const groups = [
+        [
+          "TU EQUIPO",
+          [
+            ["hq", "home", "Sede central"],
+            ["garage", "garage", "Garaje"],
+            ["workshop", "tool", "Taller"],
+            ["team", "team", "Pilotos"],
+          ],
+        ],
+        [
+          "EN EL PADDOCK",
+          [
+            ["competition", "flag", "Competiciones"],
+            ["market", "market", "Mercado de coches"],
+            ["companies", "companies", "Compañías rivales"],
+          ],
+        ],
+        [
+          "TU COMPAÑÍA",
+          [
+            ["finance", "finance", "Finanzas"],
+            ["news", "news", "Motor World Daily"],
+            ["history", "history", "Archivo histórico"],
+          ],
+        ],
+      ];
+      return `<div class="game-shell ${isRace ? "is-racing" : ""}"><aside class="rail"><button class="wordmark rail-brand" data-go="hq" aria-label="Sede central">R<span>//</span>C <em>RACING<br>COMPANY</em></button><div class="rail-nav">${groups.map(([title, items]) => `<div class="nav-group"><span class="nav-group-label">${title}</span>${items.map(([id, icon, text]) => nav(id, icon, text)).join("")}</div>`).join("")}</div><div class="rail-bottom"><span class="rail-season">TEMPORADA ${s.season.year} <i></i></span><button class="rail-button" title="Guardar partida" aria-label="Guardar partida" data-action="save">${this.icon("save")}<span>Guardar partida</span></button><button class="rail-button" title="Partidas y opciones" aria-label="Partidas y opciones" data-action="saves">${this.icon("settings")}<span>Partidas y opciones</span></button></div></aside><div class="game-body"><header class="topbar"><button class="company-brand" data-go="hq">${this.logo(s)}<span><b>${this.escape(p.name)}</b><small>Nivel ${p.level} · ${G.Data.levels[p.level - 1]}</small></span></button><div class="top-metrics"><div><small>EFECTIVO DISPONIBLE</small><b class="${p.balance < 0 ? "negative" : ""}">${this.money(p.balance)}</b></div><div class="reputation"><small>REPUTACIÓN</small><b><span class="gold">✦</span> ${p.reputation.toFixed(1)} <span class="muted">/ 100</span></b></div><div class="date-block"><small>${G.dateAt(s.day).toLocaleDateString("es-ES", { weekday: "long", timeZone: "UTC" }).toUpperCase()}</small><b>${this.date(s.day, true)} ${G.dateAt(s.day).getUTCFullYear()}</b></div></div><button class="primary advance" data-action="advance" ${s.race || s.status !== "active" ? "disabled" : ""}>${due ? "Jornada de carrera" : "Avanzar día"} ${this.icon(due ? "flag" : "arrow")}</button></header>${s.status === "bankrupt" ? '<div class="alert danger"><b>Tu compañía ha terminado su actividad.</b> La trayectoria queda archivada. Puedes guardar tu historia o comenzar una nueva partida.</div>' : p.balance < 0 ? `<div class="alert danger"><span><b>Necesitas recuperar liquidez.</b> Quedan ${14 - p.debtDays} días de margen antes de la bancarrota.</span><button class="text-button" data-go="finance">Revisar finanzas →</button></div>` : due && !s.race ? `<div class="alert"><span>${this.icon("flag")} <b>Hoy es día de carrera.</b> ${G.Data.tracks[e.track].name} está esperando tu decisión.</span><button class="text-button" data-go="competition">Preparar la salida →</button></div>` : ""}<main class="page ${isRace ? "race-page" : ""}" data-current-view="${view}">${content}</main><footer class="statusbar"><span><i class="live-dot"></i> TU COMPAÑÍA SIGUE SU CAMINO</span><span id="save-status">Guardado automático · ranura ${G.App.slot || "—"}</span><span>RACING COMPANY SIMULATOR</span></footer></div></div>`;
     },
     heading(tag, title, subtitle = "", actions = "") {
       return `<div class="page-heading"><div><div class="eyebrow breadcrumb"><button data-go="hq">SEDE CENTRAL</button> <span>/</span> ${tag}</div><h1>${title}</h1>${subtitle ? `<p>${subtitle}</p>` : ""}</div><div class="heading-actions">${actions}</div></div>`;
@@ -97,27 +124,73 @@
     hq(s) {
       const p = G.player(s),
         next = G.nextEvent(s),
-        d = G.ownedDrivers(s),
-        car = G.ownedCars(s)[0] || { condition: 0 },
+        drivers = G.ownedDrivers(s),
+        cars = G.ownedCars(s),
+        car = cars[0],
         board = G.leaderboard(s),
         position = board.findIndex((x) => x.company.id === s.playerId) + 1;
-      const task = (done, title, body, go) =>
-        `<button class="task" data-go="${go}"><span class="task-check ${done ? "done" : ""}">${done ? "✓" : "↗"}</span><span><b>${this.escape(title)}</b><small>${this.escape(body)}</small></span></button>`;
+      const ready = !!car && G.Workshop.ready(car),
+        hired = drivers.length > 0,
+        entry = !!next?.entry;
+      const steps = [
+        {
+          done: hired,
+          num: "01",
+          title: "Encuentra a tu piloto",
+          text: hired
+            ? drivers[0].name
+            : s.drivers.filter((d) => !d.companyId).length +
+              " candidatos en tu mesa",
+          go: "team",
+        },
+        {
+          done: ready,
+          num: "02",
+          title: "Prepara tu coche",
+          text: car
+            ? `${car.brand} ${car.model} · ${Math.round(car.condition)} % de estado`
+            : "El garaje está vacío",
+          go: car ? "garage" : "market",
+        },
+        {
+          done: entry,
+          num: "03",
+          title: "Confirma tu inscripción",
+          text: entry
+            ? "Piloto y coche listos para competir"
+            : "Reserva $370 para inscripción y transporte",
+          go: "competition",
+        },
+      ];
+      const current = !hired
+        ? steps[0]
+        : !ready
+          ? steps[1]
+          : !entry
+            ? steps[2]
+            : {
+                title: "Tu próxima carrera está en marcha",
+                text: next
+                  ? "Todo preparado para " +
+                    this.date(next.day, true) +
+                    ". Avanza el calendario cuando hayas terminado tus decisiones."
+                  : "Has completado la temporada. Consulta tu clasificación final.",
+                go: "competition",
+              };
       return (
         this.heading(
-          "VISTA GENERAL",
-          'Un pequeño garaje.<br><span class="muted">Una gran ambición.</span>',
-          "Tu primera escudería se construye una decisión a la vez.",
-          this.badge("TEMPORADA " + s.season.year, "outline") +
-            '<button class="secondary" data-go="companies">Compañías del paddock ↗</button>',
+          "RESUMEN DE EQUIPO",
+          `Bienvenido al paddock<span class="accent-dot">.</span>`,
+          `Este es el centro de tu compañía. Decide dónde invertir hoy para llegar mejor a la próxima carrera.`,
+          this.badge("TEMPORADA " + s.season.year, "outline"),
         ) +
-        `<div class="hq-layout"><section class="map-panel panel"><div class="panel-heading"><span class="eyebrow">TU SEDE · SEVILLA</span><span class="map-hint"><i class="live-dot"></i> SELECCIONA UN DEPARTAMENTO</span></div>${G.Render.headquarters(s)}<div class="map-footer"><span><b>01</b> Garaje alquilado</span><span><b>${d.length}/2</b> Pilotos</span><span><b>${G.ownedCars(s).length}/${p.carCapacity}</b> Plazas de garaje</span><span class="muted">HERRAMIENTAS BÁSICAS</span></div></section><aside class="hq-sidebar"><section class="next-race panel"><span class="eyebrow gold">${next ? "PRÓXIMO COMPROMISO" : "TEMPORADA COMPLETADA"}</span><h2>${next ? G.Data.tracks[next.track].name : "La bandera a cuadros."}</h2><p>${next ? `RONDA ${next.round} / 6 · ${this.date(next.day, true).toUpperCase()}` : `${s.season.year} ya forma parte de tu historia.`}</p><div class="mini-circuit"><svg viewBox="0 0 300 140"><path d="M40 50Q50 20 100 25L235 30Q278 40 256 78L210 82Q252 125 190 118L72 108Q20 90 40 50Z" fill="none" stroke="#647a6d" stroke-width="12"/><path d="M40 50Q50 20 100 25L235 30Q278 40 256 78L210 82Q252 125 190 118L72 108Q20 90 40 50Z" fill="none" stroke="#b9b9a6" stroke-width="1" stroke-dasharray="5 6"/><circle cx="40" cy="50" r="5" fill="#e2ac52"/></svg><span>${next ? Math.max(0, next.day - s.day) + "<small>DÍAS</small>" : "06<small>PRUEBAS</small>"}</span></div>${this.button(next ? (next.entry ? "Ver inscripción" : "Preparar carrera") : "Ver clasificación", "go-competition", "primary wide")}</section><section class="panel checklist"><span class="eyebrow">EN TU MESA</span>${task(d.length > 0, "Encuentra a tu piloto", d.length ? d[0].name : s.drivers.filter((d) => !d.companyId).length + " currículums disponibles", "team")}${task(car.condition >= 90, "Prepara tu coche", car.id ? `Estado mecánico: ${Math.round(car.condition)} %` : "Garaje vacío: consulta el mercado", car.id ? "garage" : "market")}${task(!!next?.entry, "Confirma tu participación", next?.entry ? "Piloto y vehículo inscritos" : "Inscripción + transporte: $370", "competition")}</section></aside></div><div class="overview-strip">${this.stat("POSICIÓN EN LA COPA", String(position).padStart(2, "0") + " <span>/ 08</span>", (s.season.standings.player?.points || 0) + " puntos esta temporada")}${this.stat("GASTO MENSUAL ESTIMADO", this.money(G.Economy.monthly(s)), "Operación + nóminas + formación")}${this.stat("BALANCE ACUMULADO", this.money(s.totals.income - s.totals.expense), "Ingresos menos gastos de la compañía")}${this.stat("PALMARÉS", p.stats.podiums + " <span>podios</span>", p.stats.starts + " participaciones · " + p.stats.wins + " victorias")}</div><section class="news-preview"><div class="section-title"><h2>Desde el paddock<span class="gold">.</span></h2><button class="text-button" data-go="news">Motor World Daily ${this.icon("arrow")}</button></div><div class="news-grid">${s.news
-          .slice(0, 3)
+        `<div class="dashboard-hero"><section class="hero-company"><div class="hero-company-top"><span class="kicker"><i></i> ${this.escape(p.name.toUpperCase())}</span><span class="hero-level">EQUIPO NIVEL ${String(p.level).padStart(2, "0")}</span></div><div class="hero-company-copy"><span class="eyebrow">TU PRÓXIMA DECISIÓN</span><h2>${this.escape(current.title)}</h2><p>${this.escape(current.text)}</p><button class="primary" data-go="${current.go}">${entry ? "Ver preparación" : "Continuar preparación"} ${this.icon("arrow")}</button></div><div class="hero-company-stats"><div><strong>${String(position).padStart(2, "0")}</strong><span>Posición en la Copa</span></div><div><strong>${s.season.standings.player?.points || 0}</strong><span>Puntos esta temporada</span></div><div><strong>${p.stats.podiums}</strong><span>Podios de tu compañía</span></div></div></section><section class="next-race panel"><div class="next-race-top"><span class="eyebrow">${next ? "PRÓXIMO FIN DE SEMANA" : "TEMPORADA COMPLETADA"}</span>${this.icon("flag")}</div><h2>${next ? G.Data.tracks[next.track].name : "La bandera a cuadros."}</h2><p>${next ? G.Data.tracks[next.track].region : "La primera página de tu historia ya está escrita."}</p><div class="next-race-date"><strong>${next ? Math.max(0, next.day - s.day) : "06"}</strong><span>${next ? "días para la carrera" : "rondas completadas"}<b>${next ? this.date(next.day) : "Temporada " + s.season.year}</b></span></div><div class="next-race-details"><span>${next ? "Ronda " + next.round + " / 6" : "Copa Club"}</span><span>${next ? G.Data.tracks[next.track].laps + " vueltas · " + (G.Data.tracks[next.track].length / 1000).toFixed(2) + " km" : "Resultados registrados"}</span></div>${this.button(next ? (entry ? "Ver inscripción" : "Preparar carrera") : "Ver clasificación", "go-competition", "secondary wide")}</section></div><div class="preparation-steps" aria-label="Preparación de la próxima carrera">${steps.map((step) => `<button class="preparation-step ${step.done ? "done" : ""}" data-go="${step.go}"><span class="step-number">${step.done ? this.icon("check") : step.num}</span><span><b>${step.title}</b><small>${this.escape(step.text)}</small></span>${this.icon("arrow")}</button>`).join("")}</div><div class="section-title spaced"><div><span class="eyebrow">TU CENTRO DE OPERACIONES</span><h2>Un lugar para construirlo todo.</h2></div><span class="map-instruction">Haz clic en un departamento para entrar.</span></div><section class="map-panel panel">${G.Render.headquarters(s)}<div class="map-footer"><span><b>01</b> Sede en Sevilla</span><span><b>${drivers.length}/${p.driverCapacity}</b> Pilotos contratados</span><span><b>${cars.length}/${p.carCapacity}</b> Plazas de garaje</span><span>Garaje alquilado · herramientas básicas</span></div></section><div class="dashboard-bottom"><section class="panel padded budget-glance"><div class="section-title"><h2>Tu margen para competir</h2><button class="text-button" data-go="finance">Ver finanzas →</button></div><div class="budget-glance-numbers"><div><span>Disponible hoy</span><b>${this.money(p.balance)}</b></div><div><span>Previsión de gasto mensual</span><b>${this.money(G.Economy.monthly(s))}</b></div></div><p>Antes de invertir, conserva liquidez para salarios, mantenimiento y tu siguiente inscripción.</p></section><section class="panel padded"><div class="section-title"><h2>Desde el paddock</h2><button class="text-button" data-go="news">Leer el diario →</button></div><div class="news-grid">${s.news
+          .slice(0, 2)
           .map(
-            (n, i) =>
-              `<button class="news-teaser" data-action="article" data-id="${n.id}"><div class="eyebrow">${n.category.toUpperCase()} <span class="muted">/ ${this.date(n.day, true)}</span></div><h3>${this.escape(n.title)}</h3><span class="muted">LEER HISTORIA ${String(i + 1).padStart(2, "0")} ↗</span></button>`,
+            (n) =>
+              `<button class="news-teaser" data-action="article" data-id="${n.id}"><div class="eyebrow">${n.category} · ${this.date(n.day, true)}</div><h3>${this.escape(n.title)}</h3><span>Leer historia ${this.icon("arrow")}</span></button>`,
           )
-          .join("")}</div></section>`
+          .join("")}</div></section></div>`
       );
     },
     garage(s) {
@@ -125,8 +198,8 @@
       return (
         this.heading(
           "GARAJE",
-          "Tu flota, tu identidad.",
-          "Un vehículo con pasado. Una historia que todavía puedes escribir.",
+          "Elige la máquina para tu próxima carrera.",
+          "Consulta su estado, prepara el mantenimiento y entra al taller para mejorar su rendimiento.",
         ) +
         `<div class="garage-layout"><section class="panel car-showcase"><div class="panel-heading"><span class="eyebrow">GARAJE 01 / 02</span>${this.badge(car.repair ? "EN REVISIÓN" : "VEHÍCULO PROPIO", car.repair ? "" : "green")}</div><div class="car-art">${G.Render.carSVG(car)}${s.logo ? `<img class="car-livery-logo" src="${s.logo}" alt="Librea de la compañía">` : ""}<span class="car-number">01</span></div><div class="car-caption"><span class="eyebrow">${car.brand.toUpperCase()} · ${car.generation} · ${car.year}</span><h2>${car.model}</h2><p>${Math.round(car.km).toLocaleString("es-ES")} km · Usado · ${car.brand === "Honda" || car.brand === "Toyota" ? "Tracción delantera" : "Tracción trasera"}</p></div></section><div class="garage-details"><section class="panel padded"><div class="section-title"><h2>Ficha de taller</h2>${this.badge("CLASE CLUB")}</div><div class="spec-grid">${this.stat("POTENCIA", car.hp + " <span>CV</span>")}${this.stat("PESO", car.weight + " <span>kg</span>")}${this.stat("VELOCIDAD MÁX.", car.top + " <span>km/h</span>")}${this.stat("FIABILIDAD", car.reliability + " <span>/100</span>")}</div>${this.bar("Estado mecánico", car.condition, car.condition < 50 ? "#dc7869" : "")}${this.bar("Neumáticos de calle", car.tires)}<div class="service-actions">${this.button(car.repair ? "Listo el " + this.date(car.repair.end, true) : "Revisión · " + this.money(G.Economy.repairQuote(car)), "repair", "secondary", 'data-id="' + car.id + '" ' + (car.repair ? "disabled" : ""))}${this.button("Neumáticos · " + this.money(G.Workshop.tireCost(s, car)), "tires", "secondary", 'data-id="' + car.id + '" ' + (car.tires >= 99 ? "disabled" : ""))}</div><p class="fine-print">La revisión ocupa el taller durante 2 días. El estado y el agarre afectan a la velocidad y la fiabilidad en carrera. Cifras técnicas y valores económicos equilibrados para el juego; no son una ficha de homologación.</p></section><section class="panel padded"><div class="section-title"><h2>Pasaporte del vehículo</h2><span class="eyebrow">${car.id}</span></div><div class="passport-stats"><span>${car.starts} salidas</span><span>${car.wins} victorias</span><span>${this.money((car.value * car.condition) / 100)} valor estimado</span></div>${
           car.history.length
@@ -143,7 +216,7 @@
     },
     driverCard(d, owned = false) {
       const trait = G.Data.traits[d.trait];
-      return `<article class="driver-card panel"><div class="driver-identity">${this.portrait(d)}<div><span class="eyebrow">${this.escape(d.nation)} · ${d.age} AÑOS</span><h3>${this.escape(d.name)}</h3>${this.badge(trait.name, "outline")}<p>${trait.description}</p></div><div class="driver-rating">${G.Drivers.rating(d)}<small>ACTUAL</small></div></div><div class="driver-metrics">${["pace", "control", "consistency", "overtake"].map((k) => this.bar(G.Drivers.labels[k], d.stats[k])).join("")}</div><div class="driver-footer">${owned ? `<span><b>${this.money(d.contract.salary)}/mes</b><small>Vence ${this.date(d.contract.end, true)} · Moral ${Math.round(d.morale)} % · Fatiga ${Math.round(d.fatigue)} %</small></span>` : `<span><b>${this.money(d.ask)}/mes</b><small>${d.experience} temporadas · Potencial sin evaluar</small></span>`}${this.button(owned ? "Gestionar" : "Negociar", owned ? "driver-detail" : "negotiate", owned ? "secondary" : "primary", `data-id="${d.id}"`)}</div></article>`;
+      return `<article class="driver-card panel"><div class="driver-identity">${this.portrait(d)}<div><span class="eyebrow">${this.escape(d.nation)} · ${d.age} AÑOS</span><h3>${this.escape(d.name)}</h3>${this.badge(trait.name, "outline")}<p>${trait.description}</p></div><div class="driver-rating">${G.Drivers.rating(d)}<small>VALORACIÓN</small></div></div><div class="driver-metrics">${["pace", "control", "consistency", "overtake"].map((k) => this.bar(G.Drivers.labels[k], d.stats[k])).join("")}</div><div class="driver-footer">${owned ? `<span><b>${this.money(d.contract.salary)}/mes</b><small>Vence ${this.date(d.contract.end, true)} · Moral ${Math.round(d.morale)} % · Fatiga ${Math.round(d.fatigue)} %</small></span>` : `<span><b>${this.money(d.ask)}/mes</b><small>${d.experience} temporadas · Potencial aún por descubrir</small></span>`}${this.button(owned ? "Gestionar" : "Negociar", owned ? "driver-detail" : "negotiate", owned ? "secondary" : "primary", `data-id="${d.id}"`)}</div></article>`;
     },
     team(s) {
       const hired = G.ownedDrivers(s),
@@ -151,11 +224,11 @@
       return (
         this.heading(
           "SALA DE PILOTOS",
-          "Personas antes que máquinas.",
-          "Cada piloto tiene sus fortalezas, expectativas y un contrato que debes cumplir.",
+          "Un buen equipo empieza por su piloto.",
+          "Compara candidatos, negocia sus condiciones y cuida la moral de tu equipo.",
           this.badge(hired.length + " / 2 ASIENTOS"),
         ) +
-        `<div class="section-title"><h2>Tu alineación</h2><span class="muted">El potencial real no se muestra en los currículums.</span></div><div class="drivers-grid">${hired.length ? hired.map((d) => this.driverCard(d, true)).join("") : '<div class="empty-state panel"><span class="empty-number">00</span><h3>El asiento está libre.</h3><p>Estudia los currículums y negocia un salario sostenible.<br>Necesitas un piloto para inscribirte en la Copa Club.</p></div>'}</div><div class="section-title spaced"><h2>Currículums recibidos <span class="muted">${free.length.toString().padStart(2, "0")}</span></h2><span class="eyebrow">AGENCIA LOCAL · NIVEL 1</span></div><div class="drivers-grid">${free.map((d) => this.driverCard(d)).join("")}</div>`
+        `<div class="section-title"><h2>Tu alineación</h2><span class="muted">El potencial real no se muestra en los currículums.</span></div><div class="drivers-grid">${hired.length ? hired.map((d) => this.driverCard(d, true)).join("") : '<div class="empty-state panel"><span class="empty-number">00</span><h3>El asiento está libre.</h3><p>Estudia los currículums y negocia un salario sostenible.<br>Necesitas un piloto para inscribirte en la Copa Club.</p></div>'}</div><div class="section-title spaced"><h2>Candidatos disponibles <span class="muted">${free.length.toString().padStart(2, "0")}</span></h2><span class="eyebrow">PILOTOS INTERESADOS EN TU EQUIPO</span></div><div class="drivers-grid">${free.map((d) => this.driverCard(d)).join("")}</div>`
       );
     },
     standings(s) {
@@ -192,7 +265,7 @@
       return (
         this.heading(
           "CENTRO DE ESTRATEGIA",
-          "Seis domingos. Una oportunidad.",
+          "Tu temporada, carrera a carrera.",
           "Copa Club de Turismos · Temporada " + s.season.year,
           next
             ? this.button(
@@ -231,7 +304,7 @@
       return (
         this.heading(
           "OFICINA",
-          "Cada dólar tiene una historia.",
+          "Mantén tu compañía en carrera.",
           "Las nóminas se liquidan el día 1. El alquiler y los suministros se pagan diariamente.",
           this.button("Editar identidad", "identity", "secondary"),
         ) +
@@ -262,41 +335,118 @@
     },
     race(s) {
       const r = s.race,
-        t = G.Data.tracks[r.track];
-      return `<div class="broadcast-heading"><div><span class="kicker"><i></i> EN DIRECTO / COPA CLUB</span><h1>${t.name}</h1><p>${t.region} · ${t.laps} vueltas · Pista seca · Neumáticos de calle</p></div><div class="race-controls"><button class="secondary" data-action="pause" id="pause-button">Pausar</button>${[1, 2, 4].map((n) => `<button class="speed-button ${G.App.speed === n ? "selected" : ""}" data-action="speed" data-value="${n}">×${n}</button>`).join("")}<button class="secondary" data-action="camera" id="camera-button">Cámara: circuito</button></div></div><div class="race-layout"><section class="panel timing-panel"><div class="panel-heading"><h2>Clasificación</h2><span class="badge green">LIVE</span></div><div id="live-standings"></div></section><section class="race-track panel"><div class="track-overlay"><span class="broadcast-brand">R<span>//</span>C <b>LIVE</b></span><span id="live-lap">VUELTA 1 / ${t.laps}</span></div><canvas id="race-canvas" aria-label="Carrera animada: coches recorriendo el circuito"></canvas><div class="track-bottom"><span><i class="live-dot"></i> BANDERA VERDE</span><span id="live-clock">00:00.0</span></div></section><aside class="telemetry panel"><div class="panel-heading"><h2>Radio del equipo</h2><span class="radio-dot"></span></div><div id="live-telemetry"></div><div class="orders"><span class="eyebrow">ORDEN DE RITMO</span><button class="order" data-action="order" data-value="attack">↑ Atacar <small>Más ritmo · más desgaste</small></button><button class="order selected" data-action="order" data-value="balanced">→ Equilibrado <small>Ritmo constante</small></button><button class="order" data-action="order" data-value="save">↓ Conservar <small>Menos riesgo · cuidar gomas</small></button></div></aside></div><section class="radio-panel panel"><span class="eyebrow gold">RADIO / DIRECCIÓN DE CARRERA</span><div id="live-radio"></div></section>`;
+        t = G.Data.tracks[r.track],
+        mode = G.App.camera?.mode || "broadcast",
+        cameraLabel =
+          mode === "overview"
+            ? "Cámara: circuito"
+            : mode === "follow"
+              ? "Cámara: seguimiento"
+              : "Cámara: TV";
+      return `<div class="broadcast-heading"><div><span class="kicker"><i></i> COPA CLUB · TRANSMISIÓN EN DIRECTO</span><h1>${t.name}</h1><p>${t.region} <span>·</span> ${t.laps} vueltas <span>·</span> ${(t.length / 1000).toFixed(2)} km por vuelta</p></div><div class="race-controls"><button class="secondary" data-action="pause" id="pause-button">${G.App.paused ? "Reanudar" : "Pausar"}</button><div class="speed-selector" aria-label="Velocidad de simulación">${[1, 2, 4].map((n) => `<button class="speed-button ${G.App.speed === n ? "selected" : ""}" data-action="speed" data-value="${n}" aria-label="Velocidad ${n}">×${n}</button>`).join("")}</div><button class="secondary" data-action="race-audio" id="audio-button" aria-pressed="${!!G.App.audioEnabled}">${this.icon("sound")} ${G.App.audioEnabled ? "Sonido activado" : "Activar sonido"}</button></div></div><div class="race-layout"><section class="timing-panel panel"><div class="panel-heading"><h2>En pista</h2><span class="live-label"><i></i> DIRECTO</span></div><div class="timing-labels"><span>POS / PILOTO</span><span>DIF.</span></div><div id="live-standings"></div><div class="timing-hint">Selecciona un piloto para seguir su carrera.</div></section><section class="race-track panel"><div class="track-overlay"><span class="broadcast-brand">R<span>//</span>C <b>LIVE</b></span><span id="live-lap">VUELTA 1 / ${t.laps}</span></div><canvas id="race-canvas" aria-label="Transmisión de la carrera: circuito, coches y acontecimientos en tiempo real"></canvas><div class="race-event-banner" id="live-event" aria-live="polite"></div><div class="track-bottom"><span class="race-flag" id="live-flag"><i class="live-dot"></i> BANDERA VERDE</span><span id="live-clock">00:00.0</span></div><div class="camera-toolbar"><span id="camera-focus">Cámara de realización</span><div><button class="camera-control" data-action="camera" id="camera-button">${cameraLabel}</button><button class="camera-control" data-action="camera-zoom" data-value="out" aria-label="Alejar cámara">−</button><span id="camera-zoom-value">${(G.App.camera?.zoom || 1).toFixed(1)}×</span><button class="camera-control" data-action="camera-zoom" data-value="in" aria-label="Acercar cámara">+</button></div></div></section><aside class="telemetry panel"><div class="telemetry-heading"><span class="eyebrow">TU MURO DE ESTRATEGIA</span><span class="radio-dot"></span></div><div id="live-telemetry"></div><div class="orders"><span class="eyebrow">DA UNA ORDEN A TU PILOTO</span><button class="order" data-action="order" data-value="attack"><b>↑ Atacar</b><small>Busca huecos. Más ritmo y riesgo.</small></button><button class="order selected" data-action="order" data-value="balanced"><b>→ Equilibrado</b><small>Competir sin exigirlo todo.</small></button><button class="order" data-action="order" data-value="save"><b>↓ Conservar</b><small>Cuida el coche y evita contactos.</small></button></div></aside></div><section class="radio-panel panel"><div><span class="eyebrow">RADIO DEL PADDOCK</span><h2>La carrera, al momento.</h2></div><div id="live-radio"></div></section>`;
     },
     updateRace(s) {
       const r = s.race;
       if (!r) return;
       const def = G.Data.tracks[r.track],
         sorted = G.Race.positions(r),
-        a = r.entrants.find((a) => a.companyId === s.playerId);
+        a = r.entrants.find((x) => x.companyId === s.playerId),
+        focusId = G.App.camera?.focusId;
       const clock = (seconds) =>
         `${Math.floor(seconds / 60)
           .toString()
           .padStart(2, "0")}:${(seconds % 60).toFixed(1).padStart(4, "0")}`;
       const standings = document.getElementById("live-standings");
       if (!standings) return;
+      const leader = sorted.find((x) => !x.dnf) || sorted[0];
+      const focusedTimingId =
+        document.activeElement?.closest?.(".timing-row")?.dataset.id;
       standings.innerHTML = sorted
-        .map(
-          (x, i) =>
-            `<div class="timing-row ${x.companyId === s.playerId ? "is-player" : ""}"><b>${i + 1}</b><i style="background:${x.color}"></i><span>${this.escape(x.name)}<small>${this.escape(x.team)}</small></span><em>${x.dnf ? "OUT" : x.finishTime !== null ? "FIN" : i === 0 ? "LÍDER" : "+" + ((sorted[0].progress - x.progress) / Math.max(x.speed, 12)).toFixed(1)}</em></div>`,
-        )
+        .map((x, i) => {
+          const gap = x.dnf
+            ? "RET"
+            : x.finishTime !== null
+              ? "META"
+              : i === 0
+                ? "LÍDER"
+                : "+" +
+                  (
+                    (leader.progress - x.progress) /
+                    Math.max(leader.speed, 12)
+                  ).toFixed(1) +
+                  " s";
+          return `<button class="timing-row ${x.companyId === s.playerId ? "is-player" : ""} ${focusId === x.carId ? "is-watched" : ""}" data-action="watch-driver" data-id="${x.carId}" aria-label="Seguir a ${this.escape(x.name)}"><b>${String(i + 1).padStart(2, "0")}</b><i style="background:${x.color}"></i><span>${this.escape(x.name)}<small>${this.escape(x.team)}</small></span><em>${gap}</em>${x.incident && x.incidentUntil > r.time ? '<span class="timing-incident" title="Incidente en pista">!</span>' : ""}</button>`;
+        })
         .join("");
+      if (focusedTimingId)
+        standings
+          .querySelector(`[data-id="${focusedTimingId}"]`)
+          ?.focus({ preventScroll: true });
       document.getElementById("live-lap").textContent =
-        `VUELTA ${Math.min(def.laps, Math.floor(Math.max(0, sorted[0]?.progress || 0) / def.length) + 1)} / ${def.laps}`;
+        `VUELTA ${Math.min(def.laps, Math.floor(Math.max(0, leader?.progress || 0) / def.length) + 1)} / ${def.laps}`;
       document.getElementById("live-clock").textContent = clock(r.time);
-      document.getElementById("live-telemetry").innerHTML = a
-        ? `<div class="telemetry-driver">${this.portrait(s.drivers.find((d) => d.id === a.driverId))}<div><b>${this.escape(a.name)}</b><small>${sorted.findIndex((x) => x === a) + 1}º puesto · ${a.dnf ? "ABANDONO" : a.finishTime !== null ? "EN META" : "EN PISTA"}</small></div></div><div class="live-speed">${Math.round(a.speed * 3.6)}<small>KM/H</small></div><div class="padded telemetry-bars">${this.bar("Neumáticos", a.tires)}${this.bar("Mecánica", a.condition)}</div>`
-        : '<div class="padded muted">Sin coche de tu compañía en pista.</div>';
+      const yellow = r.yellowUntil > r.time || r.flag === "yellow",
+        flag = document.getElementById("live-flag");
+      if (flag) {
+        flag.classList.toggle("yellow", yellow);
+        flag.innerHTML = yellow
+          ? '<i class="flag-square"></i> PRECAUCIÓN EN PISTA'
+          : '<i class="live-dot"></i> BANDERA VERDE';
+      }
+      const latest = r.events?.find((e) => r.time - e.time < 9),
+        banner = document.getElementById("live-event");
+      if (banner) {
+        banner.classList.toggle("visible", !!latest);
+        banner.classList.toggle(
+          "incident-event",
+          !!latest &&
+            [
+              "contact",
+              "collision",
+              "spin",
+              "crash",
+              "offtrack",
+              "retirement",
+            ].includes(latest.type),
+        );
+        banner.innerHTML = latest
+          ? `<span>${clock(latest.time)} / ${latest.type === "overtake" ? "ADELANTAMIENTO" : "EN PISTA"}</span><strong>${this.escape(latest.text)}</strong>`
+          : "";
+      }
+      const camera = G.Render.cameraInfo(
+          document.getElementById("race-canvas"),
+          r,
+          r.track,
+          G.App.camera,
+        ),
+        actualFocus = camera?.focusId || focusId,
+        watched =
+          r.entrants.find(
+            (x) => x.carId === actualFocus || x.companyId === actualFocus,
+          ) ||
+          a ||
+          leader,
+        caption = document.getElementById("camera-focus");
+      if (caption)
+        caption.textContent =
+          G.App.camera?.mode === "overview"
+            ? "Vista general del circuito"
+            : watched
+              ? `${G.App.camera?.mode === "broadcast" ? "TV · " : ""}${watched.name} · ${watched.model}`
+              : "Cámara de realización";
+      const t = document.getElementById("live-telemetry");
+      t.innerHTML = a
+        ? `<div class="telemetry-driver">${this.portrait(s.drivers.find((d) => d.id === a.driverId))}<div><small>TU PILOTO</small><b>${this.escape(a.name)}</b><span>${sorted.findIndex((x) => x === a) + 1}º puesto · ${a.dnf ? "RETIRADO" : a.finishTime !== null ? "EN META" : a.incident === "spin" ? "RECUPERANDO EL CONTROL" : a.offTrack ? "FUERA DE PISTA" : "EN CARRERA"}</span></div></div><div class="live-speed">${Math.round(a.speed * 3.6)}<small>KM/H</small></div><div class="padded telemetry-bars">${this.bar("Neumáticos", a.tires)}${this.bar("Estado del coche", a.condition)}</div>`
+        : '<div class="padded muted">Tu equipo no participa en esta ronda. Puedes seguir a cualquier rival.</div>';
       document.querySelectorAll(".order").forEach((b) => {
         b.classList.toggle("selected", b.dataset.value === a?.mode);
         b.disabled = !a || a.dnf || a.finishTime !== null;
       });
       document.getElementById("live-radio").innerHTML = r.messages
-        .slice(0, 3)
+        .slice(0, 4)
         .map(
-          (m) => `<p><time>${clock(m.time)}</time>${this.escape(m.text)}</p>`,
+          (m) =>
+            `<p><time>${clock(m.time)}</time><span>${this.escape(m.text)}</span></p>`,
         )
         .join("");
     },

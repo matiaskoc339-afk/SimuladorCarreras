@@ -46,10 +46,18 @@
         '<section class="panel empty-state"><h2>Necesitas una máquina para empezar.</h2><p>Consulta el Mercado Club y compra un vehículo antes de preparar su configuración.</p><button class="primary" data-go="market">Consultar vehículos →</button></section>' +
         this.workshopInventory(s, null)
       );
-    const current = W.configuration(s, car);
+    const current = W.configuration(s, car),
+      tabs = [
+        ["diagnosis", "Diagnóstico"],
+        ["installed", "Piezas instaladas"],
+        ["inventory", "Mi almacén"],
+        ["catalog", "Catálogo"],
+      ],
+      tabNav = `<nav class="workshop-section-nav" aria-label="Secciones del taller">${tabs.map(([id, label]) => `<button class="${G.App.workshopTab === id ? "active" : ""}" data-action="workshop-tab" data-value="${id}" aria-pressed="${G.App.workshopTab === id}">${label}${id === "inventory" ? `<span>${inventory.length}</span>` : ""}</button>`).join("")}</nav>`,
+      catalogueTools = `<div class="parts-toolbar"><label class="parts-search"><span class="eyebrow">BUSCAR UN REPUESTO</span><input type="search" id="workshop-search" placeholder="Nombre, modelo o componente" value="${this.escape(G.App.workshopSearch || "")}" autocomplete="off"></label><div class="parts-filter-buttons" aria-label="Filtrar catálogo">${[["all", "Todas"], ["compatible", "Compatibles"], ...Object.entries(G.Parts.components)].map(([key, label]) => `<button class="${G.App.workshopFilter === key ? "selected" : ""}" data-action="workshop-filter" data-value="${key}" aria-pressed="${G.App.workshopFilter === key}">${label}</button>`).join("")}</div></div><p class="parts-count" id="workshop-catalogue-count" aria-live="polite"></p>`;
     return (
       head +
-      `<div class="fleet-nav"><div>${cars.map((c) => this.button(`${c.brand} ${c.model} · ${c.id}`, "workshop-car", c === car ? "primary" : "secondary", `data-id="${c.id}"`)).join("")}</div>${this.badge("ALMACÉN " + W.occupied(s) + " / " + company.sparesCapacity, "outline")}</div><div class="workshop-layout"><section class="panel workshop-car"><div class="panel-heading"><span class="eyebrow">${car.id} · ${car.brand.toUpperCase()} ${car.generation}</span>${this.badge(car.repair ? "EN TRABAJO" : "COPA CLUB", car.repair ? "outline" : "green")}</div><div class="workshop-art">${G.Render.carSVG(car)}<div class="blueprint-callout top">MOTOR<br><b>${car.hp.toFixed(1)} CV</b></div><div class="blueprint-callout bottom">CHASIS<br><b>${car.weight.toFixed(0)} kg</b></div></div><div class="padded"><h2>${car.brand} ${car.model}</h2><p>${Object.keys(car.installed).length} modificaciones · ${pending(s, car)}</p><div class="workshop-meta"><span>Refrigeración <b>×${current.cooling.toFixed(2)}</b></span><span>Desgaste gomas <b>×${current.tireWear.toFixed(2)}</b></span><span>Carga térmica <b>+${current.stress.toFixed(2)}</b></span></div></div></section><section class="panel padded"><div class="section-title"><h2>Diagnóstico por componentes</h2><span class="eyebrow">ESTADO REAL</span></div><div class="component-list">${Object.entries(
+      `<div class="fleet-nav"><div>${cars.map((c) => this.button(`${c.brand} ${c.model} · ${c.id}`, "workshop-car", c === car ? "primary" : "secondary", `data-id="${c.id}"`)).join("")}</div>${this.badge("ALMACÉN " + W.occupied(s) + " / " + company.sparesCapacity, "outline")}</div>${tabNav}<div data-workshop-panel="diagnosis"><div class="workshop-layout"><section class="panel workshop-car"><div class="panel-heading"><span class="eyebrow">${car.id} · ${car.brand.toUpperCase()} ${car.generation}</span>${this.badge(car.repair ? "EN TRABAJO" : "COPA CLUB", car.repair ? "outline" : "green")}</div><div class="workshop-art">${G.Render.carSVG(car)}<div class="blueprint-callout top">MOTOR<br><b>${car.hp.toFixed(1)} CV</b></div><div class="blueprint-callout bottom">CHASIS<br><b>${car.weight.toFixed(0)} kg</b></div></div><div class="padded"><h2>${car.brand} ${car.model}</h2><p>${Object.keys(car.installed).length} modificaciones · ${pending(s, car)}</p><div class="workshop-meta"><span>Refrigeración <b>×${current.cooling.toFixed(2)}</b></span><span>Desgaste gomas <b>×${current.tireWear.toFixed(2)}</b></span><span>Carga térmica <b>+${current.stress.toFixed(2)}</b></span></div></div></section><section class="panel padded"><div class="section-title"><h2>Diagnóstico por componentes</h2><span class="eyebrow">ESTADO REAL</span></div><div class="component-list">${Object.entries(
         G.Parts.components,
       )
         .map(
@@ -58,7 +66,7 @@
         )
         .join(
           "",
-        )}</div><p class="fine-print">La revisión restaura los sistemas base, no rejuvenece las piezas de mejora. El desgaste de estas se conserva al desmontar. Motor, transmisión, frenos y refrigeración deben superar el 30 % para competir.</p></section></div><section class="panel workshop-bay"><div><span class="eyebrow gold">ÚNICA BAHÍA DE TRABAJO</span><h3>${busy ? `${busy.brand} ${busy.model} · ${pending(s, busy)}` : job ? "Encargo de cliente · entrega " + this.date(job.end, true) : "Taller libre"}</h3><p>${busy ? `Coste abonado: ${this.money(busy.repair.cost)}. El coche permanece fuera de servicio hasta finalizar.` : job ? "Los encargos y las revisiones comparten personal y espacio." : "Los cambios se aplican al completar el plazo. El calendario procesa cada jornada."}</p></div>${this.badge(busy || job ? "OCUPADO" : "1 / 1 DISPONIBLE", busy || job ? "outline" : "green")}</section><section class="panel padded spaced"><div class="section-title"><h2>Configuración instalada</h2><span class="eyebrow">${Object.keys(car.installed).length} PIEZAS DE MEJORA</span></div><div class="installed-grid">${Object.entries(
+        )}</div><p class="fine-print">La revisión restaura los sistemas base, no rejuvenece las piezas de mejora. El desgaste de estas se conserva al desmontar. Motor, transmisión, frenos y refrigeración deben superar el 30 % para competir.</p></section></div><section class="panel workshop-bay"><div><span class="eyebrow gold">ÚNICA BAHÍA DE TRABAJO</span><h3>${busy ? `${busy.brand} ${busy.model} · ${pending(s, busy)}` : job ? "Encargo de cliente · entrega " + this.date(job.end, true) : "Taller libre"}</h3><p>${busy ? `Coste abonado: ${this.money(busy.repair.cost)}. El coche permanece fuera de servicio hasta finalizar.` : job ? "Los encargos y las revisiones comparten personal y espacio." : "Los cambios se aplican al completar el plazo. El calendario procesa cada jornada."}</p></div>${this.badge(busy || job ? "OCUPADO" : "1 / 1 DISPONIBLE", busy || job ? "outline" : "green")}</section></div><section class="panel padded" data-workshop-panel="installed"><div class="section-title"><h2>Configuración instalada</h2><span class="eyebrow">${Object.keys(car.installed).length} PIEZAS DE MEJORA</span></div><div class="installed-grid">${Object.entries(
         G.Parts.slots,
       )
         .map(([slot, label]) => {
@@ -68,22 +76,69 @@
         })
         .join("")}</div></section>` +
       this.workshopInventory(s, car) +
-      `<div class="section-title spaced"><h2>Proveedor de repuestos</h2><span class="eyebrow">PADDOCK COMPONENTS · STOCK COMPARTIDO</span></div><div class="parts-grid">${G.Parts.catalogue
+      `<section data-workshop-panel="catalog"><div class="section-title"><div><span class="eyebrow">COMPRA · COMPARA · PROGRAMA EL MONTAJE</span><h2>Proveedor de repuestos</h2></div><span class="eyebrow">STOCK COMPARTIDO</span></div><p class="catalogue-help">Comprar guarda la pieza en tu almacén. Desde allí podrás programar el montaje y consultar su plazo.</p>${catalogueTools}<div class="parts-grid">${G.Parts.catalogue
         .map((d) => {
           const stock = W.stock(s, d.id),
             unit = stock[0],
             reason = unit ? W.fit(s, car, unit) : "Sin existencias.",
             compatible = !reason;
-          return `<article class="panel part-card"><div class="part-diagram ${d.component}"><span>${G.Parts.slots[d.slot]}</span><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M18 48L30 20H85L102 45L89 55H28Z M38 20V53 M80 20V53 M24 35H96 M50 26H70V47H50Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="52" r="7" fill="#1b292d" stroke="currentColor"/><circle cx="98" cy="52" r="7" fill="#1b292d" stroke="currentColor"/></svg><b>${String(stock.length).padStart(2, "0")} <small>UNIDADES</small></b></div><div class="padded"><span class="eyebrow">${d.models ? d.models.map((i) => G.Data.models[i].generation).join(" / ") : "MULTIMODELO"}</span><h3>${d.name}</h3><p>${d.description}</p><div class="part-effects">${effects(d)}</div><div class="fit-note ${compatible ? "positive" : "muted"}">${compatible ? "Compatible con esta configuración" : this.escape(reason)}</div><div class="market-price"><b>${this.money(unit ? Math.round((d.price * unit.condition) / 100) : d.price)}</b>${this.button("Ver pieza y montaje", "part-preview", "secondary", `data-id="${unit?.id || ""}" data-car="${car.id}" ${unit ? "" : "disabled"}`)}</div><small class="muted">Mano de obra ${this.money(d.labor)} · ${d.days} ${d.days === 1 ? "día" : "días"} · Compra separada de instalación</small></div></article>`;
+          return `<article class="panel part-card" data-part-component="${d.component}" data-part-compatible="${compatible}" data-part-search="${this.escape([d.name, d.description, G.Parts.components[d.component], ...(d.models || []).map((i) => G.Data.models[i].generation)].join(" ").toLowerCase())}"><div class="part-diagram ${d.component}"><span>${G.Parts.slots[d.slot]}</span><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M18 48L30 20H85L102 45L89 55H28Z M38 20V53 M80 20V53 M24 35H96 M50 26H70V47H50Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="52" r="7" fill="#1b292d" stroke="currentColor"/><circle cx="98" cy="52" r="7" fill="#1b292d" stroke="currentColor"/></svg><b>${String(stock.length).padStart(2, "0")} <small>UNIDADES</small></b></div><div class="padded"><span class="eyebrow">${d.models ? d.models.map((i) => G.Data.models[i].generation).join(" / ") : "MULTIMODELO"}</span><h3>${d.name}</h3><p>${d.description}</p><div class="part-effects">${effects(d)}</div><div class="fit-note ${compatible ? "positive" : "muted"}">${compatible ? "Compatible con esta configuración" : this.escape(reason)}</div><div class="market-price"><b>${this.money(unit ? Math.round((d.price * unit.condition) / 100) : d.price)}</b>${this.button("Ver pieza y montaje", "part-preview", "secondary", `data-id="${unit?.id || ""}" data-car="${car.id}" ${unit ? "" : "disabled"}`)}</div><small class="muted">Mano de obra ${this.money(d.labor)} · ${d.days} ${d.days === 1 ? "día" : "días"} · Compra separada de instalación</small></div></article>`;
         })
-        .join("")}</div>`
+        .join(
+          "",
+        )}</div><div class="panel workshop-filter-empty" id="workshop-filter-empty" hidden><h3>No hay piezas con estos filtros.</h3><p>Prueba otro nombre o selecciona «Todas» para revisar el catálogo completo.</p></div></section>`
     );
+  };
+  U.applyWorkshopFilter = function () {
+    const A = G.App,
+      tab = A.workshopTab || "diagnosis",
+      filter = A.workshopFilter || "all";
+    const normalize = (value) =>
+      String(value)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const query = normalize(A.workshopSearch || "").trim();
+    document.querySelectorAll("[data-workshop-panel]").forEach((el) => {
+      el.hidden = el.dataset.workshopPanel !== tab;
+    });
+    document.querySelectorAll('[data-action="workshop-tab"]').forEach((el) => {
+      const selected = el.dataset.value === tab;
+      el.classList.toggle("active", selected);
+      el.setAttribute("aria-pressed", selected);
+    });
+    document
+      .querySelectorAll('[data-action="workshop-filter"]')
+      .forEach((el) => {
+        const selected = el.dataset.value === filter;
+        el.classList.toggle("selected", selected);
+        el.setAttribute("aria-pressed", selected);
+      });
+    let count = 0,
+      total = 0;
+    document
+      .querySelectorAll(".part-card[data-part-component]")
+      .forEach((el) => {
+        total++;
+        const matches =
+          (filter === "all" ||
+            (filter === "compatible" && el.dataset.partCompatible === "true") ||
+            filter === el.dataset.partComponent) &&
+          (!query || normalize(el.dataset.partSearch).includes(query));
+        el.hidden = !matches;
+        if (matches) count++;
+      });
+    const empty = document.getElementById("workshop-filter-empty"),
+      counter = document.getElementById("workshop-catalogue-count");
+    if (empty) empty.hidden = count > 0;
+    if (counter)
+      counter.textContent = `${count} de ${total} referencias · Las existencias son compartidas con los rivales`;
   };
   U.workshopInventory = function (s, car) {
     const inventory = W.inventory(s),
       used = W.occupied(s),
       company = G.player(s);
-    return `<section class="panel padded spaced"><div class="section-title"><h2>Tu almacén de repuestos</h2>${this.badge(used + " / " + company.sparesCapacity + " PLAZAS", "outline")}</div>${
+    return `<section class="panel padded" ${car ? 'data-workshop-panel="inventory"' : ""}><div class="section-title"><h2>Tu almacén de repuestos</h2>${this.badge(used + " / " + company.sparesCapacity + " PLAZAS", "outline")}</div>${
       inventory.length
         ? `<div class="spare-inventory">${inventory
             .map((p) => {
@@ -134,6 +189,7 @@
             "Comprar repuesto",
             `${d.name} (${p.id}) cuesta ${U.money(Math.round((d.price * p.condition) / 100))}. Pasará a tu almacén; la instalación se abona por separado.`,
             () => {
+              A.workshopTab = "inventory";
               A.mutate(() => W.buy(s, p.id), "workshop");
               U.toast("La pieza ya está en tu almacén.");
             },
@@ -148,6 +204,7 @@
             "Programar instalación",
             `${d.name}: ${U.money(d.labor)} de mano de obra y ${d.days} días de taller. Las prestaciones cambiarán al terminar y la pieza anterior se recuperará.`,
             () => {
+              A.workshopTab = "diagnosis";
               A.mutate(() => W.install(s, data.car, p.id), "workshop");
               U.toast("Pieza reservada. Trabajo de instalación iniciado.");
             },
@@ -159,6 +216,7 @@
             "Desmontar modificación",
             "El coche usará su equipamiento original en este alojamiento. La pieza volverá al almacén con su desgaste; el trabajo dura un día y cuesta el 60 % de la instalación.",
             () => {
+              A.workshopTab = "diagnosis";
               A.mutate(() => W.remove(s, data.id, data.slot), "workshop");
               U.toast("Desmontaje programado.");
             },
@@ -187,8 +245,10 @@
           A.confirm(
             "Reparación por componente",
             `${G.Parts.components[data.component]}: ${U.money(W.repairQuote(car, data.component, s))}. Solo se restaurará ese sistema base, conservando el resto del desgaste y la condición de las mejoras.`,
-            () =>
-              A.mutate(() => W.repair(s, car.id, data.component), "workshop"),
+            () => {
+              A.workshopTab = "diagnosis";
+              A.mutate(() => W.repair(s, car.id, data.component), "workshop");
+            },
           );
           return true;
         }

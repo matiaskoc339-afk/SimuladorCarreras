@@ -1,3 +1,26 @@
+# Validación de la versión 0.3.1
+
+`npm test`: **65 escenarios aprobados, sin fallos ni omisiones**. Conserva los 49 anteriores, añade una fixture auténtica de carrera 0.3, rechazo de datos corruptos de tráfico y catorce escenarios de la nueva dinámica.
+
+- Volúmenes en metros y parrilla sin interpenetración; coches paralelos con espacio no colisionan.
+- Contacto con daño en ambos coches, separación y cooldown; colisiones con doblados y separación de tres vehículos en cadena.
+- Un coche girado ocupa su longitud transversal real; un abandonado continúa como obstáculo mientras se aparta.
+- Choque grave controlado: abandono, daños que llegan al taller, amarilla y resultado correcto incluso sin clasificados.
+- Riesgo según piloto, estilo, neumáticos y curva; preparación gradual del adelantamiento según su atributo.
+- Adelantamiento que exige abrir un hueco y cruzar físicamente; amarilla local y recuperación del sector.
+- Determinismo con pasos agrupados y al guardar/reanudar, registros limitados y resumen persistente.
+- Reanudación de fixtures auténticas 0.1, 0.2 y 0.3 con resultados exactamente iguales a sus versiones.
+
+`npm run test:browser` conserva los tres recorridos completos y añade `browser-presentation.cjs`. El principal verifica temporada y 21 vistas; negocio verifica mercado/traspasos/migración y 27 vistas; taller comprueba operaciones reales, cuatro pestañas móviles y 33 vistas/pestañas. El cuarto comprueba navegación con nombres, búsqueda sin perder foco, compatibilidad y estado vacío, tres cámaras, piloto seleccionado, zoom, escala de los seis trazados, render sin mutación del RNG, audio tras un gesto, silencio al pausar y controles móviles. Un impacto controlado comprueba abandono, amarilla, órdenes deshabilitadas, ausencia de chirrido al detenerse y contadores del resumen sin duplicar choques. Se detectó y corrigió que guardar/opciones desaparecían a 390 px; se mantienen accesibles también durante la carrera. Sin errores JavaScript ni desbordamiento a 1440, 1024 y 390 px.
+
+Exploración de diez semillas normales con ocho coches: **8–32 adelantamientos, 3–9 contactos, 0–3 derrapes y 0–2 trompos**; todos terminaron y la carrocería mínima quedó entre 63 % y 78 %. Los accidentes graves no se fuerzan por tiempo. Una parrilla de 30 compañías con activos válidos completó la prueba con 83 adelantamientos, 60 roces, 4 choques, 4 derrapes y 1 trompo; estado válido antes/durante/después, guardado de 186,6 KB y carrera de 220,65 s simulados procesada en unos 7,3 s de CPU en este entorno. Estas cifras son una comprobación funcional, no el balance definitivo ni una garantía de rendimiento en cualquier equipo.
+
+Las capturas se generan en `test-results/redesign-*.png`. La apertura `file://` sigue omitida por política de Chromium; HTTP verificado. Es una simulación 2D seca con volúmenes simplificados; clima, boxes operativos y repeticiones continúan pendientes.
+
+---
+
+## Registro histórico de la 0.3
+
 # Validación de la versión 0.3
 
 `npm test`: **49 escenarios aprobados**, incluidos los 27 anteriores y 22 del taller. `npm run test:browser` ejecuta los tres recorridos de navegador, conservando la temporada y el mercado anteriores.

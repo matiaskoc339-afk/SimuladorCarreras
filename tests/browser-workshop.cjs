@@ -33,7 +33,16 @@ const fs = require("node:fs");
     await page
       .getByRole("heading", { name: "El rendimiento se construye." })
       .waitFor();
+    async function workshopTab(tab) {
+      await page
+        .locator(`[data-action="workshop-tab"][data-value="${tab}"]`)
+        .click();
+      await page
+        .locator(`[data-workshop-panel="${tab}"]`)
+        .waitFor({ state: "visible" });
+    }
     async function buy(definition) {
+      await workshopTab("catalog");
       const id = await page.evaluate(
         (key) => RCS.Workshop.stock(RCS.App.state, key)[0].id,
         definition,
@@ -46,6 +55,7 @@ const fs = require("node:fs");
         .getByRole("button", { name: "Comprar repuesto", exact: true })
         .click();
       await page.locator("#confirm-action").click();
+      await workshopTab("inventory");
       return id;
     }
     const part = await buy("brakes-club");
@@ -138,6 +148,7 @@ const fs = require("node:fs");
       ),
       205,
     );
+    await workshopTab("installed");
     await page
       .locator('[data-action="remove-part"][data-slot="brakes"]')
       .click();
@@ -199,6 +210,7 @@ const fs = require("node:fs");
       return { brakes: c.components.brakes, tires: c.components.tires };
     }, info.id);
     await page.evaluate(() => RCS.App.go("workshop"));
+    await workshopTab("diagnosis");
     await page
       .locator('[data-action="repair-component"][data-component="engine"]')
       .click();
@@ -216,6 +228,7 @@ const fs = require("node:fs");
     assert.equal(repaired.engine, 100);
     assert.equal(repaired.brakes, other.brakes);
     assert.equal(repaired.tires, other.tires);
+    await workshopTab("inventory");
     await page.locator(`[data-action="sell-part"][data-id="${wrong}"]`).click();
     await page.locator("#confirm-action").click();
     assert.equal(
@@ -248,6 +261,41 @@ const fs = require("node:fs");
           false,
           `${view} desborda a ${width}px`,
         );
+        if (view === "workshop" && width === 390) {
+          for (const tab of [
+            "diagnosis",
+            "installed",
+            "inventory",
+            "catalog",
+          ]) {
+            await workshopTab(tab);
+            assert.equal(
+              await page.locator("[data-workshop-panel]:visible").count(),
+              1,
+            );
+            assert.equal(
+              await page.evaluate(
+                () => document.documentElement.scrollWidth > innerWidth + 1,
+              ),
+              false,
+              `Taller ${tab} desborda a ${width}px`,
+            );
+          }
+          await page
+            .locator('[data-action="workshop-filter"][data-value="brakes"]')
+            .click();
+          const shown = await page
+            .locator(".part-card:visible")
+            .evaluateAll((cards) =>
+              cards.map((card) => card.dataset.partComponent),
+            );
+          assert.ok(shown.length > 0);
+          assert.ok(shown.every((component) => component === "brakes"));
+          await page
+            .locator('[data-action="workshop-filter"][data-value="all"]')
+            .click();
+          await workshopTab("diagnosis");
+        }
       }
     }
     await page.evaluate(() => RCS.App.saves());
@@ -263,7 +311,7 @@ const fs = require("node:fs");
     );
     assert.deepEqual(errors, []);
     console.log(
-      "Browser 0.3 OK: compra, compatibilidad, reserva, plazo, guardar/reanudar trabajo, montaje/desmontaje, desgaste en carrera, telemetría, reparación focal, venta de repuestos, migración 0.2 y 30 pantallas sin desbordamiento.",
+      "Browser 0.3 OK: compra, compatibilidad, reserva, plazo, guardar/reanudar trabajo, montaje/desmontaje, desgaste en carrera, telemetría, reparación focal, venta de repuestos, migración 0.2 y 33 pantallas/pestañas sin desbordamiento.",
     );
   } finally {
     await browser.close();

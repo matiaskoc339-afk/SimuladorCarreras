@@ -69,13 +69,14 @@ const fs = require("node:fs");
     );
     await page.locator('[data-action="speed"][data-value="4"]').click();
     await page.locator('[data-action="order"][data-value="attack"]').click();
-    await page.getByRole("button", { name: "Cámara: circuito" }).click();
+    await page.getByRole("button", { name: "Cámara: TV" }).click();
     await page.waitForTimeout(1000);
     assert.ok(
       (await page.evaluate(() => RCS.App.state.race.entrants[0].progress)) >
         pos1,
     );
     await page.getByRole("button", { name: "Cámara: seguimiento" }).click();
+    await page.getByRole("button", { name: "Cámara: circuito" }).click();
     await page.screenshot({ path: "test-results/race.png", fullPage: true });
     await page.getByRole("button", { name: "Pausar", exact: true }).click();
     const paused = await page.evaluate(() => RCS.App.state.race.time);

@@ -22,9 +22,7 @@ const fs = require("node:fs");
       RCS.Storage.save(1, s);
       RCS.App.setState(s, 1);
     });
-    await page
-      .getByRole("button", { name: "Compañías del paddock ↗" })
-      .click();
+    await page.locator('.rail-nav [data-go="companies"]').click();
     await page.locator(".rival-card").first().waitFor();
     assert.equal(await page.locator(".rival-card").count(), 8);
     await page.getByRole("button", { name: "Mercado compartido ↗" }).click();

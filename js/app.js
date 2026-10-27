@@ -8,7 +8,17 @@
     view: "hq",
     speed: 1,
     paused: false,
-    follow: false,
+    follow: true,
+    cameraOptions: { mode: "broadcast", focusId: null, zoom: 1.5 },
+    workshopFilter: "all",
+    workshopSearch: "",
+    workshopTab: "diagnosis",
+    get camera() {
+      return this.cameraOptions;
+    },
+    get audioEnabled() {
+      return G.Sound.enabled;
+    },
     accumulator: 0,
     lastFrame: 0,
     lastPaint: 0,
@@ -26,6 +36,12 @@
           else this.action(el.dataset.action, el.dataset);
         } catch (error) {
           U.toast(error.message, true);
+        }
+      });
+      document.addEventListener("input", (event) => {
+        if (event.target.id === "workshop-search") {
+          this.workshopSearch = event.target.value;
+          U.applyWorkshopFilter?.(this.state);
         }
       });
       document.addEventListener("submit", (event) => {
@@ -92,7 +108,9 @@
       this.slot = slot;
       this.speed = 1;
       this.paused = false;
-      this.follow = false;
+      this.follow = true;
+      this.cameraOptions = { mode: "broadcast", focusId: null, zoom: 1.5 };
+      G.Sound.reset();
       this.accumulator = 0;
       this.lastAuto = 0;
       this.saveError = false;
@@ -111,7 +129,10 @@
     },
     render() {
       U.render(this.state, this.view);
+      if (this.view === "workshop") U.applyWorkshopFilter?.(this.state);
       this.updateSaveStatus();
+      this.updateCamera();
+      this.updatePause();
       window.scrollTo(0, 0);
     },
     go(view) {
@@ -338,6 +359,12 @@
           this.speed = 1;
           this.paused = false;
           this.accumulator = 0;
+          this.cameraOptions = { mode: "broadcast", focusId: null, zoom: 1.5 };
+          G.Sound.reset();
+          if (G.Sound.enabled)
+            G.Sound.unlock().catch(() => {
+              G.Sound.enabled = false;
+            });
           this.persist();
           this.render();
           break;
@@ -383,10 +410,57 @@
           this.paused = !this.paused;
           this.updatePause();
           break;
-        case "camera":
-          this.follow = !this.follow;
-          document.getElementById("camera-button").textContent =
-            "Cámara: " + (this.follow ? "seguimiento" : "circuito");
+        case "camera": {
+          const modes = ["broadcast", "follow", "overview"];
+          this.cameraOptions.mode =
+            modes[(modes.indexOf(this.cameraOptions.mode) + 1) % modes.length];
+          if (this.cameraOptions.mode === "broadcast")
+            this.cameraOptions.focusId = null;
+          this.follow = this.cameraOptions.mode !== "overview";
+          this.updateCamera();
+          break;
+        }
+        case "camera-zoom":
+          this.cameraOptions.zoom = G.clamp(
+            this.cameraOptions.zoom + (data.value === "in" ? 0.2 : -0.2),
+            0.65,
+            2,
+          );
+          this.updateCamera();
+          break;
+        case "watch-driver":
+          G.assert(
+            s?.race?.entrants.some(
+              (a) => a.carId === data.id || a.companyId === data.id,
+            ),
+            "Ese piloto no está en esta carrera.",
+          );
+          this.cameraOptions.focusId = data.id;
+          this.cameraOptions.mode = "follow";
+          this.follow = true;
+          this.updateCamera();
+          U.updateRace(s);
+          break;
+        case "race-audio": {
+          const wasEnabled = G.Sound.enabled;
+          G.Sound.toggle().then((enabled) => {
+            this.updateCamera();
+            if (!enabled) G.Sound.silence();
+            if (!wasEnabled && !enabled)
+              U.toast(
+                "El navegador no pudo activar el sonido. La carrera continúa.",
+                true,
+              );
+          });
+          break;
+        }
+        case "workshop-filter":
+          this.workshopFilter = data.value || "all";
+          U.applyWorkshopFilter?.(s);
+          break;
+        case "workshop-tab":
+          this.workshopTab = data.value || "diagnosis";
+          U.applyWorkshopFilter?.(s);
           break;
         case "order":
           G.Race.order(s, data.value);
@@ -664,6 +738,23 @@
             `<div class="modal-actions">${U.button("Retirar inscripción sin reembolso", "withdraw-entry", "text-button", `data-id="${id}"`)}</div>`,
           );
     },
+    raceRecap(event) {
+      const summary = event.raceSummary;
+      if (!summary) return "";
+      const clock = (t) =>
+        String(Math.floor(t / 60)).padStart(2, "0") +
+        ":" +
+        String(Math.floor(t % 60)).padStart(2, "0");
+      return `<section class="race-recap"><div class="section-title"><h3>Así se decidió la carrera</h3></div><div class="overview-strip">${U.stat("Adelantamientos", summary.overtakes || 0)}${U.stat("Contactos", summary.contacts || 0)}${U.stat("Trompos", summary.spins || 0)}${U.stat("Abandonos", summary.retirements || 0)}</div>${(
+        summary.highlights || []
+      )
+        .slice(0, 6)
+        .map(
+          (e) =>
+            `<div class="timeline-line"><small>${clock(e.time)}</small><span>${U.escape(e.text)}</span></div>`,
+        )
+        .join("")}</section>`;
+    },
     results(id) {
       const s = this.state,
         e = s.season.events.find((e) => e.id === id);
@@ -673,7 +764,7 @@
         Math.floor(n / 60) + ":" + (n % 60).toFixed(2).padStart(5, "0");
       U.modal(
         "Bandera a cuadros.",
-        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "OUT" : time(r.time)}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${s.season.phase === "complete" ? '<p class="fine-print">Temporada completada. La clasificación y la prima final ya están registradas en tu archivo histórico.</p>' : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
+        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${this.raceRecap(e)}${s.season.phase === "complete" ? '<p class="fine-print">Temporada completada. La clasificación y la prima final ya están registradas en tu archivo histórico.</p>' : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
         true,
       );
     },
@@ -838,6 +929,25 @@
       a.click();
       a.remove();
     },
+    updateCamera() {
+      const button = document.getElementById("camera-button");
+      if (button)
+        button.textContent =
+          "Cámara: " +
+          { broadcast: "TV", follow: "seguimiento", overview: "circuito" }[
+            this.cameraOptions.mode
+          ];
+      const zoom = document.getElementById("camera-zoom-value");
+      if (zoom)
+        zoom.textContent = Math.round(this.cameraOptions.zoom * 100) + " %";
+      const sound = document.getElementById("audio-button");
+      if (sound) {
+        sound.textContent = G.Sound.enabled
+          ? "Silenciar sonido"
+          : "Activar sonido";
+        sound.setAttribute("aria-pressed", String(G.Sound.enabled));
+      }
+    },
     updatePause() {
       const b = document.getElementById("pause-button");
       if (b) b.textContent = this.paused ? "Reanudar" : "Pausar";
@@ -864,8 +974,20 @@
             s.race,
             s.race.track,
             this.logoImage,
-            this.follow,
+            this.cameraOptions,
           );
+        G.Sound.update(
+          s.race,
+          this.paused,
+          canvas
+            ? G.Render.cameraInfo(
+                canvas,
+                s.race,
+                s.race.track,
+                this.cameraOptions,
+              )?.focusId
+            : this.cameraOptions.focusId,
+        );
         if (time - this.lastPaint > 150) {
           U.updateRace(s);
           this.lastPaint = time;
@@ -883,6 +1005,7 @@
           this.results(id);
         }
       }
+      if (!s?.race) G.Sound.silence();
       requestAnimationFrame((t) => this.frame(t));
     },
   };
