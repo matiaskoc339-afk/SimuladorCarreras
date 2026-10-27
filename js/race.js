@@ -87,10 +87,7 @@
       G.assert(d && c, "Elige un piloto contratado y un vehículo propio.");
       G.assert(d.fatigue < 90, "El piloto necesita descansar.");
       G.assert(
-        !c.repair &&
-          !G.Market.listed(s, c.id) &&
-          c.condition >= 45 &&
-          c.tires >= 20,
+        !c.repair && !G.Market.listed(s, c.id) && G.Workshop.ready(c),
         "El coche necesita mantenimiento antes de inscribirse.",
       );
       G.assert(
@@ -151,6 +148,7 @@
         messages: [],
         finished: false,
         playerSkipped: skip,
+        mechanicalVersion: 3,
       };
       for (const c of s.companies.filter((c) => c.status === "active")) {
         if (c.id === s.playerId && skip) continue;
@@ -168,12 +166,7 @@
             : G.Companies.lineup(s, c.id).car;
         if (c.id === s.playerId)
           G.assert(
-            d &&
-              car &&
-              !car.repair &&
-              car.condition >= 45 &&
-              car.tires >= 20 &&
-              d.fatigue < 90,
+            d && car && !car.repair && G.Workshop.ready(car) && d.fatigue < 90,
             "La alineación no está disponible. Revisa piloto, contrato y mantenimiento; también puedes renunciar.",
           );
         if (!d || !car || car.repair || car.condition < 35) continue;
@@ -188,6 +181,7 @@
           );
         }
         r.entrants.push({
+          ...G.Workshop.raceSnapshot(s, car),
           companyId: c.id,
           driverId: d.id,
           carId: car.id,
@@ -278,20 +272,26 @@
           const mode =
             a.mode === "attack" ? 1.036 : a.mode === "save" ? 0.958 : 1;
           const skill = (0.8 + a.stats.pace / 300) * (1 - a.fatigue * 0.00055);
-          const mech = 0.77 + a.condition * 0.0023;
+          const modern = r.mechanicalVersion === 3;
+          const mech =
+            (0.77 + a.condition * 0.0023) *
+            (modern ? G.Workshop.mechanical(a) : 1);
+          const grip =
+            a.grip * (modern ? 0.85 + a.components.suspension * 0.0015 : 1);
+          const brakePower =
+            (4 + a.brakes / 25) *
+            (modern ? 0.75 + a.components.brakes * 0.0025 : 1);
           let limit = 70;
           for (const ahead of [0, 25, 55, 85]) {
             const corner = this.point(r.track, a.progress + ahead).limit;
             const cornerSpeed =
               corner *
-              (0.78 + a.grip / 260) *
+              (0.78 + grip / 260) *
               (0.82 + a.stats.control / 300) *
               (0.85 + a.tires * 0.0015);
             limit = Math.min(
               limit,
-              Math.sqrt(
-                cornerSpeed * cornerSpeed + 2 * (4 + a.brakes / 25) * ahead,
-              ),
+              Math.sqrt(cornerSpeed * cornerSpeed + 2 * brakePower * ahead),
             );
           }
           let target = Math.min((a.top / 3.6) * skill, limit) * mech * mode;
@@ -316,14 +316,15 @@
             a.slow -= dt;
             target *= 0.35;
           }
-          const accel = Math.min(
-            6,
-            (a.hp * 500) / (a.weight * Math.max(a.speed, 12)),
-          );
+          const braking = a.speed > target ? 1 : 0;
+          const accel =
+            (modern
+              ? a.acceleration * (0.85 + a.components.engine * 0.0015)
+              : 1) *
+            Math.min(6, (a.hp * 500) / (a.weight * Math.max(a.speed, 12)));
           a.speed = Math.max(
             0,
-            a.speed +
-              G.clamp(target - a.speed, -(4 + a.brakes / 25) * dt, accel * dt),
+            a.speed + G.clamp(target - a.speed, -brakePower * dt, accel * dt),
           );
           const moved = a.speed * dt;
           a.progress += moved;
@@ -333,12 +334,15 @@
               moved *
                 0.001 *
                 (a.mode === "attack" ? 2 : a.mode === "save" ? 0.55 : 1) *
-                (1.3 - a.stats.tires / 170),
+                (1.3 - a.stats.tires / 170) *
+                (modern ? a.tireWear : 1),
           );
-          a.condition = Math.max(
-            0,
-            a.condition - moved * 0.00025 * (a.mode === "attack" ? 1.5 : 1),
-          );
+          if (modern) G.Workshop.wear(a, moved, dt, braking);
+          else
+            a.condition = Math.max(
+              0,
+              a.condition - moved * 0.00025 * (a.mode === "attack" ? 1.5 : 1),
+            );
           // Riesgo por paso fijo: los resultados no están predeterminados.
           const risk =
             ((0.000035 * dt * (100 - a.stats.consistency)) / 30) *
@@ -347,7 +351,14 @@
             (1 + (100 - a.condition) / 30);
           if (G.random(r) < risk) {
             a.slow = 4;
-            a.condition = Math.max(0, a.condition - 3);
+            if (modern) {
+              a.components.body = Math.max(0, a.components.body - 7);
+              a.components.suspension = Math.max(
+                0,
+                a.components.suspension - 4,
+              );
+              a.condition = G.Workshop.summary(a.components);
+            } else a.condition = Math.max(0, a.condition - 3);
             r.messages.unshift({
               time: r.time,
               text: `Dirección de carrera: ${a.name} se sale de la trazada y pierde tiempo.`,
@@ -366,7 +377,16 @@
                 text: "Piloto: las gomas están perdiendo agarre. Conviene conservar.",
               });
           }
-          if (a.condition < 25 && G.random(r) < dt * 0.003) {
+          if (
+            (modern
+              ? Math.min(
+                  a.components.engine,
+                  a.components.transmission,
+                  a.components.cooling,
+                ) < 25
+              : a.condition < 25) &&
+            G.random(r) < dt * 0.003
+          ) {
             a.dnf = true;
             r.messages.unshift({
               time: r.time,
@@ -427,6 +447,7 @@
           c = s.companies.find((c) => c.id === a.companyId);
         car.condition = a.condition;
         car.tires = a.tires;
+        G.Workshop.finishRace(s, car, a, r.mechanicalVersion === 3);
         car.km += Math.max(0, a.progress) / 1000;
         car.starts++;
         if (row.position === 1 && !row.dnf) car.wins++;

@@ -1,3 +1,44 @@
+# Validación de la versión 0.3
+
+`npm test`: **49 escenarios aprobados**, incluidos los 27 anteriores y 22 del taller. `npm run test:browser` ejecuta los tres recorridos de navegador, conservando la temporada y el mercado anteriores.
+
+## Taller: pruebas nuevas
+
+- Compra de unidad física, pago al proveedor y rechazo de doble compra.
+- Reserva e instalación con plazo: cambios solo al completar y sin doble pago ni duplicación.
+- Modelo incompatible, requisitos del compresor y potencia máxima de la Copa.
+- Prohibición de desmontar requisitos todavía usados por otras mejoras.
+- Taller compartido, anuncios y compromisos deportivos.
+- Almacén lleno y reserva de la plaza futura al desmontar.
+- Sustitución con recuperación exacta de la unidad y su desgaste.
+- Retorno de los neumáticos originales con su condición anterior, sin gomas gratuitas.
+- Reparación focal sin restaurar otros sistemas o rejuvenecer mejoras.
+- Componente crítico que impide competir pese a un promedio aceptable.
+- Frenos y suspensión que aumentan la distancia recorrida en un banco de pista comparable.
+- Compuesto deportivo que aumenta agarre y desgaste.
+- Radiador que reduce temperatura y desgaste del motor bajo conducción agresiva.
+- Desgaste devuelto al coche y a las piezas, con resultado idéntico a distintas agrupaciones de pasos y al guardar a mitad de carrera.
+- Venta de coche con mejoras instaladas, conservando los repuestos del vendedor.
+- Recompra de repuestos con precio por estado y saldos contrapuestos.
+- Reanudación de montaje pendiente, sin nuevo cobro o nueva pieza.
+- Fixture auténtica 0.2 en carrera: mismas entidades anteriores y resultado exacto; la fixture 0.1 también sigue pasando.
+- Un rival compra, instala y usa las mismas mejoras en la parrilla.
+- Rechazo de piezas huérfanas, doble montaje y reservas corruptas.
+- Servicio de neumáticos modificados: precio correcto, agarre recalculado y ninguna unidad nueva, tanto en servicio directo como en trabajo de taller.
+- Revisión antigua en curso que conserva fecha de entrega y coste ya pagado al migrar.
+
+## Chromium
+
+El recorrido de la 0.3 compra por interfaz, compara compatibilidad, guarda una instalación pendiente, recarga la página, completa el plazo y verifica el cambio real de atributos. Después instala/desmonta, corre con mejoras, guarda y retoma la carrera, repara solo el motor y vende un repuesto. Verifica también una importación 0.2 durante la carrera y diez pantallas a 1440, 1024 y 390 px, sin desbordamiento ni errores JavaScript. Los recorridos 0.1 y 0.2 permanecen activos. Las pruebas agrupan pasos del mismo motor para terminar carreras sin esperar todas las vueltas reales; no insertan resultados.
+
+Se repitieron tres temporadas para las semillas 51, 184 y 489, validando después de cada ronda: **14 coches y 56 piezas** en todo momento. Los rivales compraron y montaron unidades del stock compartido; conservaron los saldos y obligaciones normales. Solo se amplió el saldo de la compañía observadora para que su inactividad no interrumpiera el análisis. Los siete rivales permanecieron activos en estas semillas; los escenarios controlados de bancarrota siguen verificando su exclusión. Esto no es el balance final de 0.9.
+
+La apertura `file://` permanece omitida por la política de Chromium (`ERR_BLOCKED_BY_ADMINISTRATOR`); la ejecución HTTP sí está comprobada. Patrocinios condicionados y pilotos impuestos siguen pendientes para la 0.4 y no se presentan como implementados.
+
+---
+
+## Registro histórico de la 0.2
+
 # Validación de la versión 0.2
 
 ## Pruebas automáticas

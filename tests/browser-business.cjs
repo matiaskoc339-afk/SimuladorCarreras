@@ -232,7 +232,7 @@ const fs = require("node:fs");
       RCS.App.paused = true;
       RCS.App.updatePause();
     });
-    assert.equal(await page.evaluate(() => RCS.App.state.version), 2);
+    assert.equal(await page.evaluate(() => RCS.App.state.version), 3);
     assert.ok((await page.locator("#live-standings").innerText()).length);
     const data = await page.evaluate(() => ({
       market: RCS.App.state.market.length,

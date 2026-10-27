@@ -306,7 +306,7 @@ test("Migración auténtica 0.1: conserva la carrera en curso y reproduce exacta
     ),
     old = JSON.parse(JSON.parse(raw).data),
     { state: s } = G.Storage.unpack(raw);
-  assert.equal(s.version, 2);
+  assert.equal(s.version, 3);
   assert.equal(s.seed, old.seed);
   assert.equal(s.rng, old.rng);
   assert.deepEqual(json(s.race), old.race);
@@ -315,7 +315,11 @@ test("Migración auténtica 0.1: conserva la carrera en curso y reproduce exacta
     old.companies.map((c) => c.balance),
   );
   for (const car of old.cars)
-    assert.deepEqual(json(s.cars.find((c) => c.id === car.id)), car);
+    for (const key of Object.keys(car))
+      assert.deepEqual(
+        json(s.cars.find((c) => c.id === car.id)[key]),
+        car[key],
+      );
   while (!s.race.finished) G.Race.tick(s, 400);
   const rows = G.Race.finish(s),
     expected = JSON.parse(

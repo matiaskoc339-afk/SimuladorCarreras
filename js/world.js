@@ -181,9 +181,10 @@
         );
     },
     migrate(s) {
-      if (s.version === 2) return s;
-      G.assert(s.version === 1, "Versión incompatible.");
-      return this.initialize(s);
+      if (s.version === 3) return s;
+      G.assert([1, 2].includes(s.version), "Versión incompatible.");
+      if (s.version === 1) this.initialize(s);
+      return G.Workshop.initialize(s);
     },
   };
 })();

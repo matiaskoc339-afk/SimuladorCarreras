@@ -1,4 +1,4 @@
-# Arquitectura de la 0.2
+# Arquitectura de la 0.3
 
 ## Un mundo, un estado
 
@@ -8,6 +8,9 @@
 | --- | --- |
 | `js/data.js` | Catálogos extensibles, rasgos, reglamento, puntos y trazados |
 | `js/core.js` | Estado inicial, IDs, RNG reproducible, consultas y eventos/noticias |
+| `js/parts.js` | Definiciones, alojamientos, compatibilidad, requisitos y efectos de mejoras |
+| `js/workshop.js` | Inventario físico, reservas, trabajos, configuración, desgaste y migración mecánica |
+| `js/ui-workshop.js` | Diagnóstico, comparador, proveedor, almacén y controles del taller |
 | `js/economy.js` | Única vía de movimiento monetario, libro de caja, servicios y mantenimiento |
 | `js/drivers.js` | Currículums, atributos, negociación, contratos y evolución básica |
 | `js/market.js` | Anuncios finitos y transferencias atómicas de coches y dinero |
@@ -68,3 +71,20 @@ La IA considera reserva salarial, necesidad de asiento/coche, calidad observable
 Las alineaciones rivales se eligen entre unidades propias, legales, no anunciadas y disponibles. La simulación de paso fijo de la 0.1 permanece intacta. Los ingresos de taller solo se cobran al entregar un encargo real después de tres jornadas; el taller no repara y hace encargos a la vez.
 
 Los expedientes conservan 16 decisiones recientes, el mundo 80 transferencias de activos y 30 propuestas recientes. Las compañías quebradas no se eliminan del archivo: sus pilotos quedan libres y sus activos se ponen en liquidación. Las ventas posteriores reducen su déficit sin reactivar la compañía. Las noticias enlazan el activo por ID y muestran su situación actual, aun cuando haya cambiado de propietario desde la publicación.
+
+
+## Taller y esquema 3
+
+Los vehículos añaden `base`, `components`, `installed`, `oemTires` y `upgradeValue`. Los atributos base anteriores se conservan. La configuración deriva potencia, masa, agarre, frenada, punta y fiabilidad a partir de las unidades instaladas. Los efectos de prestaciones se atenúan con el estado de la pieza; masa y penalizaciones estructurales no desaparecen mágicamente por desgaste. La condición mecánica global se resume a partir de seis sistemas; los neumáticos se mantienen por separado. Un sistema crítico por debajo del 30 % impide inscribir aunque el promedio sea aceptable.
+
+Cada unidad de `parts` tiene ID, definición, compañía, coche, reserva y condición. Propietario nulo y coche nulo significa stock del proveedor. Compañía sin coche significa almacén; con coche significa instalada. Una reserva referencia exactamente un trabajo de montaje. La validación comprueba unicidad, propiedad, alojamiento, dependencia, capacidad y correspondencia de las reservas. No se generan unidades al comprar o cargar: el proveedor parte de cuatro por definición y puede recomprar repuestos usados con su saldo persistente.
+
+`car.repair` conserva el bloqueo de taller ya usado en 0.1/0.2 y ahora representa revisión, reparación focal, instalación o desmontaje. Al iniciar se validan todas las condiciones y se abona mano de obra; la pieza se reserva y la configuración no cambia hasta finalizar. La entrega diaria es idempotente. Una sustitución devuelve la pieza anterior; un desmontaje reserva una plaza de almacén incluso antes de producir la devolución, evitando que nuevas compras ocupen su espacio. El coche no se vende ni compite mientras está en trabajo. Las modificaciones requieren retirar antes la inscripción; la revisión básica anterior sigue disponible.
+
+Los neumáticos tienen dos historias de desgaste: el juego de serie apartado (`oemTires`) y la unidad modificada. Al desmontar vuelve el estado de las gomas originales. La renovación de caucho es un servicio pagado que restaura la condición del conjunto instalado y recalcula el agarre; no añade una segunda unidad al inventario. Las revisiones de otros sistemas restauran únicamente los componentes base, conservando la condición de las mejoras.
+
+Las carreras nuevas guardan `mechanicalVersion: 3`, una copia de componentes, temperatura y desgaste por ID de pieza. El modelo de paso fijo calcula fuerza de frenado, apoyo, aceleración y comportamiento térmico usando esa configuración. La carga de motor aumenta el calor y el desgaste; el radiador y su condición influyen en su evolución. La fiabilidad afecta al desgaste de motor y la sobretemperatura reduce el rendimiento. Al finalizar, daños y condiciones vuelven a las entidades persistentes y se recalculan prestaciones y valoración de mejoras. Las compras de coches transfieren también la propiedad de sus piezas instaladas, sin mover repuestos almacenados.
+
+La migración 1→2→3 valida cada estado anterior y añade los campos de mecánica sin regenerar los activos de 0.2. Una carrera antigua en curso conserva el algoritmo anterior hasta terminar; después se aplica su resultado a los nuevos sistemas y las carreras posteriores usan componentes. Las fixtures auténticas de ambas versiones verifican los resultados finales exactos. Las revisiones antiguas reciben un ID de trabajo conservando fin y coste ya pagado. El esquema 3 se serializa sin repetir la inicialización.
+
+La IA compara piezas compatibles que realmente existen, considera su reserva salarial y plazo hasta la prueba, compra la unidad y la instala en una decisión posterior. No paga una mejora ficticia ni recibe prestaciones antes de que termine el taller. Los objetivos generales de la 0.2 y la negociación del jugador se conservan.

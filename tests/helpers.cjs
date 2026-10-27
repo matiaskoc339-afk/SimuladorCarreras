@@ -24,6 +24,8 @@ function engine() {
   for (const f of [
     "data",
     "core",
+    "parts",
+    "workshop",
     "economy",
     "drivers",
     "market",

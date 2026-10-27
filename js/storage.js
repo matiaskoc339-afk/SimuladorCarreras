@@ -14,8 +14,8 @@
     },
     validate(s) {
       G.assert(
-        s && [1, 2].includes(s.version),
-        "Versión de guardado incompatible. Este juego admite las versiones 1 y 2.",
+        s && [1, 2, 3].includes(s.version),
+        "Versión de guardado incompatible. Este juego admite las versiones 1, 2 y 3.",
       );
       G.assert(
         Number.isInteger(s.day) &&
@@ -38,19 +38,24 @@
         s.season && Array.isArray(s.season.events),
         "Falta el calendario deportivo.",
       );
-      if (s.version === 2)
+      if (s.version >= 2)
         G.assert(
           Array.isArray(s.market) &&
             Array.isArray(s.transferOffers) &&
             Array.isArray(s.trades),
           "Faltan los mercados del mundo.",
         );
+      if (s.version === 3)
+        G.assert(Array.isArray(s.parts), "Falta el inventario de repuestos.");
       const entities = [
         ...s.companies,
         ...s.drivers,
         ...s.cars,
         ...s.season.events,
-        ...(s.version === 2
+        ...(s.version === 3
+          ? [...s.parts, ...s.cars.filter((c) => c.repair).map((c) => c.repair)]
+          : []),
+        ...(s.version >= 2
           ? [...s.market, ...s.transferOffers, ...s.trades]
           : []),
       ];
@@ -208,7 +213,7 @@
       for (const c of s.cars)
         G.assert(
           (s.companies.some((x) => x.id === c.companyId) ||
-            (s.version === 2 && c.companyId === null)) &&
+            (s.version >= 2 && c.companyId === null)) &&
             Number.isInteger(c.modelIndex) &&
             G.Data.models[c.modelIndex] &&
             Number.isFinite(c.condition) &&
@@ -274,19 +279,20 @@
           );
       }
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
-      if (s.version === 2) G.World.validate(s);
+      if (s.version >= 2) G.World.validate(s);
+      if (s.version === 3) G.Workshop.validate(s);
       return s;
     },
     pack(s) {
       G.assert(
-        s?.version === 2,
+        s?.version === 3,
         "Versión incompatible: migra la partida antes de guardarla.",
       );
       this.validate(s);
       const data = JSON.stringify(s);
       return JSON.stringify({
         format: "RCS",
-        version: 2,
+        version: 3,
         savedAt: new Date().toISOString(),
         checksum: this.checksum(data),
         data,
@@ -306,7 +312,7 @@
       G.assert(
         e &&
           e.format === "RCS" &&
-          [1, 2].includes(e.version) &&
+          [1, 2, 3].includes(e.version) &&
           typeof e.data === "string",
         "Formato o versión de guardado incompatible.",
       );

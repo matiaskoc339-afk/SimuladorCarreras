@@ -89,6 +89,7 @@
           0,
           () => G.Economy.job(s, c.id),
         );
+      candidates.push(...G.Workshop.aiCandidates(s, c, money, days, p));
       for (const car of cars) {
         if (G.Market.listed(s, car.id)) continue;
         if (
@@ -107,13 +108,17 @@
               () => G.Economy.repair(s, car.id, c.id),
             );
         }
-        if (car.tires < 45 && c.balance >= 530)
+        if (
+          workshopFree &&
+          car.tires < 45 &&
+          c.balance >= G.Workshop.tireCost(s, car) + 370
+        )
           add(
             "neumáticos",
             car.tires < 20 ? 115 : 72,
             "El desgaste de neumáticos reduce el agarre de la alineación.",
             car.id,
-            160,
+            G.Workshop.tireCost(s, car),
             () => G.Economy.tires(s, car.id, c.id),
           );
       }

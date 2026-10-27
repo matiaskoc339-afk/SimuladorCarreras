@@ -84,7 +84,7 @@
       "El nombre debe tener entre 2 y 32 caracteres.",
     );
     const s = {
-      version: 2,
+      version: 3,
       seed: seed >>> 0,
       rng: seed >>> 0,
       sequence: 0,
@@ -172,6 +172,7 @@
       "competition",
     );
     G.World.initialize(s);
+    G.Workshop.initialize(s);
     return s;
   };
   G.nextEvent = (s) => s.season.events.find((e) => e.status === "scheduled");

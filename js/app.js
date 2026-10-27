@@ -135,6 +135,7 @@
           "history",
           "market",
           "companies",
+          "workshop",
         ].includes(view)
       )
         return;
@@ -195,7 +196,11 @@
       }
     },
     action(name, data) {
-      if (G.BusinessUI.action(this, name, data)) return;
+      if (
+        G.WorkshopUI.action(this, name, data) ||
+        G.BusinessUI.action(this, name, data)
+      )
+        return;
       const s = this.state;
       switch (name) {
         case "new":

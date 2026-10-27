@@ -38,8 +38,7 @@
               !c.repair &&
               !G.Market.listed(s, c.id) &&
               c.hp <= 210 &&
-              c.condition >= 45 &&
-              c.tires >= 20,
+              G.Workshop.ready(c),
           )
           .sort(
             (a, b) =>
@@ -318,6 +317,10 @@
       }
       if (c.id !== s.playerId)
         for (const car of G.ownedCars(s, c.id)) {
+          if (car.repair?.partId) {
+            const p = s.parts.find((p) => p.id === car.repair.partId);
+            if (p) p.reservedFor = null;
+          }
           car.repair = null;
           if (!G.Market.listed(s, car.id))
             G.Market.list(

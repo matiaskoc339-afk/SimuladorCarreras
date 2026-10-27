@@ -7,7 +7,8 @@
         car.value *
           (0.4 + car.condition * 0.006) *
           G.clamp(1.05 - car.km / 500000, 0.65, 1) +
-          car.wins * 70,
+          car.wins * 70 +
+          (car.upgradeValue || 0),
       );
     },
     listed(s, carId) {
@@ -117,6 +118,7 @@
         );
       else s.dealer.balance += l.price;
       const from = l.sellerId;
+      G.Workshop.transferParts(s, car, buyerId);
       car.companyId = buyerId;
       car.color = buyer.color;
       car.history.unshift({

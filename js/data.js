@@ -2,7 +2,7 @@
 "use strict";
 globalThis.RCS = globalThis.RCS || {};
 RCS.Data = Object.freeze({
-  version: 2,
+  version: 3,
   startDate: "2026-01-05",
   points: [15, 12, 10, 8, 6, 4, 2, 1],
   prizes: [1800, 1400, 1150, 950, 800, 700, 600, 550],

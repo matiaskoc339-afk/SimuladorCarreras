@@ -32,34 +32,11 @@
     monthly(s) {
       return G.Companies.monthly(s, s.playerId);
     },
-    repairQuote(car) {
-      return Math.round((100 - car.condition) * 24 + 120);
+    repairQuote(car, component = "all") {
+      return G.Workshop.repairQuote(car, component);
     },
     repair(s, id, companyId = s.playerId) {
-      const car = s.cars.find((c) => c.id === id && c.companyId === companyId);
-      G.assert(car, "Vehículo no disponible.");
-      G.assert(
-        !G.Market.listed(s, id),
-        "Retira el anuncio antes de revisar el coche.",
-      );
-      G.assert(
-        !s.race &&
-          !(companyId === s.playerId
-            ? s.job
-            : s.companies.find((c) => c.id === companyId)?.job) &&
-          !G.ownedCars(s, companyId).some((c) => c.repair),
-        "El taller está ocupado.",
-      );
-      G.assert(car.condition < 99, "El coche ya está en buen estado.");
-      const cost = this.repairQuote(car);
-      this.spendCompany(
-        s,
-        companyId,
-        cost,
-        "Taller",
-        `Revisión de ${car.model}`,
-      );
-      car.repair = { end: s.day + 2, cost };
+      return G.Workshop.repair(s, id, "all", companyId);
     },
     tires(s, id, companyId = s.playerId) {
       const car = s.cars.find((c) => c.id === id && c.companyId === companyId);
@@ -69,14 +46,21 @@
         "Retira el anuncio antes de cambiar neumáticos.",
       );
       G.assert(car.tires < 99, "Los neumáticos ya están nuevos.");
+      G.Workshop.available(s, car, companyId);
+      const tirePart = s.parts.find((p) => p.id === car.installed.tires);
+      const cost = G.Workshop.tireCost(s, car);
       this.spendCompany(
         s,
         companyId,
-        160,
+        cost,
         "Taller",
         "Juego de neumáticos de calle",
       );
       car.tires = 100;
+      car.components.tires = 100;
+      if (tirePart) tirePart.condition = 100;
+      else car.oemTires = 100;
+      G.Workshop.recalculate(s, car);
       car.history.unshift({ day: s.day, type: "Neumáticos nuevos" });
     },
     job(s, companyId = s.playerId) {
@@ -156,20 +140,7 @@
           }
         }
       }
-      for (const car of s.cars)
-        if (car.repair && s.day >= car.repair.end) {
-          car.condition = 100;
-          car.history.unshift({ day: s.day, type: "Revisión completa" });
-          car.repair = null;
-          G.news(
-            s,
-            "Taller",
-            `${car.brand} ${car.model}: revisión terminada.`,
-            "El vehículo recupera su estado mecánico. Ya está disponible para competir.",
-            "car",
-            car.id,
-          );
-        }
+      for (const car of s.cars) G.Workshop.complete(s, car);
       for (const c of s.companies.filter((c) => c.status === "active")) {
         const job = c.id === s.playerId ? s.job : c.job;
         if (job && s.day >= job.end) {
