@@ -1,0 +1,26 @@
+# Plan de desarrollo
+
+La entrega actual es **0.1 — Base jugable**. El resto está pendiente; no se representa con controles decorativos ni se considera terminado por disponer de campos de estado.
+
+| Versión | Resultado previsto | Estado |
+| --- | --- | --- |
+| 0.1 | Creación/logotipo, sede, calendario, finanzas básicas, coche inicial, currículums y negociación, seis carreras visuales, resultados, noticias, temporada y guardados | Implementada y probada |
+| 0.2 | IA empresarial por utilidad y personalidad: compras/ventas reales, contratación y transferencias, finanzas y activos compartidos, crisis y noticias verificables | Pendiente; la 0.1 solo mantiene equipos y repone asientos |
+| 0.3 | Catálogo de piezas, compatibilidad, inventario, instalación, modificaciones y desgaste por componentes | Pendiente; la 0.1 ofrece revisión y neumáticos funcionales |
+| 0.4 | Negociaciones profundas, patrocinio con condiciones y pilotos impuestos, fabricantes, préstamos y cláusulas | Pendiente; la negociación inicial ya afecta salarios, duración, prima y rescisión |
+| 0.5 | Física/tráfico mejorados, más cámaras, boxes, compuestos, clima, colisiones, banderas y repeticiones | Pendiente; hay carrera seca, dos cámaras, ritmo y pequeños incidentes básicos |
+| 0.6 | Ampliación de la única sede, empleados especializados, políticas de automatización, I+D, academia y relaciones laborales | Pendiente |
+| 0.7 | Compra/venta/subastas, importación, precios dinámicos, repuestos, fabricantes, coleccionistas y editor de libreas | Pendiente |
+| 0.8 | Envejecimiento/retiro, generaciones, lanzamientos ficticios, reglamentos cambiantes, fusiones, crisis y archivo histórico extenso | Pendiente; se conservan los resúmenes de las temporadas actuales |
+| 0.9 | Balance a largo plazo, IA y contratos más profundos, variedad, relaciones, nuevas categorías y optimización | Pendiente |
+| 1.0 | Integración y validación completa, balance final, contenido y distribución | Pendiente |
+
+## Criterios de continuidad
+
+- Mantener la experiencia jugable de la versión anterior y sus escenarios de prueba.
+- Cada transacción altera saldos e inventarios de las entidades reales.
+- Las noticias se publican a partir de acciones confirmadas.
+- El RNG de partida/carrera se conserva al guardar.
+- Las nuevas versiones deben validar/migrar el esquema sin regenerar el mundo del jugador.
+- Probar contratos, mercado, taller, carrera, rivales, noticias, guardado, patrocinio condicionado, evolución y bancarrota conforme se incorporan. Mercado/piezas/patrocinio (pruebas B/C/H del documento original) no corresponden a esta entrega.
+- Retener la especificación íntegra del usuario; el desarrollo incremental no elimina mecánicas.
