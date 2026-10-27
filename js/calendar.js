@@ -15,6 +15,7 @@
         s.day++;
         G.Economy.daily(s);
         G.Drivers.daily(s);
+        G.AI.daily(s);
         G.Economy.assess(s);
         const event = G.nextEvent(s);
         if (event && event.day - s.day === 7)

@@ -1,11 +1,11 @@
 # Plan de desarrollo
 
-La entrega actual es **0.1 — Base jugable**. El resto está pendiente; no se representa con controles decorativos ni se considera terminado por disponer de campos de estado.
+La entrega actual es **0.2 — Empresas rivales**. El resto está pendiente; no se representa con controles decorativos ni se considera terminado por disponer de campos de estado.
 
 | Versión | Resultado previsto | Estado |
 | --- | --- | --- |
 | 0.1 | Creación/logotipo, sede, calendario, finanzas básicas, coche inicial, currículums y negociación, seis carreras visuales, resultados, noticias, temporada y guardados | Implementada y probada |
-| 0.2 | IA empresarial por utilidad y personalidad: compras/ventas reales, contratación y transferencias, finanzas y activos compartidos, crisis y noticias verificables | Pendiente; la 0.1 solo mantiene equipos y repone asientos |
+| 0.2 | IA empresarial por utilidad y personalidad: compras/ventas reales, contratación y transferencias, finanzas y activos compartidos, crisis y noticias verificables | Implementada y probada; mercado básico compartido, decisiones por utilidad, traspasos, crisis y expedientes |
 | 0.3 | Catálogo de piezas, compatibilidad, inventario, instalación, modificaciones y desgaste por componentes | Pendiente; la 0.1 ofrece revisión y neumáticos funcionales |
 | 0.4 | Negociaciones profundas, patrocinio con condiciones y pilotos impuestos, fabricantes, préstamos y cláusulas | Pendiente; la negociación inicial ya afecta salarios, duración, prima y rescisión |
 | 0.5 | Física/tráfico mejorados, más cámaras, boxes, compuestos, clima, colisiones, banderas y repeticiones | Pendiente; hay carrera seca, dos cámaras, ritmo y pequeños incidentes básicos |
@@ -22,5 +22,5 @@ La entrega actual es **0.1 — Base jugable**. El resto está pendiente; no se r
 - Las noticias se publican a partir de acciones confirmadas.
 - El RNG de partida/carrera se conserva al guardar.
 - Las nuevas versiones deben validar/migrar el esquema sin regenerar el mundo del jugador.
-- Probar contratos, mercado, taller, carrera, rivales, noticias, guardado, patrocinio condicionado, evolución y bancarrota conforme se incorporan. Mercado/piezas/patrocinio (pruebas B/C/H del documento original) no corresponden a esta entrega.
+- Probar contratos, mercado, taller, carrera, rivales, noticias, guardado, patrocinio condicionado, evolución y bancarrota conforme se incorporan. La compraventa básica (B) se valida en la 0.2; piezas (C) y patrocinio condicionado (H) siguen pendientes para sus versiones.
 - Retener la especificación íntegra del usuario; el desarrollo incremental no elimina mecánicas.

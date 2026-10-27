@@ -84,7 +84,7 @@
       "El nombre debe tener entre 2 y 32 caracteres.",
     );
     const s = {
-      version: 1,
+      version: 2,
       seed: seed >>> 0,
       rng: seed >>> 0,
       sequence: 0,
@@ -171,6 +171,7 @@
       "Seis pruebas, ocho escuderías y un presupuesto ajustado. Máximo 210 CV y un coche por equipo. La inscripción cuesta $250 más $120 de transporte.",
       "competition",
     );
+    G.World.initialize(s);
     return s;
   };
   G.nextEvent = (s) => s.season.events.find((e) => e.status === "scheduled");

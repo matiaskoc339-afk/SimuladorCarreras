@@ -1,4 +1,4 @@
-# Arquitectura de la 0.1
+# Arquitectura de la 0.2
 
 ## Un mundo, un estado
 
@@ -10,6 +10,11 @@
 | `js/core.js` | Estado inicial, IDs, RNG reproducible, consultas y eventos/noticias |
 | `js/economy.js` | Única vía de movimiento monetario, libro de caja, servicios y mantenimiento |
 | `js/drivers.js` | Currículums, atributos, negociación, contratos y evolución básica |
+| `js/market.js` | Anuncios finitos y transferencias atómicas de coches y dinero |
+| `js/companies.js` | Alineaciones, fichajes, compensaciones, ofertas, crisis y registro de decisiones |
+| `js/ai.js` | Utilidad de acciones, reservas y personalidades empresariales |
+| `js/world.js` | Inicialización, invariantes del mundo y migración del esquema 1 al 2 |
+| `js/ui-business.js` | Pantallas y controladores del mercado, compañías y traspasos |
 | `js/calendar.js` | Orquestación diaria, bloqueo de carreras, apertura de temporadas |
 | `js/race.js` | Inscripciones, participantes, física y resultados, sin DOM |
 | `js/storage.js` | Serialización, validación, checksum, ranuras y recuperación |
@@ -26,9 +31,10 @@ Se usan scripts clásicos con un único espacio de nombres `RCS`, en orden expl�
 2. Incrementar la fecha.
 3. Cobrar $18 de gastos diarios a las compañías activas. Devengar los sueldos con salario/30 y liquidarlos el día 1.
 4. Completar reparaciones y entregar encargos vencidos.
-5. Recuperar fatiga, procesar entrenamiento pagado, liquidar contratos vencidos y reponer asientos rivales cuando hay recursos.
-6. Evaluar la solvencia **después de todos los cobros y pagos**. Catorce jornadas consecutivas en negativo llevan a bancarrota.
-7. Publicar recordatorios reales y detenerse si ha llegado una carrera.
+5. Recuperar fatiga, procesar entrenamiento pagado, liquidar contratos vencidos.
+6. Procesar ofertas y ejecutar decisiones empresariales de los rivales. Cada una usa los mismos comandos económicos, deportivos y de mercado que la interfaz.
+7. Evaluar la solvencia **después de todos los cobros y pagos**. Catorce jornadas consecutivas en negativo llevan a bancarrota.
+8. Publicar recordatorios reales y detenerse si ha llegado una carrera.
 
 El avance hasta la próxima prueba repite exactamente este proceso: no salta pagos, entrenamientos ni contratos. Los meses de contrato se modelan como 30 días, explicitado en el contrato de esta primera versión. Las cifras salariales son una cuota normalizada de 30 días.
 
@@ -44,6 +50,21 @@ La lógica corre en pasos de 0.05 s. El bucle visual acumula tiempo y ejecuta ta
 
 El sobre `RCS` almacena versión, fecha de guardado, checksum FNV y estado JSON. La validación comprueba IDs duplicados, propiedad, contratos, catálogo, calendario y carrera. Se valida antes de escribir o aplicar una importación. La copia anterior solo se reemplaza por un guardado validado. Los acumulados económicos sobreviven a la poda del libro de movimientos.
 
-Los datos reservan espacios de estado para empleados, mercado, investigación y relaciones. No son sistemas implementados ni pantallas vacías: se desarrollarán con sus comandos y pruebas en sus versiones. El esquema debe migrarse antes de cambiar incompatiblemente una entidad. Las nuevas operaciones económicas deberán usar `Economy.transact/spend`, y publicar noticias después de una mutación real.
+Los datos reservan espacios de estado para empleados, investigación y relaciones. No son sistemas implementados ni pantallas vacías: se desarrollarán con sus comandos y pruebas en sus versiones. El esquema debe migrarse antes de cambiar incompatiblemente una entidad. Las nuevas operaciones económicas deberán usar `Economy.transact/spend`, y publicar noticias después de una mutación real.
 
-No se introducirá un sistema de sucursales. Las futuras instalaciones pertenecen a una única sede. La IA de la 0.2 deberá operar sobre estos mismos coches, pilotos y saldos, no inventar inventarios ni recursos paralelos. El plan completo permanece en `ROADMAP.md` y la especificación original.
+No se introducirá un sistema de sucursales. Las futuras instalaciones pertenecen a una única sede. La IA de la 0.2 opera sobre estos mismos coches, pilotos y saldos. El plan completo permanece en `ROADMAP.md` y la especificación original.
+
+
+## Integridad empresarial y migración
+
+El esquema 2 mantiene las mismas claves `localStorage` que la 0.1. Se comprueba el checksum del sobre original, se valida el estado de origen y solo entonces se amplía. No se regenera ningún activo anterior. `World.initialize` añade seis unidades de stock finito y sus anuncios usando un RNG auxiliar derivado de la semilla, y restaura el RNG de partida; no modifica el RNG de una carrera. Una fixture auténtica del commit 0.1 prueba que una carrera reanudada produce exactamente los mismos resultados. Las siguientes cargas del esquema 2 no ejecutan la inicialización otra vez.
+
+`Market.buy` valida propietario, anuncio, fondos, taller, compromisos deportivos y capacidad antes del primer movimiento. Debita al comprador, acredita al vendedor (o al proveedor persistente), cambia la propiedad del mismo objeto y retira el anuncio. No hay reposición implícita. El precio de un anuncio ya publicado no se recalcula al pulsar comprar.
+
+`Companies.sign` valida consentimiento, disponibilidad, salario, duración, plazas y fondos. Transfiere compensación, liquida al empleado su nómina devengada, actualiza su contrato y conserva estadísticas. Las propuestas al jugador se guardan con precio, comprador, piloto y vencimiento: no reservan fondos, por lo que se revalida la solvencia al aceptarlas. Las rechazas o aceptas explícitamente. La compensación se fija al presentar la oferta y no aumenta porque pasen unos días. Las inscripciones impiden transferencias; la retirada voluntaria no devuelve su pago.
+
+La IA considera reserva salarial, necesidad de asiento/coche, calidad observable, edad, precio, estado mecánico y proximidad de la carrera. Evalúa acciones y ejecuta la de mayor utilidad con desempate estable. Cada rival tiene un intervalo normal de tres jornadas; los asientos vacíos y las crisis se revisan diariamente. Un fichaje nuevo no se vuelve a captar automáticamente durante sesenta días. La IA no accede al potencial oculto, no tiene subvenciones invisibles ni toma el control de los pilotos del jugador.
+
+Las alineaciones rivales se eligen entre unidades propias, legales, no anunciadas y disponibles. La simulación de paso fijo de la 0.1 permanece intacta. Los ingresos de taller solo se cobran al entregar un encargo real después de tres jornadas; el taller no repara y hace encargos a la vez.
+
+Los expedientes conservan 16 decisiones recientes, el mundo 80 transferencias de activos y 30 propuestas recientes. Las compañías quebradas no se eliminan del archivo: sus pilotos quedan libres y sus activos se ponen en liquidación. Las ventas posteriores reducen su déficit sin reactivar la compañía. Las noticias enlazan el activo por ID y muestran su situación actual, aun cuando haya cambiado de propietario desde la publicación.

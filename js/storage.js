@@ -14,8 +14,8 @@
     },
     validate(s) {
       G.assert(
-        s && s.version === 1,
-        "Versión de guardado incompatible. Este juego admite la versión 1.",
+        s && [1, 2].includes(s.version),
+        "Versión de guardado incompatible. Este juego admite las versiones 1 y 2.",
       );
       G.assert(
         Number.isInteger(s.day) &&
@@ -38,11 +38,21 @@
         s.season && Array.isArray(s.season.events),
         "Falta el calendario deportivo.",
       );
+      if (s.version === 2)
+        G.assert(
+          Array.isArray(s.market) &&
+            Array.isArray(s.transferOffers) &&
+            Array.isArray(s.trades),
+          "Faltan los mercados del mundo.",
+        );
       const entities = [
         ...s.companies,
         ...s.drivers,
         ...s.cars,
         ...s.season.events,
+        ...(s.version === 2
+          ? [...s.market, ...s.transferOffers, ...s.trades]
+          : []),
       ];
       const ids = new Set();
       for (const x of entities) {
@@ -136,6 +146,7 @@
         "Agenda",
         "Resultados",
         "Temporada",
+        "Mercado",
       ];
       for (const n of s.news)
         G.assert(
@@ -151,6 +162,9 @@
               "team",
               "companies",
               "history",
+              "market",
+              "car",
+              "driver",
             ].includes(n.target),
           "Noticia inválida.",
         );
@@ -193,7 +207,8 @@
       }
       for (const c of s.cars)
         G.assert(
-          s.companies.some((x) => x.id === c.companyId) &&
+          (s.companies.some((x) => x.id === c.companyId) ||
+            (s.version === 2 && c.companyId === null)) &&
             Number.isInteger(c.modelIndex) &&
             G.Data.models[c.modelIndex] &&
             Number.isFinite(c.condition) &&
@@ -259,14 +274,19 @@
           );
       }
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
+      if (s.version === 2) G.World.validate(s);
       return s;
     },
     pack(s) {
+      G.assert(
+        s?.version === 2,
+        "Versión incompatible: migra la partida antes de guardarla.",
+      );
       this.validate(s);
       const data = JSON.stringify(s);
       return JSON.stringify({
         format: "RCS",
-        version: 1,
+        version: 2,
         savedAt: new Date().toISOString(),
         checksum: this.checksum(data),
         data,
@@ -286,7 +306,7 @@
       G.assert(
         e &&
           e.format === "RCS" &&
-          e.version === 1 &&
+          [1, 2].includes(e.version) &&
           typeof e.data === "string",
         "Formato o versión de guardado incompatible.",
       );
@@ -294,7 +314,15 @@
         e.checksum === this.checksum(e.data),
         "El guardado está dañado: la suma de comprobación no coincide.",
       );
-      return { state: this.validate(JSON.parse(e.data)), savedAt: e.savedAt };
+      const state = this.validate(JSON.parse(e.data));
+      G.assert(
+        state.version === e.version,
+        "Las versiones del sobre y de la partida no coinciden.",
+      );
+      return {
+        state: this.validate(G.World.migrate(state)),
+        savedAt: e.savedAt,
+      };
     },
     save(slot, s) {
       G.assert(

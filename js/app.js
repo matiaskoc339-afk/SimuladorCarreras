@@ -88,6 +88,7 @@
     },
     setState(s, slot) {
       this.state = s;
+      this.selectedCarId = null;
       this.slot = slot;
       this.speed = 1;
       this.paused = false;
@@ -132,6 +133,8 @@
           "competition",
           "news",
           "history",
+          "market",
+          "companies",
         ].includes(view)
       )
         return;
@@ -192,6 +195,7 @@
       }
     },
     action(name, data) {
+      if (G.BusinessUI.action(this, name, data)) return;
       const s = this.state;
       switch (name) {
         case "new":
@@ -622,6 +626,13 @@
         }`,
         true,
       );
+      if (G.Companies.willing(s, d))
+        document
+          .querySelector(".modal-content")
+          .insertAdjacentHTML(
+            "beforeend",
+            `<div class="modal-actions">${U.button("Negociar traspaso", "transfer-driver", "primary", `data-id="${id}"`)}</div>`,
+          );
     },
     event(id) {
       const s = this.state,
@@ -634,12 +645,19 @@
       const t = G.Data.tracks[e.track],
         due = e.day <= s.day,
         d = G.ownedDrivers(s),
-        cars = G.ownedCars(s);
+        cars = G.ownedCars(s).filter((c) => !G.Market.listed(s, c.id));
       U.modal(
         U.escape(t.name),
-        `<p class="eyebrow gold">RONDA ${e.round} / 6 · ${U.date(e.day)} · ${t.laps} VUELTAS</p>${e.entry ? `<div class="onboarding-note"><strong>Inscripción confirmada</strong>${U.escape(s.drivers.find((d) => d.id === e.entry.driverId)?.name || "Piloto no disponible")} · ${U.escape(s.cars.find((c) => c.id === e.entry.carId)?.model || "Coche no disponible")} · Inscripción y transporte pagados: $370</div>${due ? `<div class="modal-actions">${U.button("Renunciar a la ronda", "skip-race", "secondary", `data-id="${id}"`)}${U.button("Ir a la parrilla " + U.icon("flag"), "start-race", "primary", `data-id="${id}"`)}</div>` : `<p class="fine-print">Avanza hasta la fecha de la prueba. El calendario se detendrá para preparar la salida. No puedes sustituir un coche o piloto sin retirar su inscripción.</p><div class="modal-actions">${U.button("Volver al calendario", "close", "primary")}</div>`}` : d.length ? `<form id="entry-form" data-id="${id}"><label class="form-field"><span>Piloto</span><select name="driver">${d.map((d) => `<option value="${d.id}">${U.escape(d.name)} · Fatiga ${Math.round(d.fatigue)} %</option>`).join("")}</select></label><label class="form-field"><span>Vehículo</span><select name="car">${cars.map((c) => `<option value="${c.id}">${c.brand} ${c.model} · ${Math.round(c.condition)} % ${c.repair ? "(EN REVISIÓN)" : ""}</option>`).join("")}</select></label><p class="fine-print">Inscripción: $250 · Transporte: $120 · Total: $370. Estado mínimo 45 %, neumáticos 20 % y fatiga inferior a 90 %. La selección quedará vinculada a este evento.</p><div class="modal-actions">${due ? U.button("Renunciar", "skip-race", "secondary", `data-id="${id}"`) : U.button("Cancelar", "close", "secondary")}<button class="primary" type="submit">Confirmar inscripción · $370</button></div></form>` : `<p>Necesitas contratar un piloto antes de participar. Hay currículums disponibles en la sala de pilotos.</p><div class="modal-actions">${due ? U.button("Renunciar a la ronda", "skip-race", "secondary", `data-id="${id}"`) : ""}<button class="primary" data-go="team">Buscar un piloto →</button></div>`}`,
+        `<p class="eyebrow gold">RONDA ${e.round} / 6 · ${U.date(e.day)} · ${t.laps} VUELTAS</p>${e.entry ? `<div class="onboarding-note"><strong>Inscripción confirmada</strong>${U.escape(s.drivers.find((d) => d.id === e.entry.driverId)?.name || "Piloto no disponible")} · ${U.escape(s.cars.find((c) => c.id === e.entry.carId)?.model || "Coche no disponible")} · Inscripción y transporte pagados: $370</div>${due ? `<div class="modal-actions">${U.button("Renunciar a la ronda", "skip-race", "secondary", `data-id="${id}"`)}${U.button("Ir a la parrilla " + U.icon("flag"), "start-race", "primary", `data-id="${id}"`)}</div>` : `<p class="fine-print">Avanza hasta la fecha de la prueba. El calendario se detendrá para preparar la salida. No puedes sustituir un coche o piloto sin retirar su inscripción.</p><div class="modal-actions">${U.button("Volver al calendario", "close", "primary")}</div>`}` : d.length && cars.length ? `<form id="entry-form" data-id="${id}"><label class="form-field"><span>Piloto</span><select name="driver">${d.map((d) => `<option value="${d.id}">${U.escape(d.name)} · Fatiga ${Math.round(d.fatigue)} %</option>`).join("")}</select></label><label class="form-field"><span>Vehículo</span><select name="car">${cars.map((c) => `<option value="${c.id}">${c.brand} ${c.model} · ${Math.round(c.condition)} % ${c.repair ? "(EN REVISIÓN)" : ""}</option>`).join("")}</select></label><p class="fine-print">Inscripción: $250 · Transporte: $120 · Total: $370. Estado mínimo 45 %, neumáticos 20 % y fatiga inferior a 90 %. La selección quedará vinculada a este evento.</p><div class="modal-actions">${due ? U.button("Renunciar", "skip-race", "secondary", `data-id="${id}"`) : U.button("Cancelar", "close", "secondary")}<button class="primary" type="submit">Confirmar inscripción · $370</button></div></form>` : `<p>${!cars.length ? "Necesitas un vehículo propio sin anuncio de venta. Consulta el mercado o retira tu anuncio antes de inscribirte." : "Necesitas contratar un piloto antes de participar. Hay currículums disponibles en la sala de pilotos."}</p><div class="modal-actions">${due ? U.button("Renunciar a la ronda", "skip-race", "secondary", `data-id="${id}"`) : ""}<button class="primary" data-go="${!cars.length ? "market" : "team"}">${!cars.length ? "Consultar mercado →" : "Buscar un piloto →"}</button></div>`}`,
         true,
       );
+      if (e.entry)
+        document
+          .querySelector(".modal-content")
+          .insertAdjacentHTML(
+            "beforeend",
+            `<div class="modal-actions">${U.button("Retirar inscripción sin reembolso", "withdraw-entry", "text-button", `data-id="${id}"`)}</div>`,
+          );
     },
     results(id) {
       const s = this.state,
@@ -657,6 +675,27 @@
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
       if (!n) return;
+      if (n.entityId && n.target === "car") {
+        G.BusinessUI.car(this, n.entityId);
+        return;
+      }
+      if (n.entityId && n.target === "driver") {
+        this.driverDetail(n.entityId);
+        return;
+      }
+      if (n.entityId && n.target === "market") {
+        this.go("market");
+        G.BusinessUI.car(this, n.entityId);
+        return;
+      }
+      if (
+        n.entityId &&
+        n.target === "finance" &&
+        n.entityId !== this.state.playerId
+      ) {
+        this.company(n.entityId);
+        return;
+      }
       if (n.target === "companies" && n.entityId) {
         this.company(n.entityId);
         return;
@@ -678,13 +717,7 @@
       const s = this.state,
         c = s.companies.find((c) => c.id === id);
       G.assert(c, "Compañía no disponible.");
-      const cars = G.ownedCars(s, id),
-        drivers = G.ownedDrivers(s, id);
-      U.modal(
-        U.escape(c.name),
-        `<div class="company-profile">${id === s.playerId ? U.logo(s) : `<span class="company-swatch" style="background:${c.color}">${U.escape(c.name.slice(0, 2).toUpperCase())}</span>`}<div><h3>${U.escape(c.name)}</h3><p>${c.personality} · Nivel ${c.level} · ${c.status === "active" ? "En activo" : "Bancarrota"}</p></div></div><div class="spec-grid">${U.stat("EFECTIVO", U.money(c.balance))}${U.stat("REPUTACIÓN", c.reputation.toFixed(1))}${U.stat("VICTORIAS", c.stats.wins)}${U.stat("PARTICIPACIONES", c.stats.starts)}</div><h3>Plantilla</h3>${drivers.map((d) => `<div class="timeline-line"><span>${U.escape(d.name)}</span><b>${U.money(d.contract.salary)}/mes</b></div>`).join("") || '<p class="fine-print">No tiene pilotos contratados.</p>'}<h3 class="spaced">Flota persistente</h3>${cars.map((car) => `<div class="timeline-line"><span>${car.brand} ${car.model} · ${car.year}</span><b>${Math.round(car.condition)} %</b></div>`).join("")}<p class="fine-print">Finanzas, contratos y coches del mismo mundo que compite en pista. La IA empresarial ampliada se desarrollará en la versión 0.2.</p>`,
-        true,
-      );
+      U.modal(U.escape(c.name), U.companyBody(s, c), true);
     },
     saves() {
       const slots = G.Storage.list();
@@ -717,6 +750,7 @@
     submit(form) {
       const values = new FormData(form),
         s = this.state;
+      if (G.BusinessUI.submit(this, form, values)) return;
       switch (form.id) {
         case "new-game-form": {
           const logo = this.logoData();

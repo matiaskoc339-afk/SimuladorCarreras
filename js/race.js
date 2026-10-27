@@ -87,7 +87,10 @@
       G.assert(d && c, "Elige un piloto contratado y un vehículo propio.");
       G.assert(d.fatigue < 90, "El piloto necesita descansar.");
       G.assert(
-        !c.repair && c.condition >= 45 && c.tires >= 20,
+        !c.repair &&
+          !G.Market.listed(s, c.id) &&
+          c.condition >= 45 &&
+          c.tires >= 20,
         "El coche necesita mantenimiento antes de inscribirse.",
       );
       G.assert(
@@ -108,6 +111,23 @@
         `${d.name} pilotará el ${c.brand} ${c.model} en ${G.Data.tracks[e.track].name}.`,
         "competition",
         eventId,
+      );
+    },
+    withdraw(s, id) {
+      G.ensurePlayable(s);
+      const e = s.season.events.find((e) => e.id === id);
+      G.assert(
+        e && e.status === "scheduled" && e.entry && !s.race,
+        "No hay una inscripción que retirar.",
+      );
+      e.entry = null;
+      G.news(
+        s,
+        "Competición",
+        "Inscripción retirada voluntariamente.",
+        "La plaza se libera. No se reembolsan los gastos de inscripción y transporte.",
+        "competition",
+        id,
       );
     },
     start(s, eventId, skip = false) {
@@ -139,13 +159,13 @@
             ? s.drivers.find(
                 (d) => d.id === e.entry.driverId && d.companyId === c.id,
               )
-            : G.ownedDrivers(s, c.id)[0];
+            : G.Companies.lineup(s, c.id).driver;
         const car =
           c.id === s.playerId
             ? s.cars.find(
                 (car) => car.id === e.entry.carId && car.companyId === c.id,
               )
-            : G.ownedCars(s, c.id)[0];
+            : G.Companies.lineup(s, c.id).car;
         if (c.id === s.playerId)
           G.assert(
             d &&

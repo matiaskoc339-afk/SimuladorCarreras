@@ -2837,3 +2837,282 @@ input[type="range"] {
     scroll-behavior: auto !important;
   }
 }
+
+/* 0.2 · El mismo lenguaje visual para mercado, flotas y compañías. */
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.market-card h2 {
+  font-size: 24px;
+  margin: 6px 0;
+}
+.market-art {
+  display: block;
+  width: 100%;
+  height: 210px;
+  background: radial-gradient(ellipse at center, #354440, #1a272b);
+  overflow: hidden;
+}
+.market-art svg {
+  height: 230px;
+  width: 140px;
+  transform: rotate(-23deg);
+  filter: drop-shadow(15px 10px 10px #0005);
+}
+.market-spec {
+  font-size: 10px;
+  margin-bottom: 16px;
+}
+.market-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 25px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.market-price > b {
+  font: 21px var(--mono);
+}
+.market-price > button {
+  font-size: 10px;
+  padding: 10px 12px;
+}
+.fleet-nav {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin: 0 0 24px;
+}
+.fleet-nav > div {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.fleet-nav button {
+  font-size: 10px;
+  white-space: normal;
+}
+.companies-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.rival-card .company-profile h2 {
+  font-size: 20px;
+}
+.rival-card .company-profile p {
+  font-size: 10px;
+}
+.rival-health {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24px 0 16px;
+}
+.rival-health strong {
+  font: 24px var(--mono);
+}
+.rival-objective {
+  font-size: 12px;
+  line-height: 1.8;
+  min-height: 43px;
+  margin-bottom: 20px;
+}
+.rival-card .passport-stats {
+  font-size: 10px;
+  gap: 20px;
+}
+.last-decision {
+  border-top: 1px solid var(--line);
+  padding: 16px 0 20px;
+  margin-top: 20px;
+  min-height: 103px;
+}
+.last-decision .eyebrow {
+  color: var(--gold);
+  font-size: 8px;
+}
+.last-decision p {
+  font-size: 10px;
+  line-height: 1.8;
+  margin-top: 7px;
+}
+.decision-record {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+}
+.decision-record p {
+  font-size: 12px;
+  margin: 6px 0;
+}
+.decision-record small {
+  font: 9px var(--mono);
+  color: var(--muted);
+}
+.offers-inbox {
+  border-color: #e3af5840;
+  margin-bottom: 26px;
+}
+.offer-row,
+.transfer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.offer-row p,
+.transfer-row p {
+  font-size: 11px;
+  margin-top: 7px;
+}
+.offer-row h3,
+.transfer-row h3 {
+  font-size: 14px;
+}
+.offer-row > div:last-child {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.offer-row button,
+.transfer-row button {
+  font-size: 10px;
+}
+.asset-profile {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  align-items: center;
+  gap: 25px;
+}
+.asset-profile > div:first-child {
+  height: 230px;
+  background: radial-gradient(ellipse, #34423c, #1a262b);
+}
+.asset-profile svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-12deg);
+}
+.asset-profile h3 {
+  font-size: 17px;
+  margin: 10px 0;
+}
+.asset-profile p {
+  font-size: 11px;
+}
+.company-profile {
+  min-width: 0;
+}
+.company-profile > div {
+  min-width: 0;
+}
+.heading-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.company-profile h2,
+.company-profile h3 {
+  overflow-wrap: anywhere;
+}
+.timeline-line > span {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+@media (max-width: 1200px) {
+  .market-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .market-price > b {
+    font-size: 18px;
+  }
+  .rival-card .company-profile h2 {
+    font-size: 18px;
+  }
+  .rival-card .company-profile {
+    gap: 12px;
+  }
+  .rival-card .company-swatch {
+    width: 45px;
+    height: 45px;
+    font-size: 19px;
+  }
+  .heading-actions {
+    max-width: 260px;
+  }
+  .offer-row {
+    flex-wrap: wrap;
+  }
+  .offer-row > div:last-child {
+    width: 100%;
+  }
+}
+@media (max-width: 700px) {
+  .market-grid,
+  .companies-grid {
+    grid-template-columns: 1fr;
+  }
+  .market-art {
+    height: 190px;
+  }
+  .market-art svg {
+    height: 215px;
+  }
+  .fleet-nav {
+    flex-wrap: wrap;
+  }
+  .fleet-nav > div {
+    width: 100%;
+  }
+  .fleet-nav button {
+    font-size: 9px;
+    padding: 9px 12px;
+  }
+  .fleet-nav > .secondary {
+    margin-left: auto;
+  }
+  .heading-actions {
+    max-width: 100%;
+  }
+  .rival-card .company-profile h2 {
+    font-size: 18px;
+  }
+  .offer-row,
+  .transfer-row {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .asset-profile {
+    grid-template-columns: 95px 1fr;
+    gap: 16px;
+  }
+  .asset-profile > div:first-child {
+    height: 185px;
+  }
+  .asset-profile h3 {
+    font-size: 14px;
+  }
+  .asset-profile .eyebrow {
+    font-size: 8px;
+  }
+  .asset-profile p {
+    font-size: 10px;
+  }
+  .timeline-line {
+    gap: 12px;
+  }
+  .timeline-line > small {
+    width: 44px;
+  }
+  .timeline-line > b {
+    font-size: 10px;
+  }
+  .rival-card .company-profile p {
+    font-size: 9px;
+  }
+}

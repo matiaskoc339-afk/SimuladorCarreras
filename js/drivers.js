@@ -56,6 +56,8 @@
         starts: 0,
         wins: 0,
         points: 0,
+        transferListed: false,
+        lastTransfer: null,
       };
       stats.forEach(
         (k) =>
@@ -238,51 +240,20 @@
               e.entry = null;
         }
       }
-      // La 0.1 conserva rivales persistentes con reglas económicas. IA empresarial amplia: 0.2.
-      {
-        for (const c of s.companies.filter(
-          (c) =>
-            c.id !== s.playerId &&
-            c.status === "active" &&
-            !G.ownedDrivers(s, c.id).length,
-        )) {
-          const d = s.drivers
-            .filter((d) => !d.companyId)
-            .sort((a, b) => a.ask - b.ask)[0];
-          if (d && c.balance > d.ask * 3) {
-            d.companyId = c.id;
-            d.contract = {
-              salary: d.ask,
-              start: s.day,
-              end: s.day + 360,
-              bonus: 0,
-              accrued: 0,
-            };
-            G.news(
-              s,
-              "Fichajes",
-              `${c.name} incorpora a ${d.name}.`,
-              "La escudería cubre su asiento con un piloto libre y asume su salario.",
-              "companies",
-              c.id,
-            );
-          }
-        }
-        if (
-          s.day % 30 === 0 &&
-          s.drivers.filter((d) => !d.companyId).length < 5
-        ) {
-          const d = this.generate(s, null);
-          s.drivers.push(d);
-          G.news(
-            s,
-            "Talentos",
-            `${d.name} busca su primera oportunidad.`,
-            `Un piloto de ${d.age} años envía su currículum a las escuderías locales.`,
-            "team",
-            d.id,
-          );
-        }
+      if (
+        s.day % 30 === 0 &&
+        s.drivers.filter((d) => !d.companyId).length < 5
+      ) {
+        const d = this.generate(s, null);
+        s.drivers.push(d);
+        G.news(
+          s,
+          "Talentos",
+          `${d.name} busca su primera oportunidad.`,
+          `Un piloto de ${d.age} años envía su currículum a las escuderías locales.`,
+          "team",
+          d.id,
+        );
       }
     },
   };

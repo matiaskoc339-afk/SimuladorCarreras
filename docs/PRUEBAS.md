@@ -1,3 +1,44 @@
+# Validación de la versión 0.2
+
+## Pruebas automáticas
+
+`npm test`: **27 escenarios aprobados**, sin fallos ni omisiones. Mantiene los once escenarios de la 0.1 y añade dieciséis pruebas del mundo empresarial:
+
+- Compraventa con un único vehículo, retirada de oferta, saldos contrapuestos e historial.
+- Stock, capacidad, fondos y operaciones repetidas o ajenas sin mutaciones parciales.
+- Exclusión entre anuncio, revisión e inscripción, y retirada deportiva sin reembolso.
+- Compensación de traspaso, liquidación de nómina, propiedad y continuidad deportiva del piloto.
+- Consentimiento del jugador, rechazo, aceptación días después por el importe acordado y protección frente a doble cobro.
+- Vencimiento, retirada por insolvencia y pilotos comprometidos en una inscripción.
+- Personalidades con reservas distintas y decisiones sin crédito ilimitado.
+- Un rival contrata realmente a un piloto, lo remunera y lo usa en la siguiente carrera.
+- Encargos empresariales con plazo real y taller compartido con mantenimiento.
+- Entrenamiento asignado por IA, cobrado y con mejora observable.
+- Bancarrota rival, liberación de pilotos, liquidación y exclusión permanente de la parrilla.
+- Noticias que enlazan al coche realmente comprado por el rival y a su movimiento económico.
+- Migración de una partida **auténtica del commit 0.1** guardada durante la carrera: mismos participantes, RNG, saldos y resultado final exacto.
+- Persistencia del RNG empresarial, anuncios, stock y decisiones al cargar reiteradamente.
+- Rechazo de anuncios duplicados, propietarios falsos y vehículos huérfanos.
+- Estabilidad de plantilla: la IA no vuelve a traspasar un fichaje en menos de sesenta días.
+
+## Navegador
+
+`npm run test:browser` conserva el recorrido completo de la temporada 0.1 y añade el recorrido de la 0.2. Este último comprueba compras/ventas, retirada de anuncios, selección de flota, fichajes entre compañías, rechazo/aceptación de ofertas, noticias que abren el activo correcto, decisiones diarias, garaje sin coches y migración/importación de una carrera 0.1 seguida de guardar y recargar. Se comprueban nueve pantallas a 1440, 1024 y 390 px, sin desbordamiento horizontal ni errores JavaScript.
+
+La prueba anterior mantiene el dibujo/undo/redo/exportación PNG, negociación libre, inscripción, movimiento en Canvas, órdenes, pausa, velocidad, cámaras, guardado/reanudación, seis rondas y exportación/importación. Usa el mismo motor para agrupar pasos y no esperar todas las vueltas en tiempo real; no inserta resultados prefijados.
+
+## Exploración temporal
+
+Se ejecutaron tres temporadas completas para tres semillas (51, 184 y 489) con un saldo amplio **solo en la compañía observadora de la prueba**, para evitar que su inactividad detuviera la observación. Los rivales conservaron sus presupuestos normales y pagaron sus obligaciones. Se validó el estado después de cada ronda: 14 coches en todo momento, anuncios únicos, contratos y propiedades coherentes y los siete rivales se mantuvieron activos en esas semillas tras corregir los traspasos demasiado frecuentes. La quiebra y la exclusión permanente se cubren en su escenario controlado. Es una comprobación funcional prolongada, no el balance definitivo de la 0.9.
+
+La apertura `file://` sigue omitida si Chromium devuelve `ERR_BLOCKED_BY_ADMINISTRATOR`; se usa el servidor HTTP incluido sin cambiar políticas. Las capturas y exportaciones de prueba se guardan en `test-results/`, ignorado por Git.
+
+Piezas y patrocinio con piloto impuesto (C/H de la especificación) siguen pendientes para 0.3 y 0.4; no se consideran implementados ni probados aquí.
+
+---
+
+## Registro histórico de la validación 0.1
+
 # Validación de la versión 0.1
 
 Ejecutada en el entorno de desarrollo con Node.js 24 y Chromium mediante Playwright.

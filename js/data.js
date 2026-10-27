@@ -2,7 +2,7 @@
 "use strict";
 globalThis.RCS = globalThis.RCS || {};
 RCS.Data = Object.freeze({
-  version: 1,
+  version: 2,
   startDate: "2026-01-05",
   points: [15, 12, 10, 8, 6, 4, 2, 1],
   prizes: [1800, 1400, 1150, 950, 800, 700, 600, 550],
@@ -194,7 +194,7 @@ RCS.Data = Object.freeze({
     ["Atlas Motorsport", "#a28fe0", "Agresiva", 2],
     ["Lince Competition", "#a4be78", "Formadora", 0],
     ["Velox Club", "#e0c66c", "Oportunista", 3],
-    ["Sur Motor", "#dc87aa", "Conservadora", 1],
+    ["Sur Motor", "#dc87aa", "Prestigiosa", 1],
     ["Punto de Fuga", "#89bdb2", "Desarrolladora", 2],
   ],
   firstNames: [

@@ -19,58 +19,86 @@
         s.totals[amount > 0 ? "income" : "expense"] += Math.abs(amount);
     },
     spend(s, amount, category, label) {
-      G.ensurePlayable(s);
+      return this.spendCompany(s, s.playerId, amount, category, label);
+    },
+    spendCompany(s, companyId, amount, category, label) {
+      const company = s.companies.find((c) => c.id === companyId);
+      G.assert(company?.status === "active", "La compañía no está activa.");
+      if (companyId === s.playerId) G.ensurePlayable(s);
       G.assert(Number.isFinite(amount) && amount >= 0, "Importe inválido.");
-      G.assert(G.player(s).balance >= amount, "No tienes fondos suficientes.");
-      this.transact(s, s.playerId, -amount, category, label);
+      G.assert(company.balance >= amount, "No tienes fondos suficientes.");
+      this.transact(s, companyId, -amount, category, label);
     },
     monthly(s) {
-      const p = G.player(s);
-      return (
-        18 * 30 +
-        G.ownedDrivers(s).reduce(
-          (n, d) => n + (d.contract?.salary || 0) + (d.training ? 18 * 30 : 0),
-          0,
-        )
-      );
+      return G.Companies.monthly(s, s.playerId);
     },
     repairQuote(car) {
       return Math.round((100 - car.condition) * 24 + 120);
     },
-    repair(s, id) {
-      const car = s.cars.find((c) => c.id === id && c.companyId === s.playerId);
+    repair(s, id, companyId = s.playerId) {
+      const car = s.cars.find((c) => c.id === id && c.companyId === companyId);
       G.assert(car, "Vehículo no disponible.");
       G.assert(
-        !s.race && !s.job && !G.ownedCars(s).some((c) => c.repair),
+        !G.Market.listed(s, id),
+        "Retira el anuncio antes de revisar el coche.",
+      );
+      G.assert(
+        !s.race &&
+          !(companyId === s.playerId
+            ? s.job
+            : s.companies.find((c) => c.id === companyId)?.job) &&
+          !G.ownedCars(s, companyId).some((c) => c.repair),
         "El taller está ocupado.",
       );
       G.assert(car.condition < 99, "El coche ya está en buen estado.");
       const cost = this.repairQuote(car);
-      this.spend(s, cost, "Taller", `Revisión de ${car.model}`);
+      this.spendCompany(
+        s,
+        companyId,
+        cost,
+        "Taller",
+        `Revisión de ${car.model}`,
+      );
       car.repair = { end: s.day + 2, cost };
     },
-    tires(s, id) {
-      const car = s.cars.find((c) => c.id === id && c.companyId === s.playerId);
+    tires(s, id, companyId = s.playerId) {
+      const car = s.cars.find((c) => c.id === id && c.companyId === companyId);
       G.assert(car && !car.repair && !s.race, "Vehículo no disponible.");
+      G.assert(
+        !G.Market.listed(s, id),
+        "Retira el anuncio antes de cambiar neumáticos.",
+      );
       G.assert(car.tires < 99, "Los neumáticos ya están nuevos.");
-      this.spend(s, 160, "Taller", "Juego de neumáticos de calle");
+      this.spendCompany(
+        s,
+        companyId,
+        160,
+        "Taller",
+        "Juego de neumáticos de calle",
+      );
       car.tires = 100;
       car.history.unshift({ day: s.day, type: "Neumáticos nuevos" });
     },
-    job(s) {
+    job(s, companyId = s.playerId) {
+      const c = s.companies.find((c) => c.id === companyId);
+      G.assert(c?.status === "active", "La compañía no está activa.");
       G.assert(
-        !s.race && !s.job && !G.ownedCars(s).some((c) => c.repair),
+        !s.race &&
+          !(companyId === s.playerId ? s.job : c.job) &&
+          !G.ownedCars(s, companyId).some((car) => car.repair),
         "El taller está ocupado.",
       );
       G.assert(
-        s.day - s.lastJob >= 7,
-        "El siguiente encargo estará disponible en " +
-          (7 - (s.day - s.lastJob)) +
-          " días.",
+        s.day - (companyId === s.playerId ? s.lastJob : c.lastJob) >= 7,
+        "El siguiente encargo estará disponible en unos días.",
       );
-      G.ensurePlayable(s);
-      s.job = { end: s.day + 3, net: 360 };
-      s.lastJob = s.day;
+      if (companyId === s.playerId) {
+        s.job = { end: s.day + 3, net: 360 };
+        s.lastJob = s.day;
+      } else {
+        c.job = { end: s.day + 3, net: 360 };
+        c.lastJob = s.day;
+      }
     },
     assess(s) {
       for (const c of s.companies.filter((c) => c.status === "active")) {
@@ -88,6 +116,7 @@
           if (c.debtDays >= 14) {
             c.status = "bankrupt";
             if (c.id === s.playerId) s.status = "bankrupt";
+            G.Companies.bankrupt(s, c);
             G.news(
               s,
               "Finanzas",
@@ -137,26 +166,31 @@
             "Taller",
             `${car.brand} ${car.model}: revisión terminada.`,
             "El vehículo recupera su estado mecánico. Ya está disponible para competir.",
-            "garage",
+            "car",
             car.id,
           );
         }
-      if (s.job && s.day >= s.job.end) {
-        this.transact(
-          s,
-          s.playerId,
-          s.job.net,
-          "Servicios",
-          "Encargo de mantenimiento local (neto)",
-        );
-        s.job = null;
-        G.news(
-          s,
-          "Finanzas",
-          "Encargo de taller entregado.",
-          "El cliente ha abonado $360 netos, descontados los consumibles.",
-          "finance",
-        );
+      for (const c of s.companies.filter((c) => c.status === "active")) {
+        const job = c.id === s.playerId ? s.job : c.job;
+        if (job && s.day >= job.end) {
+          this.transact(
+            s,
+            c.id,
+            job.net,
+            "Servicios",
+            "Encargo de mantenimiento local (neto)",
+          );
+          if (c.id === s.playerId) s.job = null;
+          else c.job = null;
+          G.news(
+            s,
+            "Finanzas",
+            `${c.name} entrega un encargo de taller.`,
+            "El cliente ha abonado $360 netos, descontados los consumibles.",
+            c.id === s.playerId ? "finance" : "companies",
+            c.id,
+          );
+        }
       }
     },
   };
