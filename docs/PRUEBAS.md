@@ -1,3 +1,17 @@
+# Validación de la versión 0.4
+
+`npm test`: 89 escenarios aprobados, sin fallos ni omisiones. El motor conserva los 65 anteriores y añade 24 pruebas de contratos/economía. `npm run test:browser` incorpora un quinto recorrido, `browser-contracts.cjs`, y mantiene los cuatro anteriores.
+
+Las nuevas pruebas verifican reserva y conservación de fondos; firma y pago únicos; contraofertas, contraprestaciones, pausa y presupuesto; exclusividad; convocatorias vencidas/rechazadas; fabricante con piloto y coche físicos; capacidad; ausencia de mutación parcial; la Prueba H con piloto incorrecto y liquidación; cumplimiento/promoción/prima final; logotipo y requisito técnico; crédito, cuotas, mora, regularización y amortización; cláusulas, victorias, memoria y moral con efecto real; renovación; patrocinio rival; guardado/RNG; importación auténtica 0.3.1 con resultado exacto; corrupción; la cuota del 70 %; bancarrota con obligaciones y nuevas convocatorias sin reponer presupuestos.
+
+El recorrido Chromium negocia y recibe una contraoferta, firma un fabricante, contrata al piloto impuesto y transfiere un coche existente; guarda una promoción pendiente y la completa tras cargar. Retira/restaura marca, negocia cláusulas de otro piloto, solicita crédito y paga una cuota y la amortización mediante controles. Disputa una carrera con un piloto distinto, verifica la cuota retenida y completa las demás rondas con renuncias reales del motor. Los encargos de taller financian el paso del año; se comprueban devolución/penalización únicas y la noticia abre el contrato concreto. Finalmente renueva un piloto, comprueba que la bancarrota permite consultar las obligaciones y bloquea nuevo crédito, importa una carrera 0.3.1 y recorre las cuatro pestañas comerciales a 1440, 1024 y 390 px. Las pruebas unitarias usan también escenarios controlados de rondas para aislar condiciones y contabilidad; el navegador comprueba la integración con la temporada real.
+
+Los proveedores y banco son simulaciones ficticias. No se realizan llamadas ni pagos externos. Las capturas se escriben en `test-results/contracts-*.png`. El catálogo inicial no implica que estén terminados clima, boxes operativos, personal ni las etapas posteriores del plan.
+
+---
+
+## Registro histórico de la 0.3.1
+
 # Validación de la versión 0.3.1
 
 `npm test`: **65 escenarios aprobados, sin fallos ni omisiones**. Conserva los 49 anteriores, añade una fixture auténtica de carrera 0.3, rechazo de datos corruptos de tráfico y catorce escenarios de la nueva dinámica.

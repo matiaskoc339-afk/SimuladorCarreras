@@ -14,8 +14,10 @@
         if (due && due.day <= s.day) return { blocked: true, event: due };
         s.day++;
         G.Economy.daily(s);
+        G.Contracts.daily(s);
         G.Drivers.daily(s);
         G.AI.daily(s);
+        G.Contracts.aiDaily(s);
         G.Economy.assess(s);
         const event = G.nextEvent(s);
         if (event && event.day - s.day === 7)
@@ -51,6 +53,7 @@
         s,
         Math.max(year, G.dateAt(s.day).getUTCFullYear()),
       );
+      G.Contracts.openSeason(s);
       G.news(
         s,
         "Temporada",

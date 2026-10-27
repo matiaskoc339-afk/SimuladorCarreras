@@ -195,6 +195,10 @@
           companyId: c.id,
           driverId: d.id,
           carId: car.id,
+          sponsors: G.Contracts.marks(s, c.id),
+          sponsorParts: Object.values(car.installed)
+            .map((id) => s.parts.find((p) => p.id === id)?.definitionId)
+            .filter(Boolean),
           name: d.name,
           team: c.name,
           color: car.color,
@@ -213,6 +217,7 @@
           initialTires: car.tires,
           initialCondition: car.condition,
           fatigue: d.fatigue,
+          morale: d.morale,
           progress: 0,
           speed: 0,
           lane: 0,
@@ -536,6 +541,7 @@
           `Premio · Ronda ${e.round} · ${row.dnf ? "abandono" : row.position + "º"}`,
         );
       }
+      G.Contracts.raceFinished(s, e, r);
       if (results.length) {
         const noWinner =
           r.racingVersion === 1 && results.every((row) => row.dnf);
@@ -1009,7 +1015,11 @@
               Math.sqrt(cornerSpeed * cornerSpeed + 2 * brakePower * look),
             );
           }
-          let target = Math.min((a.top / 3.6) * skill, limit) * mech * mode;
+          let target =
+            Math.min((a.top / 3.6) * skill, limit) *
+            mech *
+            mode *
+            (0.94 + (a.morale ?? 75) * 0.0008);
           let lateralTarget =
             Math.abs(curve) > 0.025 ? Math.sign(curve) * 1.15 : 0.15;
           let drafting = false,

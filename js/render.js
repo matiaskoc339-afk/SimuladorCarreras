@@ -694,6 +694,10 @@
       c.lineTo(-length * 0.32, width * 0.31);
       c.stroke();
     }
+    for (const [i, mark] of (a.sponsors || []).slice(0, 3).entries()) {
+      c.fillStyle = mark.color;
+      c.fillRect(length * 0.3 - i * 0.22, -width * 0.22, 0.18, width * 0.44);
+    }
     if (a.dnf) {
       c.fillStyle = "#111b1b88";
       c.fillRect(-length * 0.5, -width * 0.4, length, width * 0.8);

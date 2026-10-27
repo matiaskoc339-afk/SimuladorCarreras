@@ -79,7 +79,7 @@
           4,
       );
     },
-    offer(s, id, salary, months, bonus = 0) {
+    offer(s, id, salary, months, bonus = 0, terms = undefined) {
       G.ensurePlayable(s);
       const d = s.drivers.find((d) => d.id === id);
       G.assert(d && !d.companyId, "Este piloto ya no está disponible.");
@@ -106,16 +106,16 @@
           ((old?.cooldown || s.day) - s.day) +
           " días.",
       );
-      const min = Math.round(
-        d.ask * (months === 6 ? 1.1 : months === 24 ? 0.96 : 1) -
-          Math.min(bonus / 12, d.ask * 0.12),
-      );
+      const clauses =
+        terms === undefined ? null : G.Contracts.driverTerms(s, months, terms);
+      const min = G.Contracts.salaryMinimum(d, months, bonus, clauses);
       if (salary < min) {
         const attempts = (old?.attempts || 0) + 1;
         s.negotiations[id] = {
           salary: min,
           months,
           bonus,
+          terms,
           attempts,
           cooldown: attempts >= 3 ? s.day + 7 : s.day,
         };
@@ -138,8 +138,9 @@
         bonus,
         start: s.day,
         end: s.day + months * 30,
-        role: "principal",
+        role: clauses?.role || "principal",
         accrued: 0,
+        ...(clauses ? { clauses } : {}),
       };
       delete s.negotiations[id];
       d.memory.push({ day: s.day, event: "Contrato firmado" });
@@ -164,19 +165,26 @@
       );
       d.training = type;
     },
+    releaseQuote(d) {
+      return Math.round(
+        d.contract.salary * (d.contract.clauses?.releaseMonths || 1) +
+          d.contract.accrued,
+      );
+    },
     release(s, id) {
       G.assert(!s.race, "Termina la carrera antes de rescindir contratos.");
       const d = s.drivers.find(
         (d) => d.id === id && d.companyId === s.playerId,
       );
       G.assert(d, "Piloto no disponible.");
-      const cost = Math.round(d.contract.salary + d.contract.accrued);
+      const cost = this.releaseQuote(d);
       G.Economy.spend(
         s,
         cost,
         "Contratos",
         `Rescisión y nómina pendiente · ${d.name}`,
       );
+      G.Contracts.settlePromise(s, d);
       d.companyId = null;
       d.contract = null;
       d.training = null;

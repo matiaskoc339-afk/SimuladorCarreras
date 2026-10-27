@@ -32,6 +32,7 @@ function engine() {
     "companies",
     "world",
     "ai",
+    "contracts",
     "race",
     "calendar",
     "storage",

@@ -78,6 +78,23 @@
         if (Number.isFinite(utility) && utility > 0)
           candidates.push({ action, utility, reason, targetId, cost, run });
       };
+      if (
+        c.balance < 1000 &&
+        c.balance >= -500 &&
+        c.reputation >= 1 &&
+        !G.Contracts.debt(s, c.id)
+      ) {
+        const quote = G.Contracts.loanQuote(s, 1000, 3, c.id);
+        if (quote.accepted)
+          add(
+            "crédito",
+            96,
+            "Cubrir el desfase de caja con una deuda limitada y cuotas conocidas.",
+            null,
+            0,
+            () => G.Contracts.borrow(s, 1000, 3, c.id),
+          );
+      }
       // Un encargo crea ingresos por trabajo y ocupa el mismo taller usado para revisar coches.
       const workshopFree = !c.job && !cars.some((car) => car.repair);
       if (workshopFree && s.day - c.lastJob >= 7)
@@ -240,7 +257,7 @@
           !G.Market.locked(s, d.id) &&
           c.balance < G.Companies.monthly(s, c.id) * 2
         ) {
-          const cost = Math.round(d.contract.salary + d.contract.accrued);
+          const cost = G.Drivers.releaseQuote(d);
           if (c.balance >= cost)
             add(
               "rescisión",

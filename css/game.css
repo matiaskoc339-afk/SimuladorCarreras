@@ -7652,3 +7652,255 @@ input[type="range"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* Dirección comercial: condiciones visibles antes de cualquier compromiso. */
+.commercial-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+  margin: 25px 0;
+}
+.commercial-tabs button {
+  font-size: 13px;
+  font-weight: 650;
+  padding: 14px 18px;
+  border-bottom: 3px solid transparent;
+}
+.commercial-tabs button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.commercial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.commercial-card h2 {
+  font-size: 22px;
+  max-width: 30ch;
+}
+.commercial-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 23px;
+  border-bottom: 1px solid var(--line);
+  border-top: 4px solid var(--brand);
+  background: var(--panel-2);
+}
+.commercial-brand > span:first-child {
+  font-weight: 750;
+  font-size: 18px;
+  color: var(--brand);
+}
+.commercial-figures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 22px 0;
+}
+.commercial-figures span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.commercial-figures b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 23px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-top: 5px;
+}
+.commercial-requirements {
+  padding-left: 19px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 22px 0;
+}
+.commercial-requirements li {
+  padding: 5px 0;
+}
+.commercial-requirements b {
+  color: var(--ink);
+}
+.commercial-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.commercial-progress {
+  height: 5px;
+  background: var(--line);
+  margin-top: 20px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.commercial-progress > i {
+  display: block;
+  height: 100%;
+  background: var(--green);
+}
+.commercial-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 24px;
+}
+.commercial-lead {
+  margin: 15px 0;
+  line-height: 1.85;
+}
+.commercial-review {
+  margin-top: 25px;
+  padding: 22px;
+  border: 1px solid #abc7b8;
+  background: #f3f8f4;
+  border-radius: 7px;
+}
+.commercial-review p {
+  margin: 12px 0 18px;
+}
+.commercial-owner {
+  margin: 0 0 9px;
+  font-size: 13px;
+  font-weight: 650;
+}
+.commercial-result {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-weight: 650;
+}
+.loan-card {
+  margin-bottom: 20px;
+}
+.loan-schedule {
+  margin: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.loan-schedule > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.loan-schedule small {
+  grid-column: 1/-1;
+  color: var(--muted);
+}
+.loan-schedule b {
+  text-align: right;
+  font-family: var(--mono);
+}
+.loan-schedule .paid {
+  color: var(--green);
+}
+.loan-schedule .late {
+  color: var(--red);
+}
+.contract-clauses {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  min-width: 0;
+}
+.contract-clauses legend {
+  font-weight: 700;
+  font-size: 15px;
+  padding: 0 8px;
+}
+.contract-clauses p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.checkbox-field input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.sponsor-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 30px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.sponsor-ribbon > span {
+  border-left: 3px solid var(--brand);
+  padding-left: 9px;
+  font-size: 11px;
+  font-weight: 750;
+  color: var(--ink);
+}
+.is-racing .sponsor-ribbon {
+  background: #14232a;
+  border-color: #263a43;
+}
+.is-racing .sponsor-ribbon > span {
+  color: #d9e3e7;
+}
+@media (max-width: 1020px) {
+  .commercial-grid,
+  .commercial-columns {
+    grid-template-columns: 1fr;
+  }
+  .commercial-tabs button {
+    padding: 13px 12px;
+  }
+}
+@media (max-width: 650px) {
+  .commercial-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .commercial-tabs button {
+    text-align: left;
+    font-size: 12px;
+  }
+  .commercial-brand {
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+  .commercial-brand > span:first-child {
+    font-size: 17px;
+  }
+  .commercial-actions > .primary,
+  .commercial-actions > .secondary {
+    width: 100%;
+  }
+  .commercial-figures b {
+    font-size: 20px;
+  }
+  .contract-clauses {
+    padding: 15px;
+  }
+  .commercial-review {
+    padding: 16px;
+  }
+  .sponsor-ribbon {
+    padding: 10px 15px;
+  }
+  .commercial-columns .section-title {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 650px) {
+  .commercial-columns .form-row,
+  .contract-clauses .form-row {
+    grid-template-columns: 1fr;
+  }
+}

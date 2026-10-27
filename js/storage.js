@@ -52,6 +52,14 @@
         ...s.drivers,
         ...s.cars,
         ...s.season.events,
+        ...(s.commercial
+          ? [
+              ...s.commercial.providers,
+              ...s.commercial.offers,
+              ...s.commercial.contracts,
+              ...s.commercial.loans,
+            ]
+          : []),
         ...(s.version === 3
           ? [...s.parts, ...s.cars.filter((c) => c.repair).map((c) => c.repair)]
           : []),
@@ -170,6 +178,7 @@
               "market",
               "car",
               "driver",
+              "contracts",
             ].includes(n.target),
           "Noticia inválida.",
         );
@@ -346,7 +355,9 @@
         );
         for (const a of r.entrants)
           G.assert(
-            finite(a.lateral) &&
+            (a.morale === undefined ||
+              (finite(a.morale) && a.morale >= 0 && a.morale <= 100)) &&
+              finite(a.lateral) &&
               Math.abs(a.lateral) <= 15 &&
               finite(a.headingSlip) &&
               Math.abs(a.headingSlip) < 10 &&
@@ -375,6 +386,7 @@
             "Dinámica del vehículo inválida.",
           );
       }
+      G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);
       if (s.version === 3) G.Workshop.validate(s);
@@ -423,7 +435,7 @@
         "Las versiones del sobre y de la partida no coinciden.",
       );
       return {
-        state: this.validate(G.World.migrate(state)),
+        state: this.validate(G.Contracts.initialize(G.World.migrate(state))),
         savedAt: e.savedAt,
       };
     },

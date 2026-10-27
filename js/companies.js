@@ -6,6 +6,7 @@
       if (s.companies.find((c) => c.id === id)?.status !== "active") return 0;
       return (
         540 +
+        G.Contracts.nextPayments(s, id) +
         G.ownedDrivers(s, id).reduce(
           (n, d) => n + d.contract.salary + (d.training ? 540 : 0),
           0,
@@ -22,7 +23,7 @@
       );
     },
     lineup(s, id) {
-      return {
+      const normal = {
         driver: G.ownedDrivers(s, id)
           .filter((d) => d.contract && d.fatigue < 90)
           .sort(
@@ -45,12 +46,15 @@
               this.carRating(b) - this.carRating(a) || a.id.localeCompare(b.id),
           )[0],
       };
+      return G.Contracts.preferred(s, id, normal);
     },
     log(s, c, action, reason, targetId = null, cost = 0) {
       c.decisions.unshift({ day: s.day, action, reason, targetId, cost });
       c.decisions.length = Math.min(16, c.decisions.length);
     },
     fee(s, d) {
+      if (d.contract?.clauses)
+        return Math.round(d.contract.salary * d.contract.clauses.releaseMonths);
       return d.contract
         ? Math.round(
             d.contract.salary * G.clamp((d.contract.end - s.day) / 90, 1, 3),
@@ -125,6 +129,7 @@
         buyer.balance >= cost,
         "La compañía compradora no puede cubrir el traspaso y la prima.",
       );
+      if (seller) G.Contracts.settlePromise(s, d);
       const from = d.companyId;
       if (cost)
         G.Economy.transact(
@@ -268,12 +273,13 @@
         d && c && companyId !== s.playerId && !G.Market.locked(s, id),
         "No se puede rescindir este contrato.",
       );
-      const cost = Math.round(d.contract.salary + d.contract.accrued);
+      const cost = G.Drivers.releaseQuote(d);
       G.assert(
         c.balance >= cost,
         "Fondos insuficientes para la indemnización.",
       );
       G.Economy.transact(s, c.id, -cost, "Contratos", `Rescisión · ${d.name}`);
+      G.Contracts.settlePromise(s, d);
       d.companyId = null;
       d.contract = null;
       d.training = null;
@@ -301,7 +307,9 @@
       }
     },
     bankrupt(s, c) {
+      G.Contracts.bankrupt(s, c.id);
       for (const d of G.ownedDrivers(s, c.id)) {
+        G.Contracts.settlePromise(s, d);
         if (d.contract.accrued)
           G.Economy.transact(
             s,

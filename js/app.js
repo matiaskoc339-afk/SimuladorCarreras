@@ -13,6 +13,7 @@
     workshopFilter: "all",
     workshopSearch: "",
     workshopTab: "diagnosis",
+    contractTab: "offers",
     get camera() {
       return this.cameraOptions;
     },
@@ -157,6 +158,7 @@
           "market",
           "companies",
           "workshop",
+          "contracts",
         ].includes(view)
       )
         return;
@@ -218,6 +220,7 @@
     },
     action(name, data) {
       if (
+        G.ContractsUI.action(this, name, data) ||
         G.WorkshopUI.action(this, name, data) ||
         G.BusinessUI.action(this, name, data)
       )
@@ -344,7 +347,7 @@
           const d = s.drivers.find((d) => d.id === data.id);
           this.confirm(
             "Rescindir contrato",
-            `La rescisión de ${d.name} cuesta ${U.money(d.contract.salary + d.contract.accrued)}, incluidas las nóminas devengadas. Sus inscripciones se retirarán sin reembolso.`,
+            `La rescisión de ${d.name} cuesta ${U.money(G.Drivers.releaseQuote(d))}, incluidas las nóminas devengadas. Sus inscripciones se retirarán sin reembolso.`,
             () => this.mutate(() => G.Drivers.release(s, data.id), "team"),
           );
           break;
@@ -670,7 +673,7 @@
       const n = s.negotiations[id];
       U.modal(
         "Negociación · " + U.escape(d.name),
-        `<div class="company-profile">${U.portrait(d)}<div><h3>${U.escape(d.name)}</h3><p>${d.age} años · ${U.escape(d.nation)} · ${G.Data.traits[d.trait].name}</p><p>Solicita ${U.money(d.ask)} mensuales · Representante: Agencia Club</p></div></div>${n ? `<div class="counter-offer"><b>Contraoferta: ${U.money(n.salary)} al mes</b><p>${n.cooldown > s.day ? "Tras varias ofertas insuficientes, el representante pide esperar hasta el " + U.date(n.cooldown, true) + "." : "El piloto aceptaría este salario con la duración y prima propuestas. Puedes aceptarlo o presentar otra oferta."}</p></div>` : ""}<form id="negotiate-form" data-id="${id}"><div class="form-row"><label class="form-field"><span>Salario mensual ($)</span><input type="number" name="salary" min="200" max="10000" step="1" value="${n?.salary || d.ask}" required></label><label class="form-field"><span>Duración</span><select name="months">${[6, 12, 24].map((m) => `<option value="${m}" ${(n?.months || 12) === m ? "selected" : ""}>${m} meses</option>`).join("")}</select></label></div><label class="form-field"><span>Prima de contratación ($)</span><input name="bonus" type="number" min="0" max="5000" step="1" value="${n?.bonus || 0}" required></label><div class="onboarding-note"><strong>Cláusulas de esta oferta</strong>Piloto principal · Salarios devengados diariamente y pagados el día 1 · Rescisión: un mes de salario más lo devengado · Las condiciones propuestas se conservarán en su contrato.</div><div class="modal-actions"><button class="secondary" data-action="close">Retirarse</button><button class="primary" type="submit">${n ? "Presentar / aceptar oferta" : "Presentar oferta"}</button></div></form>`,
+        `<div class="company-profile">${U.portrait(d)}<div><h3>${U.escape(d.name)}</h3><p>${d.age} años · ${U.escape(d.nation)} · ${G.Data.traits[d.trait].name}</p><p>Solicita ${U.money(d.ask)} mensuales · Representante: Agencia Club</p></div></div>${n ? `<div class="counter-offer"><b>Contraoferta: ${U.money(n.salary)} al mes</b><p>${n.cooldown > s.day ? "Tras varias ofertas insuficientes, el representante pide esperar hasta el " + U.date(n.cooldown, true) + "." : "El piloto aceptaría este salario con la duración y prima propuestas. Puedes aceptarlo o presentar otra oferta."}</p></div>` : ""}<form id="negotiate-form" data-id="${id}"><div class="form-row"><label class="form-field"><span>Salario mensual ($)</span><input type="number" name="salary" min="200" max="10000" step="1" value="${n?.salary || d.ask}" required></label><label class="form-field"><span>Duración</span><select name="months">${[6, 12, 24].map((m) => `<option value="${m}" ${(n?.months || 12) === m ? "selected" : ""}>${m} meses</option>`).join("")}</select></label></div><label class="form-field"><span>Prima de contratación ($)</span><input name="bonus" type="number" min="0" max="5000" step="1" value="${n?.bonus || 0}" required></label>${G.ContractsUI.driverFields(s, n?.terms)}<div class="onboarding-note"><strong>Pago de nóminas</strong>Los salarios se devengan diariamente y se pagan el día 1. La rescisión suma los meses pactados y lo devengado. Las primas de victoria se pagan al liquidar la carrera.</div><div class="modal-actions"><button class="secondary" data-action="close">Retirarse</button><button class="primary" type="submit">${n ? "Presentar / aceptar oferta" : "Presentar oferta"}</button></div></form>`,
         true,
       );
     },
@@ -705,6 +708,10 @@
         }`,
         true,
       );
+      if (own)
+        document
+          .querySelector(".modal-content")
+          .insertAdjacentHTML("beforeend", G.ContractsUI.driverDetails(s, d));
       if (G.Companies.willing(s, d))
         document
           .querySelector(".modal-content")
@@ -771,6 +778,11 @@
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
       if (!n) return;
+      if (n.target === "contracts") {
+        this.go("contracts");
+        if (n.entityId) G.ContractsUI.detail(this, n.entityId);
+        return;
+      }
       if (n.entityId && n.target === "car") {
         G.BusinessUI.car(this, n.entityId);
         return;
@@ -846,7 +858,11 @@
     submit(form) {
       const values = new FormData(form),
         s = this.state;
-      if (G.BusinessUI.submit(this, form, values)) return;
+      if (
+        G.ContractsUI.submit(this, form, values) ||
+        G.BusinessUI.submit(this, form, values)
+      )
+        return;
       switch (form.id) {
         case "new-game-form": {
           const logo = this.logoData();
@@ -886,6 +902,13 @@
             Number(values.get("salary")),
             Number(values.get("months")),
             Number(values.get("bonus")),
+            {
+              role: String(values.get("contractRole") || "principal"),
+              winBonus: Number(values.get("winBonus") || 0),
+              releaseMonths: Number(values.get("releaseMonths") || 1),
+              promiseShare: Number(values.get("promiseShare") || 0),
+              renewalOption: values.has("renewalOption"),
+            },
           );
           this.persist();
           this.render();
