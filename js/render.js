@@ -386,6 +386,25 @@
     stroke(c, pit, "#a6aa9d", 8, null, false);
     stroke(c, pit, "#515853", 6.4, null, false);
     stroke(c, pit, "#deddd2", 0.14, [2, 2], false);
+    for (let i = 0; i < 10; i++) {
+      const progress = pitStart + (pitEnd - pitStart) * (0.32 + (i / 9) * 0.36),
+        p = worldPoint(
+          index,
+          progress,
+          Math.sin((0.32 + (i / 9) * 0.36) * Math.PI) * 19 * pitSide,
+        );
+      c.save();
+      c.translate(p.x, p.y);
+      c.rotate(p.angle);
+      c.strokeStyle = "#e8e5c980";
+      c.lineWidth = 0.12;
+      c.strokeRect(-2.5, -1.45, 5, 2.9);
+      c.fillStyle = "#b8c8bd";
+      c.font = "bold 1.4px monospace";
+      c.textAlign = "center";
+      c.fillText(String(i + 1).padStart(2, "0"), 0, pitSide * 3.8);
+      c.restore();
+    }
     const garage = worldPoint(index, (pitStart + pitEnd) / 2, pitSide * 33);
     building(
       c,
@@ -541,6 +560,10 @@
               "spin",
               "slide",
               "offtrack",
+              "pit-in",
+              "pit-box",
+              "pit-out",
+              "puncture",
             ].includes(e.type),
         )
         .sort((a, b) => b.time - a.time)[0];
@@ -810,6 +833,83 @@
       }
     }
   }
+  function wetSurface(c, r, index, scene) {
+    const wet = r?.weather?.wetness || 0;
+    if (wet < 0.02) return;
+    stroke(c, scene.points, `rgba(40,66,80,${wet * 0.45})`, 12.2);
+    for (let i = 0; i < scene.points.length; i += 7)
+      if (hash(i + index * 173) > 0.48) {
+        const p = worldPoint(
+          index,
+          scene.points[i].distance,
+          (hash(i + 7) - 0.5) * 8,
+        );
+        c.save();
+        c.translate(p.x, p.y);
+        c.rotate(p.angle);
+        c.fillStyle = `rgba(167,192,198,${wet * 0.28})`;
+        c.beginPath();
+        c.ellipse(
+          0,
+          0,
+          2 + hash(i + 3) * 5,
+          0.3 + hash(i + 5) * 0.5,
+          0,
+          0,
+          TAU,
+        );
+        c.fill();
+        c.restore();
+      }
+  }
+  function pitCrew(c, r, a, index) {
+    if (a.pit?.phase !== "box" || a.speed > 0.5 || a.dnf) return;
+    const p = worldPoint(index, a.progress, a.lateral);
+    c.save();
+    c.translate(p.x, p.y);
+    c.rotate(p.angle);
+    for (const [i, x] of [-1.3, 1.3].entries())
+      for (const side of [-1, 1]) {
+        const y = side * (1.55 + Math.sin(r.time * 4 + i) * 0.05);
+        c.fillStyle = "#10202755";
+        c.beginPath();
+        c.ellipse(x + 0.15, y + 0.1, 0.45, 0.3, 0, 0, TAU);
+        c.fill();
+        c.fillStyle = a.color;
+        c.fillRect(x - 0.28, y - 0.23, 0.55, 0.45);
+        c.fillStyle = "#d5d7c9";
+        c.beginPath();
+        c.arc(x, y, 0.19, 0, TAU);
+        c.fill();
+        c.strokeStyle = "#d9ddd1";
+        c.lineWidth = 0.12;
+        c.beginPath();
+        c.moveTo(x, y);
+        c.lineTo(x + 0.3 * Math.sin(r.time * 3), y - side * 0.5);
+        c.stroke();
+      }
+    c.restore();
+  }
+  function rainfall(c, r, w, h, dpr) {
+    const rain = r?.weather?.rain || 0;
+    if (rain < 0.02) return;
+    c.save();
+    c.fillStyle = `rgba(17,36,52,${rain * 0.15})`;
+    c.fillRect(0, 0, w, h);
+    c.strokeStyle = `rgba(207,230,239,${0.12 + rain * 0.16})`;
+    c.lineWidth = 0.8 * dpr;
+    for (let i = 0; i < Math.ceil(90 * rain); i++) {
+      const x =
+          ((hash(i * 13) * w + r.time * 170 * dpr) % (w + 20 * dpr)) - 10 * dpr,
+        y =
+          ((hash(i * 43) * h + r.time * 390 * dpr) % (h + 30 * dpr)) - 15 * dpr;
+      c.beginPath();
+      c.moveTo(x, y);
+      c.lineTo(x - 4 * dpr, y + 11 * dpr);
+      c.stroke();
+    }
+    c.restore();
+  }
   G.Render = {
     worldPoint,
     metrics: geometry,
@@ -963,6 +1063,7 @@
       c.scale(cam.scale, cam.scale);
       c.translate(-cam.cx, -cam.cy);
       c.drawImage(scene.canvas, b.x, b.y, b.width, b.height);
+      wetSurface(c, r, index, scene);
       effects(c, r, index);
       const cautions =
         r?.cautions?.filter((zone) => zone.until > r.time) ||
@@ -987,6 +1088,7 @@
               : (a.lane || 0) * scene.factor,
             p = worldPoint(index, a.progress, lateral);
           carCanvas(c, a, p, cam.scale, logo, r.entrants.indexOf(a) + 1);
+          pitCrew(c, r, a, index);
           if (mode === "overview") {
             c.fillStyle = a.companyId === "player" ? "#f45a3e" : a.color;
             c.strokeStyle = "#eef3e2";
@@ -1035,6 +1137,7 @@
         c.restore();
       }
       c.restore();
+      rainfall(c, r, w, h, dpr);
       // Un pequeño mapa de situación permite leer la escala sin alejar la acción.
       if (r && mode !== "overview") {
         const mw = 145 * dpr,

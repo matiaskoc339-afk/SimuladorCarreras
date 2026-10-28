@@ -454,11 +454,14 @@
         a.components[k] = Math.max(0, a.components[k] - moved * rate * load);
       a.components.tires = a.tires;
       a.condition = this.summary(a.components);
-      for (const id of Object.keys(a.partWear))
+      for (const id of Object.keys(a.partWear)) {
+        if (a.compound && a.compound !== "road" && id === a.roadTirePartId)
+          continue;
         a.partWear[id] = Math.max(
           0,
           a.partWear[id] - moved * 0.00045 * load * (1 + a.stress * 0.5),
         );
+      }
     },
     validate(s) {
       G.assert(

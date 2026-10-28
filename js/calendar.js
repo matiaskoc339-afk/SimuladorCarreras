@@ -14,6 +14,7 @@
         if (due && due.day <= s.day) return { blocked: true, event: due };
         s.day++;
         G.Economy.daily(s);
+        G.RaceWeekend.daily(s);
         G.Contracts.daily(s);
         G.Drivers.daily(s);
         G.AI.daily(s);

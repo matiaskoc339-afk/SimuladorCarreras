@@ -190,6 +190,7 @@
       d.training = null;
       for (const e of s.season.events)
         if (e.status === "scheduled" && e.entry?.driverId === id) {
+          G.RaceWeekend.releaseEntry(s, e);
           e.entry = null;
           G.news(
             s,
@@ -244,8 +245,10 @@
             d.id,
           );
           for (const e of s.season.events)
-            if (e.status === "scheduled" && e.entry?.driverId === d.id)
+            if (e.status === "scheduled" && e.entry?.driverId === d.id) {
+              G.RaceWeekend.releaseEntry(s, e);
               e.entry = null;
+            }
         }
       }
       if (

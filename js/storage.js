@@ -52,6 +52,7 @@
         ...s.drivers,
         ...s.cars,
         ...s.season.events,
+        ...(s.raceSupplies ? s.raceSupplies.sets : []),
         ...(s.commercial
           ? [
               ...s.commercial.providers,
@@ -358,7 +359,12 @@
             (a.morale === undefined ||
               (finite(a.morale) && a.morale >= 0 && a.morale <= 100)) &&
               finite(a.lateral) &&
-              Math.abs(a.lateral) <= 15 &&
+              Math.abs(a.lateral) <=
+                (r.weekendVersion &&
+                a.pit &&
+                !["none", "queued"].includes(a.pit.phase)
+                  ? 25
+                  : 15) &&
               finite(a.headingSlip) &&
               Math.abs(a.headingSlip) < 10 &&
               finite(a.incidentStarted) &&
@@ -386,6 +392,7 @@
             "Dinámica del vehículo inválida.",
           );
       }
+      G.RaceWeekend.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);
@@ -435,7 +442,11 @@
         "Las versiones del sobre y de la partida no coinciden.",
       );
       return {
-        state: this.validate(G.Contracts.initialize(G.World.migrate(state))),
+        state: this.validate(
+          G.RaceWeekend.initialize(
+            G.Contracts.initialize(G.World.migrate(state)),
+          ),
+        ),
         savedAt: e.savedAt,
       };
     },

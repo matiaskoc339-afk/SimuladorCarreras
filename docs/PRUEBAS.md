@@ -1,3 +1,30 @@
+# Validación de la versión 0.5
+
+`npm test`: 112 escenarios aprobados, sin fallos ni omisiones. Conserva los 89 anteriores y añade 23 del fin de semana. El recorrido nuevo de navegador se añade como sexto, conservando los cinco previos.
+
+- Compra/reserva/uso y reutilización del mismo juego físico; stock y capacidad; fondos insuficientes sin cobros parciales.
+- Reposición con fondos reales una vez por fecha, sin reponer al cargar.
+- Grip y desgaste según compuesto, agua y temperatura; lluvia y secado progresivos.
+- Orden/cancelación, reserva de combustible, carril, detención sin progreso, servicio, coste y salida.
+- Reparación limitada sin empeorar sistemas sanos, piezas sin rejuvenecer, velocidad de boxes y sanción única.
+- Peso de combustible, consumo y ahorro, abandono al agotar combustible, pinchazo y sustitución.
+- VSC por obstrucción múltiple y fin del procedimiento.
+- Guardado durante el servicio con factura, reloj y resultado idénticos.
+- Grabación adaptativa acotada, búsqueda sin alterar estado/RNG y tiempos finales oficiales.
+- Carrera 0.4 auténtica con resultados y estado final exactos, incluida economía y contratos.
+- Rechazo de clima, juego, parada o fotograma corrupto; gomas de calle pinchadas sin reparación gratis; descarte sin ingresos ficticios.
+- Última entrada/capacidad de depósito, devolución de reservas al rescindir piloto y reintegro del repostaje no entregado.
+
+El nuevo recorrido Chromium usa inscripción con gomas y coste, pide cambio/reparación/repostaje, guarda estando detenido y reanuda sin repetir la factura. Controla una secuencia de lluvia para aislar el efecto visible, verifica el visor instantáneo sin mutar la partida, termina con el mismo motor, conserva el neumático de calle, reproduce y recarga la grabación final, descarta un juego e importa una carrera 0.4. Comprueba carrera y visor a 1440, 1024 y 390 px sin desbordamiento ni errores JavaScript. Capturas `test-results/race05-*.png`.
+
+Una parrilla válida de 30 coches completó 269,2 segundos simulados en unos 7,6 segundos de CPU: seis paradas de IA, dos transiciones de clima, 75 adelantamientos, 59 contactos y un choque. Terminaron los 30. La grabación quedó en 271 fotogramas adaptados y el guardado completo ocupó alrededor de 0,6 MB; validación antes/durante/después correcta. Son observaciones de este escenario, no el balance final ni una promesa de rendimiento universal.
+
+Las repeticiones son interpolaciones de muestras de la carrera real; solo se conserva la última grabación. El modelo sigue siendo 2D con procedimientos simplificados de Copa Club. Personal e instalaciones continúan en 0.6; no se presentan como completados por esta actualización.
+
+---
+
+## Registro histórico de la 0.4
+
 # Validación de la versión 0.4
 
 `npm test`: 89 escenarios aprobados, sin fallos ni omisiones. El motor conserva los 65 anteriores y añade 24 pruebas de contratos/economía. `npm run test:browser` incorpora un quinto recorrido, `browser-contracts.cjs`, y mantiene los cuatro anteriores.

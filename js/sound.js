@@ -126,7 +126,10 @@
         0.12,
       );
       this.skid.gain.setTargetAtTime(
-        !a.dnf && a.speed > 2 && Math.abs(a.headingSlip || 0) > 0.13
+        !a.dnf &&
+          (!a.pit || ["none", "queued"].includes(a.pit.phase)) &&
+          a.speed > 2 &&
+          Math.abs(a.headingSlip || 0) > 0.13
           ? 0.025
           : 0,
         t,

@@ -174,6 +174,7 @@
     G.World.initialize(s);
     G.Workshop.initialize(s);
     G.Contracts.initialize(s);
+    G.RaceWeekend.initialize(s);
     return s;
   };
   G.nextEvent = (s) => s.season.events.find((e) => e.status === "scheduled");

@@ -267,7 +267,12 @@
     },
     order(s, mode) {
       G.assert(
-        ["attack", "balanced", "save"].includes(mode),
+        [
+          "attack",
+          "balanced",
+          "save",
+          ...(s.race?.weekendVersion ? ["fuel", "defend"] : []),
+        ].includes(mode),
         "Orden inválida.",
       );
       const r = s.race,
@@ -286,6 +291,8 @@
             attack: "Ataca. Usaremos más neumático para ganar ritmo.",
             balanced: "Entendido. Mantendré un ritmo constante.",
             save: "Recibido. Reduciré riesgos y cuidaré las gomas.",
+            fuel: "Entendido. Levantaré antes para ahorrar combustible.",
+            defend: "Recibido. Protegeré mi posición sin movimientos bruscos.",
           }[mode],
       });
       r.messages.length = Math.min(r.messages.length, 30);
@@ -471,6 +478,13 @@
         points: a.dnf ? 0 : G.Data.points[i] || 0,
         prize: a.dnf ? 250 : G.Data.prizes[i] || 500,
         bestLap: a.bestLap,
+        ...(r.weekendVersion
+          ? {
+              compound: a.compound,
+              pitStops: a.pitStops,
+              penalty: a.totalPenalty,
+            }
+          : {}),
         ...(r.racingVersion === 1
           ? {
               incidents: a.collisionCount,
@@ -650,11 +664,14 @@
     },
     underYellow(r, a) {
       const length = G.Data.tracks[r.track].length;
-      return (r.cautions || []).some(
-        (c) =>
-          c.until > r.time &&
-          this.relative(a, { progress: c.progress }, length) > -40 &&
-          this.relative(a, { progress: c.progress }, length) < 145,
+      return (
+        !!(r.weekendVersion && r.safety.active) ||
+        (r.cautions || []).some(
+          (c) =>
+            c.until > r.time &&
+            this.relative(a, { progress: c.progress }, length) > -40 &&
+            this.relative(a, { progress: c.progress }, length) < 145,
+        )
       );
     },
     damageCar(
@@ -752,7 +769,7 @@
       const length = G.Data.tracks[r.track].length,
         cars = r.entrants.filter(
           (a) =>
-            active(a) ||
+            (active(a) && (!r.weekendVersion || G.RaceWeekend.onTrack(a))) ||
             (a.dnf && Math.abs(a.lateral) < r.trackWidth / 2 + 0.3),
         );
       // Una corrección puede empujar un tercer coche: vuelve a separar hasta
@@ -881,7 +898,9 @@
       }
     },
     recordPasses(r) {
-      const cars = r.entrants.filter(active);
+      const cars = r.entrants.filter(
+        (a) => active(a) && (!r.weekendVersion || G.RaceWeekend.onTrack(a)),
+      );
       for (let i = 0; i < cars.length; i++)
         for (let j = i + 1; j < cars.length; j++) {
           const a = cars[i],
@@ -933,7 +952,10 @@
         r.step++;
         r.cautions = r.cautions.filter((c) => c.until > r.time);
         const wasYellow = r.flag === "yellow";
-        r.flag = r.cautions.length ? "yellow" : "green";
+        r.flag =
+          r.cautions.length || (r.weekendVersion && r.safety.active)
+            ? "yellow"
+            : "green";
         if (wasYellow && r.flag === "green")
           this.event(
             r,
@@ -942,7 +964,13 @@
             [],
             r.yellowProgress,
           );
+        if (r.weekendVersion) G.RaceWeekend.step(s, r);
         for (const retired of r.entrants.filter((a) => a.dnf)) {
+          if (
+            r.weekendVersion &&
+            !["none", "queued"].includes(retired.pit.phase)
+          )
+            continue;
           const edge =
             retired.lateral >= 0
               ? r.trackWidth / 2 + 1.2
@@ -957,12 +985,13 @@
         const snapshots = r.entrants
           .filter(
             (a) =>
-              active(a) ||
+              (active(a) && (!r.weekendVersion || G.RaceWeekend.onTrack(a))) ||
               (a.dnf && Math.abs(a.lateral) < r.trackWidth / 2 + 0.3),
           )
           .map((a) => ({ ...a, stats: a.stats, components: a.components }));
         for (const a of r.entrants) {
           if (!active(a)) continue;
+          if (r.weekendVersion && G.RaceWeekend.drivePit(s, r, a, dt)) continue;
           const me = snapshots.find((x) => x.carId === a.carId);
           const ahead = snapshots
             .filter((b) => b.carId !== a.carId)
@@ -995,7 +1024,9 @@
           const mech = (0.77 + a.condition * 0.0023) * G.Workshop.mechanical(a);
           const grip = a.grip * (0.85 + a.components.suspension * 0.0015),
             brakePower =
-              (4 + a.brakes / 25) * (0.75 + a.components.brakes * 0.0025);
+              (4 + a.brakes / 25) *
+              (0.75 + a.components.brakes * 0.0025) *
+              (r.weekendVersion ? G.RaceWeekend.grip(r, a) : 1);
           const point = this.point(r.track, a.progress),
             curve = signedAngle(
               this.point(r.track, a.progress + 20).angle,
@@ -1009,7 +1040,8 @@
               cornerLimit *
               (0.78 + grip / 260) *
               (0.82 + a.stats.control / 300) *
-              (0.85 + a.tires * 0.0015);
+              (0.85 + a.tires * 0.0015) *
+              (r.weekendVersion ? Math.sqrt(G.RaceWeekend.grip(r, a)) : 1);
             limit = Math.min(
               limit,
               Math.sqrt(cornerSpeed * cornerSpeed + 2 * brakePower * look),
@@ -1113,6 +1145,10 @@
             lateralTarget = beside.lateral + side * buffer * care;
           }
           if (yellow) target = Math.min(target, front?.b.dnf ? 14 : 24);
+          if (r.weekendVersion)
+            target = G.RaceWeekend.target(r, a, target, brakePower);
+          if (r.weekendVersion && a.mode === "defend" && rear && rear.gap < 25)
+            lateralTarget += Math.sign(curve) * 0.55;
           const beforeLateral = a.lateral;
           if (a.incident && r.time >= a.incidentUntil) {
             a.incident = null;
@@ -1155,7 +1191,12 @@
           const accel =
             a.acceleration *
             (0.85 + a.components.engine * 0.0015) *
-            Math.min(6, (a.hp * 500) / (a.weight * Math.max(a.speed, 12)));
+            Math.min(
+              6,
+              (a.hp * 500) /
+                ((a.weight + (r.weekendVersion ? a.fuel * 0.75 : 0)) *
+                  Math.max(a.speed, 12)),
+            );
           a.speed = Math.max(
             0,
             a.speed + G.clamp(target - a.speed, -brakePower * dt, accel * dt),
@@ -1169,9 +1210,11 @@
                 0.001 *
                 (a.mode === "attack" ? 2 : a.mode === "save" ? 0.55 : 1) *
                 (1.3 - a.stats.tires / 170) *
-                a.tireWear,
+                a.tireWear *
+                (r.weekendVersion ? G.RaceWeekend.wearFactor(r, a) : 1),
           );
           G.Workshop.wear(a, moved, dt, a.braking ? 1 : 0);
+          if (r.weekendVersion) G.RaceWeekend.moved(s, r, a, moved, dt);
           const pressure =
             front && front.gap < 12 ? 1 : rear && rear.gap < 10 ? 0.7 : 0;
           if (
@@ -1179,7 +1222,10 @@
             r.time > a.errorCooldown &&
             a.speed > 15 &&
             corner > 0.25 &&
-            G.random(r) < this.errorRate(a, corner, pressure) * dt
+            G.random(r) <
+              this.errorRate(a, corner, pressure) *
+                dt *
+                (r.weekendVersion ? G.RaceWeekend.errorFactor(r, a) : 1)
           )
             this.loseControl(r, a, corner);
           if (
@@ -1231,6 +1277,7 @@
           for (const a of r.entrants.filter(active))
             this.retire(r, a, "No puede completar la distancia de carrera");
         r.finished = r.entrants.every((a) => a.finishTime !== null || a.dnf);
+        if (r.weekendVersion) G.RaceWeekend.afterStep(r);
       }
     },
   });

@@ -166,6 +166,7 @@
       this.render();
     },
     close() {
+      G.RaceUI.closeReplay(this);
       document.getElementById("modal-root").innerHTML = "";
       this.editor = null;
     },
@@ -220,6 +221,7 @@
     },
     action(name, data) {
       if (
+        G.RaceUI.action(this, name, data) ||
         G.ContractsUI.action(this, name, data) ||
         G.WorkshopUI.action(this, name, data) ||
         G.BusinessUI.action(this, name, data)
@@ -737,6 +739,7 @@
         `<p class="eyebrow gold">RONDA ${e.round} / 6 · ${U.date(e.day)} · ${t.laps} VUELTAS</p>${e.entry ? `<div class="onboarding-note"><strong>Inscripción confirmada</strong>${U.escape(s.drivers.find((d) => d.id === e.entry.driverId)?.name || "Piloto no disponible")} · ${U.escape(s.cars.find((c) => c.id === e.entry.carId)?.model || "Coche no disponible")} · Inscripción y transporte pagados: $370</div>${due ? `<div class="modal-actions">${U.button("Renunciar a la ronda", "skip-race", "secondary", `data-id="${id}"`)}${U.button("Ir a la parrilla " + U.icon("flag"), "start-race", "primary", `data-id="${id}"`)}</div>` : `<p class="fine-print">Avanza hasta la fecha de la prueba. El calendario se detendrá para preparar la salida. No puedes sustituir un coche o piloto sin retirar su inscripción.</p><div class="modal-actions">${U.button("Volver al calendario", "close", "primary")}</div>`}` : d.length && cars.length ? `<form id="entry-form" data-id="${id}"><label class="form-field"><span>Piloto</span><select name="driver">${d.map((d) => `<option value="${d.id}">${U.escape(d.name)} · Fatiga ${Math.round(d.fatigue)} %</option>`).join("")}</select></label><label class="form-field"><span>Vehículo</span><select name="car">${cars.map((c) => `<option value="${c.id}">${c.brand} ${c.model} · ${Math.round(c.condition)} % ${c.repair ? "(EN REVISIÓN)" : ""}</option>`).join("")}</select></label><p class="fine-print">Inscripción: $250 · Transporte: $120 · Total: $370. Estado mínimo 45 %, neumáticos 20 % y fatiga inferior a 90 %. La selección quedará vinculada a este evento.</p><div class="modal-actions">${due ? U.button("Renunciar", "skip-race", "secondary", `data-id="${id}"`) : U.button("Cancelar", "close", "secondary")}<button class="primary" type="submit">Confirmar inscripción · $370</button></div></form>` : `<p>${!cars.length ? "Necesitas un vehículo propio sin anuncio de venta. Consulta el mercado o retira tu anuncio antes de inscribirte." : "Necesitas contratar un piloto antes de participar. Hay currículums disponibles en la sala de pilotos."}</p><div class="modal-actions">${due ? U.button("Renunciar a la ronda", "skip-race", "secondary", `data-id="${id}"`) : ""}<button class="primary" data-go="${!cars.length ? "market" : "team"}">${!cars.length ? "Consultar mercado →" : "Buscar un piloto →"}</button></div>`}`,
         true,
       );
+      G.RaceUI.entry(this, e);
       if (e.entry)
         document
           .querySelector(".modal-content")
@@ -771,9 +774,10 @@
         Math.floor(n / 60) + ":" + (n % 60).toFixed(2).padStart(5, "0");
       U.modal(
         "Bandera a cuadros.",
-        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${this.raceRecap(e)}${s.season.phase === "complete" ? '<p class="fine-print">Temporada completada. La clasificación y la prima final ya están registradas en tu archivo histórico.</p>' : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
+        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${this.raceRecap(e)}${s.season.phase === "complete" ? '<p class="fine-print">Temporada completada. La clasificación y la prima final ya están registradas en tu archivo histórico.</p>' : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
         true,
       );
+      G.RaceUI.results(this, e);
     },
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
@@ -859,6 +863,7 @@
       const values = new FormData(form),
         s = this.state;
       if (
+        G.RaceUI.submit(this, form, values) ||
         G.ContractsUI.submit(this, form, values) ||
         G.BusinessUI.submit(this, form, values)
       )
@@ -930,7 +935,10 @@
         }
         case "entry-form": {
           const id = form.dataset.id;
-          G.Race.register(s, id, values.get("driver"), values.get("car"));
+          G.Race.register(s, id, values.get("driver"), values.get("car"), {
+            compound: String(values.get("compound") || "road"),
+            fuel: Number(values.get("fuel") || 3),
+          });
           this.persist();
           this.render();
           this.event(id);
@@ -1028,6 +1036,7 @@
           this.results(id);
         }
       }
+      G.RaceUI.frame(time);
       if (!s?.race) G.Sound.silence();
       requestAnimationFrame((t) => this.frame(t));
     },
