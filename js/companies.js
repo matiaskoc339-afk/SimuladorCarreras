@@ -10,7 +10,7 @@
         G.Staff.monthly(s, id) +
         G.Contracts.nextPayments(s, id) +
         G.ownedDrivers(s, id).reduce(
-          (n, d) => n + d.contract.salary + (d.training ? 540 : 0),
+          (n, d) => n + G.Pay.monthly(d.contract) + (d.training ? 540 : 0),
           0,
         )
       );
@@ -58,10 +58,13 @@
     },
     fee(s, d) {
       if (d.contract?.clauses)
-        return Math.round(d.contract.salary * d.contract.clauses.releaseMonths);
+        return Math.round(
+          G.Pay.monthly(d.contract) * d.contract.clauses.releaseMonths,
+        );
       return d.contract
         ? Math.round(
-            d.contract.salary * G.clamp((d.contract.end - s.day) / 90, 1, 3),
+            G.Pay.monthly(d.contract) *
+              G.clamp((d.contract.end - s.day) / 90, 1, 3),
           )
         : 0;
     },
@@ -105,7 +108,7 @@
         Number.isInteger(salary) &&
           salary >= this.salary(d) &&
           salary <= 10000 &&
-          [6, 12, 24].includes(months) &&
+          G.Pay.durations(s).includes(months) &&
           Number.isInteger(bonus) &&
           bonus >= 0 &&
           bonus <= 5000,
@@ -127,6 +130,7 @@
         G.Professionals.available(s, d),
         "Piloto no disponible médicamente o currículum caducado.",
       );
+      G.Challenge.requireDriver(s, d, buyerId);
       const fee = agreedFee ?? this.fee(s, d),
         cost = fee + bonus;
       G.assert(
@@ -169,6 +173,7 @@
         G.Professionals.care(s, d.id).recruited = true;
       d.contract = {
         salary,
+        ...G.Pay.fields(d),
         bonus,
         start: s.day,
         end: s.day + months * 30,
@@ -200,7 +205,7 @@
         s,
         "Fichajes",
         `${d.name} ficha por ${buyer.name}.`,
-        `${seller ? "Llega de " + seller.name + " por $" + fee + " de compensación." : "Firma como agente libre."} Percibirá $${salary} al mes y una prima de $${bonus}. Se ha conservado su historial deportivo.`,
+        `${seller ? "Llega de " + seller.name + " por $" + fee + " de compensación." : "Firma como agente libre."} Percibirá $${salary}${G.Pay.daily(d) ? "/día" : " al mes"} y una prima de $${bonus}. Se ha conservado su historial deportivo.`,
         "driver",
         id,
       );

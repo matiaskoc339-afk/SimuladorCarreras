@@ -18,7 +18,7 @@ const fs = require("node:fs");
     await page.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     // Crear la partida por API: el recorrido de creación/dibujo ya tiene su prueba propia.
     await page.evaluate(() => {
-      const s = RCS.createGame("Aster Business", "", 320);
+      const s = RCS.createLegacyGame("Aster Business", "", 320);
       RCS.Storage.save(1, s);
       RCS.App.setState(s, 1);
     });

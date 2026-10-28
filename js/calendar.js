@@ -25,6 +25,7 @@
         G.Contracts.daily(s);
         G.Drivers.daily(s);
         G.Operations.daily(s);
+        G.Challenge.daily(s);
         G.AI.daily(s);
         G.Contracts.aiDaily(s);
         G.Economy.assess(s);

@@ -1,6 +1,8 @@
-# Estado del prompt maestro en la versión 0.6.3
+# Estado del prompt maestro en la versión 0.6.4
 
 Esta revisión sustituye la lista de pendientes de la 0.5. Se conserva el [análisis histórico completo](ANALISIS_MECANICAS_0_5.md), el [prompt original](PROMPT_MAESTRO.md) y las [reglas añadidas sobre especialistas](REGLAS_ESPECIALISTAS.md). La entrega 0.6.3 incorpora gerencia con políticas reales y atención médica; no convierte los otros sistemas pendientes en funciones implementadas.
+
+La 0.6.4 añade variedad de 24 modelos/retratos, generación inicial modesta con progresión, salarios diarios, contratación con presupuesto visible, marcas/desgaste de neumáticos y decisiones de conducción anticipadas. [Reglas y límites](EQUILIBRIO_0_6_4.md). Las filas siguientes conservan la distinción entre sistemas completos en su alcance actual y requisitos aún pendientes.
 
 ## Las trece áreas del análisis anterior
 
@@ -26,7 +28,7 @@ La progresión, las instalaciones y las relaciones laborales ya no deben figurar
 
 “Funcional” describe un ciclo jugable concreto; no significa catálogo o balance definitivos. “Parcial” identifica requisitos aún abiertos. “Transversal” es una condición de desarrollo.
 
-| Nº  | Apartado                          | Estado 0.6.3                                                                                                                                                 |
+| Nº  | Apartado                          | Estado 0.6.4                                                                                                                                                 |
 | --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1   | Concepto general                  | Parcial: empresa jugable y progresión; falta crecimiento hasta categorías internacionales y generaciones.                                                    |
 | 2   | Tecnología y arquitectura         | Funcional en el alcance actual: HTML/CSS/JS local, sin dependencias de ejecución ni recursos remotos.                                                        |
@@ -37,7 +39,7 @@ La progresión, las instalaciones y las relaciones laborales ya no deben figurar
 | 7   | Pilotos                           | Parcial: atributos, contratos, fatiga, estrés, potencial, formación, lesiones y recuperación; falta evolución generacional y mayor profundidad individual.   |
 | 8   | Negociación y contratos           | Parcial: ofertas, contraofertas, cláusulas, promesas, renovación y rescisión; representantes y demandas más amplias pendientes.                              |
 | 9   | Empleados y delegación            | Parcial: siete roles, trabajo, niveles, relaciones y políticas reales. Faltan otras profesiones del catálogo.                                                |
-| 10  | Vehículos                         | Parcial: cuatro modelos con unidades persistentes; falta variedad para categorías superiores y evolución histórica.                                          |
+| 10  | Vehículos                         | Parcial: 24 modelos y variantes visuales con unidades persistentes; faltan categorías superiores y evolución histórica.                                      |
 | 11  | Taller                            | Parcial: 14 mejoras, inventario, requisitos, montaje, desgaste y reparación; faltan reglajes y despiece avanzado.                                            |
 | 12  | Personalización visual            | Parcial: logotipo/color; editor de libreas completo pendiente.                                                                                               |
 | 13  | Daños y mantenimiento             | Funcional en siete componentes, desgaste y servicios con plazo, diagnóstico y mantenimiento delegado; historial avanzado y averías por repuestos pendientes. |
@@ -79,6 +81,6 @@ La progresión, las instalaciones y las relaciones laborales ya no deben figurar
 4. **Mercado y personalización:** subastas/importación, precios dinámicos y libreas persistentes en pista.
 5. **Nuevas categorías y evolución histórica:** catálogo, formatos, reglamentos, pilotos y empresas por generaciones.
 
-Además, sigue pendiente conectar más atributos a contextos deportivos verificables: en carrera, frenada del piloto, concentración y trabajo en equipo todavía carecen de los efectos directos previstos. La resistencia sí interviene en la fatiga de las prácticas. No se consideran resueltos por mostrar sus barras.
+La 0.6.4 conecta también frenada, concentración, trabajo en equipo y resistencia a consecuencias de carrera, además de edad y experiencia. Hay pruebas físicas comparadas de frenada/control y reanudación determinista. Queda ampliar contextos y validar el equilibrio con categorías superiores; mostrar una barra no se considera por sí solo implementación.
 
 Los [resultados de validación](PRUEBAS.md) distinguen los recorridos reales y los escenarios controlados. Las pruebas actuales no demuestran equilibrio a largo plazo ni la existencia de las áreas marcadas como pendientes.

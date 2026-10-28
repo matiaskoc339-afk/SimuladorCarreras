@@ -18,7 +18,7 @@ const fs = require("node:fs");
     await page.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     const info = await page.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Aster Engineering", "", 403),
+        s = G.createLegacyGame("Aster Engineering", "", 403),
         d = s.drivers.find((d) => !d.companyId);
       G.Drivers.offer(s, d.id, d.ask, 12, 0);
       G.Storage.save(1, s);

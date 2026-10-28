@@ -1,6 +1,6 @@
 # Plan de desarrollo
 
-La entrega actual es **0.6.3 — Gerencia, delegación y atención médica**, conservando las carreras avanzadas, los contratos y el rediseño. La etapa de expansión empresarial está en curso: siete especialidades de personal, niveles/estrés, relaciones salariales, boxes manuales, pista de entrenamiento, CVs, estratega automático y gerencia con políticas/presupuestos reales ya funcionan. Hay tratamientos de lesiones con médico. Academia, investigación y el resto del catálogo de empleados siguen pendientes. No se consideran implementados por disponer de campos de estado.
+La entrega actual es **0.6.4 — Variedad, sueldos diarios y conducción más exigente**, conservando las carreras avanzadas, los contratos y el rediseño. La etapa de expansión empresarial está en curso: siete especialidades de personal, niveles/estrés, relaciones salariales, boxes manuales, pista de entrenamiento, CVs, estratega automático y gerencia con políticas/presupuestos reales ya funcionan. Hay tratamientos de lesiones con médico. Academia, investigación y el resto del catálogo de empleados siguen pendientes. No se consideran implementados por disponer de campos de estado.
 
 La [comparación de los 42 apartados](ANALISIS_MECANICAS.md) detalla las mecánicas funcionales, parciales y pendientes frente al [prompt maestro original](PROMPT_MAESTRO.md). El alcance de una entrega no implica que todos los requisitos de su área estén completos.
 
@@ -29,3 +29,5 @@ El archivo conserva ya pilotos y resultados de cada ronda de las nuevas temporad
 - Las nuevas versiones deben validar/migrar el esquema sin regenerar el mundo del jugador.
 - Probar contratos, mercado, taller, carrera, rivales, noticias, guardado, patrocinio condicionado, evolución y bancarrota conforme se incorporan. La compraventa básica (B) se valida desde 0.2 y piezas/montaje (C) desde 0.3; patrocinio condicionado (H) se valida desde 0.4.
 - Retener la especificación íntegra del usuario; el desarrollo incremental no elimina mecánicas.
+
+La 0.6.4 revisa economía y conducción del alcance actual: inicio de $4.200, generación modesta y progresiva, salarios diarios, contratación clara, 24 modelos, retratos procedurales, gomas por marcas, mayor desgaste y decisiones anticipadas. No cierra academia, I+D ni las demás áreas pendientes.

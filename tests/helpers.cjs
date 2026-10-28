@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-function engine() {
+function engine({ current = false } = {}) {
   const store = new Map();
   const context = vm.createContext({
     console,
@@ -23,6 +23,7 @@ function engine() {
   });
   for (const f of [
     "data",
+    "content",
     "core",
     "parts",
     "workshop",
@@ -41,6 +42,10 @@ function engine() {
     "practice",
     "pit-crew",
     "operations",
+    "challenge",
+    "rubber",
+    "racecraft",
+    "art",
     "calendar",
     "storage",
   ])
@@ -49,6 +54,7 @@ function engine() {
       context,
       { filename: f + ".js" },
     );
+  if (!current) context.RCS.createGame = context.RCS.createLegacyGame;
   return { G: context.RCS, store };
 }
 module.exports = { engine };

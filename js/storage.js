@@ -260,7 +260,15 @@
           color(c.color) &&
             c.brand === G.Data.models[c.modelIndex].brand &&
             c.model === G.Data.models[c.modelIndex].model &&
-            ["hatch", "coupe", "roadster"].includes(c.shape),
+            [
+              "hatch",
+              "coupe",
+              "roadster",
+              "compact",
+              "targa",
+              "sedan",
+              "wagon",
+            ].includes(c.shape),
           "Identidad de vehículo inválida.",
         );
       G.assert(
@@ -420,6 +428,9 @@
       G.Practice.validate(s);
       G.PitCrew.validate(s);
       G.Operations.validate(s);
+      G.Challenge.validate(s);
+      G.Rubber.validate(s);
+      G.Racecraft.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);

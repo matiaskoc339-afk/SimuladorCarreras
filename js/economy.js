@@ -144,8 +144,11 @@
         for (const d of G.ownedDrivers(s, c.id)) {
           if (d.contract) {
             d.contract.accrued =
-              (d.contract.accrued || 0) + d.contract.salary / 30;
-            if (date.getUTCDate() === 1) {
+              (d.contract.accrued || 0) +
+              (G.Pay.daily(d.contract)
+                ? d.contract.salary
+                : d.contract.salary / 30);
+            if (G.Pay.daily(d.contract) || date.getUTCDate() === 1) {
               this.transact(
                 s,
                 c.id,

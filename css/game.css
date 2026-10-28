@@ -9758,3 +9758,209 @@ input[type="range"] {
   flex: 0 0 17px;
   appearance: auto;
 }
+/* Negociación con costes diarios, contrato completo y presupuesto legible. */
+.deal-identity {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+.deal-identity > .portrait {
+  width: 92px;
+  height: 108px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.deal-identity h3 {
+  margin: 8px 0;
+  font-size: 25px;
+}
+.deal-identity p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.deal-identity small {
+  display: block;
+  color: var(--muted);
+  margin-top: 7px;
+  font-size: 12px;
+}
+.deal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(230px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.deal-step {
+  background: #f2f5ef;
+  border: 1px solid var(--line);
+  padding: 21px;
+  margin-bottom: 18px;
+  border-radius: 6px;
+}
+.deal-step > .eyebrow {
+  display: block;
+  margin-bottom: 18px;
+}
+.deal-step .form-field {
+  margin-bottom: 16px;
+}
+.deal-summary {
+  background: #e8efe4;
+  padding: 22px;
+  border: 1px solid #ccdac5;
+  border-radius: 6px;
+}
+.deal-summary h3 {
+  font-size: 17px;
+  margin-bottom: 18px;
+}
+#deal-preview > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid #d0dccb;
+  padding: 12px 0;
+  font-size: 12px;
+}
+#deal-preview > div b {
+  flex-shrink: 0;
+  font-family: var(--mono);
+}
+.deal-summary .fine-print {
+  margin-top: 18px;
+}
+.deal-verdict {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 16px 0 0;
+}
+.deal-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.deal-shortcuts button {
+  font-size: 11px;
+  padding: 9px 11px;
+}
+.deal-clauses {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px;
+}
+.deal-clauses > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+.deal-clauses summary span {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.deal-clauses[open] > summary {
+  margin-bottom: 22px;
+}
+.deal-staff-level {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 96px;
+  background: #dbe7d4;
+  color: #486745;
+  border-radius: 5px;
+  font: 23px var(--mono);
+}
+.driver-stage-note {
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding: 12px 20px;
+  margin: 0;
+}
+.racecraft-status {
+  padding: 12px;
+  border: 1px solid #4a6358;
+  background: #21372e;
+  color: #e3ead8;
+  border-radius: 4px;
+}
+.racecraft-status b {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.racecraft-status span {
+  font-size: 11px;
+  color: #b0c4b5;
+  line-height: 1.7;
+}
+@media (max-width: 700px) {
+  .deal-layout {
+    grid-template-columns: 1fr;
+  }
+  .deal-identity {
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .deal-identity > .portrait {
+    width: 70px;
+    height: 83px;
+  }
+  .deal-identity h3 {
+    font-size: 21px;
+  }
+  .deal-step,
+  .deal-summary {
+    padding: 17px;
+  }
+  .deal-shortcuts button {
+    flex: 1 1 40%;
+  }
+}
+/* La telemetría admite diagnóstico y decisiones sin comprimir el piloto ni el velocímetro. */
+.race-page .telemetry #live-telemetry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  align-items: start;
+  gap: 16px;
+  padding: 18px;
+}
+.race-page .telemetry-driver {
+  min-width: 0;
+  grid-column: 1;
+}
+.race-page .live-speed {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  margin: 0;
+}
+.race-page .telemetry-bars {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.race-page .telemetry-bars .race-mechanics {
+  grid-column: 1 / -1;
+}
+.race-page .staff-race-support,
+.race-page .racecraft-status {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.race-page .staff-race-support {
+  background: #203333;
+  color: #d8e3d8;
+  border: 1px solid #39534e;
+  padding: 12px;
+}

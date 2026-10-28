@@ -1,3 +1,30 @@
+# Validación de la versión 0.6.4 · variedad, dificultad y conducción
+
+`npm test`: **250 escenarios aprobados**, sin fallos ni omisiones: 230 regresiones anteriores y 20 casos de las reglas actuales. `npm run test:browser`: **once recorridos**; los diez anteriores y `browser-challenge.cjs`. `npm run test:balance`: temporada completa reproducible, sin inyectar financiación ni resultados. Juego y pruebas de motor sin dependencias de ejecución. La apertura `file://` sigue omitida por la política de Chromium del entorno; HTTP verificado.
+
+Los casos nuevos prueban inicio de $4.200 y doce candidatos de valoración 10–25 en 30 semillas; determinismo; 500 nombres/identidades/retratos únicos, edad, nacionalidad y temperamento; ausencia de consumo de RNG al dibujar; progresión y curva salarial; 24 modelos con variantes y doce familias de ilustraciones; débito diario real de piloto, mecánico y operación; especialista NV 6 motivado por encima de $800/día y acceso por nivel; indemnización con conversión de meses; caducidad y reposición de CVs; 17 opciones de gomas, precios y duración; guardado/reanudación exactos con marcas y cerebro; desgaste y pérdida de agarre; efecto de edad/experiencia/frenada/atención/resistencia y riesgo; orientación continua en seis trazados; huella de tribunas fuera de todos los segmentos y boxes; carrera completa con disputas, desgaste, paradas y repetición; rechazos de estado corrupto; y reservas, renovación con aumento y sustitución fiscal de pilotos rivales pagando costes reales. La prueba física comparada mantiene coche/órdenes/semilla y comprueba más distancia con mejor frenada/control/atención.
+
+Las suites anteriores fijan explícitamente `createLegacyGame`; la suite nueva usa `engine({current:true})`. No se usa la compatibilidad anterior como prueba del nuevo equilibrio. Una fixture auténtica 0.6.3, tomada antes de cambiar el motor, reproduce resultados y estado final **completos**, sin excluir bloques nuevos: al no tener marcador, mantiene sus reglas. Siguen pasando las fixtures históricas anteriores.
+
+El recorrido nuevo funda una partida con el constructor actual desde el formulario y dibuja el logotipo. Negocia mediante sueldo de referencia, ajuste inferior y cláusulas completas; firma y comprueba el cobro al avanzar el día; contrata un mecánico con sueldo diario; reserva un compuesto de marca con cotización y previsión de vueltas; corre con el bucle real de animación; pausa, guarda/carga cerebro y marca; llega a boxes por la pista y completa el servicio con el mismo motor. Para ejercitar el fallo manual se retira el apoyo del mecánico del snapshot de prueba. Inspecciona carrera/boxes, pilotos, mercado, taller, finanzas y negociación en 1440/1024/390 px, sin errores ni desbordamientos. Verifica expresamente que identidad y velocímetro no se solapan. Capturas `test-results/challenge064-*.png`.
+
+La simulación anual con semilla **1364** usa el piloto inicial más barato ($24/día), el coche inicial, encargos cuando están disponibles, Fortis duros, modo conservar y cambios manuales cuando procede. Avanza todos los días con sus gastos y simula las seis carreras completas. No contrata especialistas ni recibe financiación adicional. Resultado registrado:
+
+| Ronda | Día | Coches | Puesto del jugador | Paradas | Motor restante | Adelantamientos registrados |
+| ----- | --- | ------ | ------------------ | ------- | -------------- | --------------------------- |
+| 1     | 13  | 8      | 6.º                | 1       | 80 %           | 6                           |
+| 2     | 69  | 8      | 7.º                | 2       | 76 %           | 1                           |
+| 3     | 132 | 8      | 7.º                | 1       | 73 %           | 2                           |
+| 4     | 195 | 8      | 7.º                | 2       | 69 %           | 3                           |
+| 5     | 258 | 8      | 7.º                | 2       | 64 %           | 7                           |
+| 6     | 314 | 8      | Abandono           | 0       | 60 %           | 2                           |
+
+El saldo final es **$8.832**: $23.100 de ingresos y $18.468 de gastos, sobre los $4.200 iniciales. Los siete rivales terminan activos y con caja positiva; conservan ocho participantes en las seis rondas. Esta ruta muestra supervivencia con ahorro y trabajo, sin convertirla en una estrategia ganadora. Los incidentes surgen del motor; no se fuerza un accidente por ronda. Los contadores de radio/acontecimientos son acotados. Una semilla y una estrategia no prueban equilibrio universal, categorías superiores ni décadas de juego.
+
+---
+
+## Registro histórico de la 0.6.3
+
 # Validación de la versión 0.6.3 · gerencia, delegación y medicina
 
 `npm test`: **230 escenarios aprobados, sin fallos ni omisiones**, incluidos los 200 anteriores y 30 nuevos. `npm run test:browser`: **diez recorridos aprobados**, los nueve anteriores y `browser-operations.cjs`. Se mantiene el juego sin dependencias de ejecución. La apertura `file://` continúa omitida por la política de Chromium del entorno; inicio HTTP verificado.

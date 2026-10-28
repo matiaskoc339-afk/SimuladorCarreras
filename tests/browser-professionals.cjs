@@ -16,7 +16,10 @@ const fs = require("node:fs");
     p.on("pageerror", (e) => errors.push(e.message));
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     await p.evaluate(() => {
-      RCS.App.setState(RCS.createGame("Aster Especialistas", "", 1162), 1);
+      RCS.App.setState(
+        RCS.createLegacyGame("Aster Especialistas", "", 1162),
+        1,
+      );
       RCS.App.go("garage");
     });
     assert.ok(await p.locator('[data-action="pro-review"]').isDisabled());
@@ -203,7 +206,7 @@ const fs = require("node:fs");
     await p.setViewportSize({ width: 1440, height: 1050 });
     await p.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Boxes en directo", "", 1162),
+        s = G.createLegacyGame("Boxes en directo", "", 1162),
         d = s.drivers.find((d) => !d.companyId),
         ev = G.nextEvent(s);
       G.Drivers.offer(s, d.id, d.ask, 12);
@@ -317,7 +320,7 @@ const fs = require("node:fs");
     // Control del estratega y datos médicos en la ficha.
     await p.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Decisiones técnicas", "", 1164),
+        s = G.createLegacyGame("Decisiones técnicas", "", 1164),
         e = s.employees.find((e) => e.role === "strategist"),
         d = s.drivers.find((d) => !d.companyId),
         ev = G.nextEvent(s);
@@ -341,7 +344,7 @@ const fs = require("node:fs");
     );
     await p.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Descubrimientos", "", 1165),
+        s = G.createLegacyGame("Descubrimientos", "", 1165),
         e = s.employees.find((e) => e.role === "scout");
       G.Staff.offer(s, e.id, { salary: 1400, months: 12 });
       s.day = 20;

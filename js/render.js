@@ -71,14 +71,7 @@
     return value;
   }
   function worldPoint(index, progress, lateral = 0) {
-    const m = geometry(index),
-      p = G.Race.point(index, progress);
-    return {
-      x: p.x * m.factor - Math.sin(p.angle) * lateral,
-      y: p.y * 0.66 * m.factor + Math.cos(p.angle) * lateral,
-      angle: p.angle,
-      limit: p.limit,
-    };
+    return G.Racecraft.metric(index, progress, lateral);
   }
   function path(c, points, closed = true) {
     c.beginPath();
@@ -380,7 +373,15 @@
         offset = Math.sin(Math.PI * t) * 19 * pitSide;
       pit.push(worldPoint(index, pitStart + (pitEnd - pitStart) * t, offset));
     }
-    const pad = worldPoint(index, (pitStart + pitEnd) / 2, pitSide * 53);
+    const pad = G.Racecraft.safePlacement(
+      index,
+      (pitStart + pitEnd) / 2,
+      132,
+      62,
+      pitSide,
+      53,
+      9,
+    );
     rectangle(c, pad.x, pad.y, 132, 62, "#858b80", mid.angle);
     rectangle(c, pad.x, pad.y, 127, 57, "#979c90", mid.angle);
     stroke(c, pit, "#a6aa9d", 8, null, false);
@@ -405,7 +406,15 @@
       c.fillText(String(i + 1).padStart(2, "0"), 0, pitSide * 3.8);
       c.restore();
     }
-    const garage = worldPoint(index, (pitStart + pitEnd) / 2, pitSide * 33);
+    const garage = G.Racecraft.safePlacement(
+      index,
+      (pitStart + pitEnd) / 2,
+      115,
+      20,
+      pitSide,
+      33,
+      9,
+    );
     building(
       c,
       garage.x,
@@ -438,8 +447,16 @@
       c.fillRect(-49 + i * 25, -5, 1, 9);
     }
     c.restore();
-    const tower = worldPoint(index, pitStart + 25, pitSide * 28);
-    building(c, tower.x, tower.y, 11, 18, mid.angle, "tower");
+    const tower = G.Racecraft.safePlacement(
+      index,
+      pitStart + 25,
+      11,
+      18,
+      pitSide,
+      28,
+      10,
+    );
+    building(c, tower.x, tower.y, 11, 18, tower.angle, "tower");
     // Tribunas, vallas y puestos de comisarios.
     for (let j = 0; j < 3; j++) {
       const prog = m.length * (0.29 + j * 0.23),
@@ -450,7 +467,7 @@
           0
             ? 1
             : -1,
-        stand = worldPoint(index, prog, side * 28);
+        stand = G.Racecraft.safePlacement(index, prog, 52, 15, side, 28, 17);
       c.save();
       c.translate(stand.x, stand.y);
       c.rotate(a.angle);
@@ -603,7 +620,8 @@
         (a.shape === "roadster" ? 3.95 : a.shape === "coupe" ? 4.35 : 4.15),
       width = a.width || 1.78,
       slip = Number.isFinite(a.headingSlip) ? a.headingSlip : 0,
-      paint = a.dnf ? "#747b75" : a.color;
+      paint = a.dnf ? "#747b75" : a.color,
+      design = G.Art.carProfile(a);
     c.save();
     c.translate(position.x, position.y);
     c.rotate(position.angle + slip);
@@ -614,8 +632,13 @@
     c.fill();
     c.fillStyle = "#121b19";
     for (const x of [-length * 0.29, length * 0.28])
-      for (const y of [-width * 0.49, width * 0.49])
-        c.fillRect(x - 0.25, y - 0.13, 0.5, 0.26);
+      for (const y of [-width * 0.49, width * 0.49]) {
+        c.save();
+        c.translate(x, y);
+        if (x > 0) c.rotate(position.steering || 0);
+        c.fillRect(-0.25, -0.14, 0.5, 0.28);
+        c.restore();
+      }
     const grad = c.createLinearGradient(0, -width * 0.5, 0, width * 0.5);
     grad.addColorStop(0, shade(paint, 34));
     grad.addColorStop(0.25, paint);
@@ -623,14 +646,26 @@
     grad.addColorStop(1, shade(paint, -47));
     c.fillStyle = grad;
     c.beginPath();
-    c.moveTo(length * 0.44, -width * 0.36);
-    c.quadraticCurveTo(length * 0.55, 0, length * 0.44, width * 0.36);
+    const nose =
+        design.shape === "compact"
+          ? 0.49
+          : design.shape === "sedan"
+            ? 0.53
+            : 0.55,
+      tail =
+        design.shape === "wagon"
+          ? 0.49
+          : design.shape === "roadster"
+            ? 0.34
+            : 0.42;
+    c.moveTo(length * 0.44, -width * (design.shape === "compact" ? 0.4 : 0.36));
+    c.quadraticCurveTo(length * nose, 0, length * 0.44, width * 0.36);
     c.lineTo(length * 0.3, width * 0.48);
     c.lineTo(-length * 0.35, width * 0.46);
-    c.quadraticCurveTo(-length * 0.53, width * 0.38, -length * 0.51, 0);
+    c.quadraticCurveTo(-length * 0.53, width * tail, -length * 0.51, 0);
     c.quadraticCurveTo(
       -length * 0.53,
-      -width * 0.38,
+      -width * tail,
       -length * 0.35,
       -width * 0.46,
     );
@@ -640,8 +675,8 @@
     c.strokeStyle = shade(paint, 52);
     c.lineWidth = 0.045;
     c.stroke();
-    const frontRoof = a.shape === "roadster" ? 0.04 : 0.15,
-      rearRoof = a.shape === "hatch" ? -0.34 : -0.28;
+    const frontRoof = design.frontRoof,
+      rearRoof = design.rearRoof;
     c.fillStyle = "#122a33";
     c.beginPath();
     c.moveTo(length * 0.28, -width * 0.35);
@@ -694,6 +729,7 @@
     c.fillStyle = shade(paint, -35);
     c.fillRect(length * 0.09, -width * 0.57, 0.27, 0.12);
     c.fillRect(length * 0.09, width * 0.45, 0.27, 0.12);
+    G.Art.canvas(c, a, length, width);
     c.fillStyle = "#eeeade";
     c.fillRect(-length * 0.16, -width * 0.27, 0.68, 0.54);
     c.fillStyle = "#1a2528";
@@ -919,25 +955,12 @@
         bmw = car.brand === "BMW",
         coupe = car.shape === "coupe",
         paint = car.color || "#cf6248",
-        id = escape(car.id || "car");
-      const body = roadster
-        ? "M72 35Q120 19 168 35Q187 46 191 82L190 341Q187 384 163 401L77 401Q53 384 50 341L49 82Q53 46 72 35Z"
-        : coupe
-          ? "M74 30Q120 20 166 30L190 65L196 114L189 350L173 405Q120 420 67 405L51 350L44 114L50 65Z"
-          : bmw
-            ? "M63 35Q120 24 177 35L191 79L188 356L174 403L66 403L52 356L49 79Z"
-            : "M64 34Q120 20 176 34L193 84L189 350L173 404Q120 415 67 404L51 350L47 84Z";
-      const wind = roadster
-        ? "M66 188Q120 169 174 188L166 222L74 222Z"
-        : coupe
-          ? "M68 163Q120 145 172 163L162 217L78 217Z"
-          : "M65 145Q120 129 175 145L164 194L76 194Z";
-      const rear = roadster
-        ? "M76 296L164 296L173 323Q120 342 67 323Z"
-        : hatch
-          ? "M72 293L168 293L175 345Q120 363 65 345Z"
-          : "M78 285L162 285L176 343Q120 366 64 343Z";
-      return `<svg viewBox="0 0 240 440" aria-label="Ilustración original del ${escape(car.brand)} ${escape(car.model)}" role="img"><defs><linearGradient id="paint-${id}" x1="0" x2="1" y1=".1" y2=".15"><stop stop-color="${shade(paint, -40)}"/><stop offset=".16" stop-color="${shade(paint, 22)}"/><stop offset=".48" stop-color="${paint}"/><stop offset=".83" stop-color="${shade(paint, -8)}"/><stop offset="1" stop-color="${shade(paint, -52)}"/></linearGradient><linearGradient id="glass-${id}" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#8ca9b4"/><stop offset=".24" stop-color="#3a515c"/><stop offset=".65" stop-color="#152934"/><stop offset="1" stop-color="#091c24"/></linearGradient></defs><ellipse cx="125" cy="235" rx="91" ry="192" fill="#020707" opacity=".23"/><ellipse cx="130" cy="230" rx="80" ry="180" fill="#020707" opacity=".15"/><g><g fill="#11191d" stroke="#3c4442" stroke-width="2"><rect x="34" y="87" width="21" height="56" rx="5"/><rect x="185" y="87" width="21" height="56" rx="5"/><rect x="35" y="295" width="21" height="61" rx="5"/><rect x="184" y="295" width="21" height="61" rx="5"/></g><path d="${body}" fill="url(#paint-${id})" stroke="${shade(paint, -32)}" stroke-width="2"/><path d="M59 77Q120 50 181 77M57 348Q120 369 183 348" fill="none" stroke="${shade(paint, -25)}" stroke-width="2"/><path d="M60 86L64 141M180 86L176 141" stroke="${shade(paint, 45)}" stroke-opacity=".65" stroke-width="2"/><path d="${wind}" fill="url(#glass-${id})" stroke="#13242b" stroke-width="4"/><path d="M75 ${roadster ? 192 : 155}Q120 ${roadster ? 181 : 143} 164 ${roadster ? 193 : 155}" stroke="#b8c7c0" stroke-opacity=".5" stroke-width="2" fill="none"/>${roadster ? '<path d="M73 229H167V287H73Z" fill="#15232a"/><g fill="#b19a78" stroke="#554e42" stroke-width="2"><rect x="80" y="232" width="30" height="46" rx="10"/><rect x="130" y="232" width="30" height="46" rx="10"/></g><path d="M77 279H163" stroke="#c3c8bc" stroke-width="6"/>' : `<path d="M76 202L164 202L166 283L74 283Z" fill="${shade(paint, 7)}" stroke="${shade(paint, -25)}" stroke-width="2"/><path d="M66 188L71 280L58 296L57 198ZM174 188L169 280L182 296L183 198Z" fill="url(#glass-${id})" stroke="#11232c" stroke-width="2"/><path d="M81 208V279M160 208V279" stroke="${shade(paint, 35)}" stroke-opacity=".5" stroke-width="1.5"/>`}<path d="${rear}" fill="url(#glass-${id})" stroke="#17282e" stroke-width="4"/><path d="M75 312L163 323" stroke="#9ab1b7" stroke-opacity=".28" stroke-width="2"/><g fill="${paint}" stroke="${shade(paint, -40)}" stroke-width="2"><path d="M48 181L35 187L35 200L53 197ZM192 181L205 187L205 200L187 197Z"/></g>${bmw ? '<path d="M82 57H116V73H82ZM124 57H158V73H124Z" fill="#1b2b2e"/><path d="M64 80H91V91H64ZM149 80H176V91H149Z" fill="#e1e4d9"/>' : roadster ? '<path d="M62 67Q73 48 89 63L85 79L63 81ZM178 67Q167 48 151 63L155 79L177 81Z" fill="#e5e9dc" stroke="#bcc9c4" stroke-width="2"/>' : '<path d="M59 73L93 58L90 79L59 88ZM181 73L147 58L150 79L181 88Z" fill="#e5eadc" stroke="#b5c3c1" stroke-width="2"/>'}<path d="M70 105L170 105" stroke="#172b30" stroke-width="7"/><path d="M81 111L159 111" stroke="#bec7b0" stroke-opacity=".5" stroke-width="1"/><path d="M66 380L88 380L91 391L65 390ZM174 380L152 380L149 391L175 390Z" fill="#a43c34" stroke="#e58367" stroke-width="1.5"/><path d="M78 401H162" stroke="#1a2b30" stroke-width="7"/><path d="M102 44V${roadster ? 180 : 135}M112 43V${roadster ? 179 : 134}" stroke="#e5e9db" stroke-opacity=".75" stroke-width="5"/><path d="M109 349V374M119 352V375" stroke="#e5e9db" stroke-opacity=".72" stroke-width="4"/>${roadster ? "" : `<rect x="92" y="220" width="56" height="52" rx="3" fill="#edf0e6"/><text x="120" y="256" text-anchor="middle" fill="#182b32" font-size="35" font-family="Arial,sans-serif" font-style="italic" font-weight="800">${escape(number)}</text>`}<path d="${car.installed?.aero ? "M31 363H209" : "M60 361H180"}" stroke="#15252c" stroke-width="${car.installed?.aero ? 13 : 7}"/><path d="${car.installed?.aero ? "M38 359H202" : "M65 359H175"}" stroke="#637477" stroke-width="2"/>${(car.components?.body ?? 100) < 65 ? '<path d="M165 73L175 98M168 78L180 103M58 330L78 346M60 338L82 355" stroke="#c7c9bc" stroke-width="2" opacity=".8"/>' : ""}<g fill="#212f31"><rect x="58" y="224" width="4" height="17" rx="2"/><rect x="178" y="224" width="4" height="17" rx="2"/></g></g></svg>`;
+        id = escape(car.id || "car"),
+        design = G.Art.carProfile(car);
+      const body = design.body,
+        wind = design.wind,
+        rear = design.rear;
+      return `<svg viewBox="0 0 240 440" aria-label="Ilustración original del ${escape(car.brand)} ${escape(car.model)}" role="img"><defs><linearGradient id="paint-${id}" x1="0" x2="1" y1=".1" y2=".15"><stop stop-color="${shade(paint, -40)}"/><stop offset=".16" stop-color="${shade(paint, 22)}"/><stop offset=".48" stop-color="${paint}"/><stop offset=".83" stop-color="${shade(paint, -8)}"/><stop offset="1" stop-color="${shade(paint, -52)}"/></linearGradient><linearGradient id="glass-${id}" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#8ca9b4"/><stop offset=".24" stop-color="#3a515c"/><stop offset=".65" stop-color="#152934"/><stop offset="1" stop-color="#091c24"/></linearGradient></defs><ellipse cx="125" cy="235" rx="91" ry="192" fill="#020707" opacity=".23"/><ellipse cx="130" cy="230" rx="80" ry="180" fill="#020707" opacity=".15"/><g><g fill="#11191d" stroke="#3c4442" stroke-width="2"><rect x="34" y="87" width="21" height="56" rx="5"/><rect x="185" y="87" width="21" height="56" rx="5"/><rect x="35" y="295" width="21" height="61" rx="5"/><rect x="184" y="295" width="21" height="61" rx="5"/></g><path d="${body}" fill="url(#paint-${id})" stroke="${shade(paint, -32)}" stroke-width="2"/><path d="M59 77Q120 50 181 77M57 348Q120 369 183 348" fill="none" stroke="${shade(paint, -25)}" stroke-width="2"/><path d="M60 86L64 141M180 86L176 141" stroke="${shade(paint, 45)}" stroke-opacity=".65" stroke-width="2"/><path d="${wind}" fill="url(#glass-${id})" stroke="#13242b" stroke-width="4"/><path d="M75 ${roadster ? 192 : 155}Q120 ${roadster ? 181 : 143} 164 ${roadster ? 193 : 155}" stroke="#b8c7c0" stroke-opacity=".5" stroke-width="2" fill="none"/>${roadster ? '<path d="M73 229H167V287H73Z" fill="#15232a"/><g fill="#b19a78" stroke="#554e42" stroke-width="2"><rect x="80" y="232" width="30" height="46" rx="10"/><rect x="130" y="232" width="30" height="46" rx="10"/></g><path d="M77 279H163" stroke="#c3c8bc" stroke-width="6"/>' : `<path d="M76 202L164 202L166 283L74 283Z" fill="${shade(paint, 7)}" stroke="${shade(paint, -25)}" stroke-width="2"/><path d="M66 188L71 280L58 296L57 198ZM174 188L169 280L182 296L183 198Z" fill="url(#glass-${id})" stroke="#11232c" stroke-width="2"/><path d="M81 208V279M160 208V279" stroke="${shade(paint, 35)}" stroke-opacity=".5" stroke-width="1.5"/>`}<path d="${rear}" fill="url(#glass-${id})" stroke="#17282e" stroke-width="4"/><path d="M75 312L163 323" stroke="#9ab1b7" stroke-opacity=".28" stroke-width="2"/><g fill="${paint}" stroke="${shade(paint, -40)}" stroke-width="2"><path d="M48 181L35 187L35 200L53 197ZM192 181L205 187L205 200L187 197Z"/></g>${bmw ? '<path d="M82 57H116V73H82ZM124 57H158V73H124Z" fill="#1b2b2e"/><path d="M64 80H91V91H64ZM149 80H176V91H149Z" fill="#e1e4d9"/>' : roadster ? '<path d="M62 67Q73 48 89 63L85 79L63 81ZM178 67Q167 48 151 63L155 79L177 81Z" fill="#e5e9dc" stroke="#bcc9c4" stroke-width="2"/>' : '<path d="M59 73L93 58L90 79L59 88ZM181 73L147 58L150 79L181 88Z" fill="#e5eadc" stroke="#b5c3c1" stroke-width="2"/>'}<path d="M70 105L170 105" stroke="#172b30" stroke-width="7"/><path d="M81 111L159 111" stroke="#bec7b0" stroke-opacity=".5" stroke-width="1"/><path d="M66 380L88 380L91 391L65 390ZM174 380L152 380L149 391L175 390Z" fill="#a43c34" stroke="#e58367" stroke-width="1.5"/><path d="M78 401H162" stroke="#1a2b30" stroke-width="7"/><path d="M102 44V${roadster ? 180 : 135}M112 43V${roadster ? 179 : 134}" stroke="#e5e9db" stroke-opacity=".75" stroke-width="5"/><path d="M109 349V374M119 352V375" stroke="#e5e9db" stroke-opacity=".72" stroke-width="4"/>${roadster ? "" : `<rect x="92" y="220" width="56" height="52" rx="3" fill="#edf0e6"/><text x="120" y="256" text-anchor="middle" fill="#182b32" font-size="35" font-family="Arial,sans-serif" font-style="italic" font-weight="800">${escape(number)}</text>`}<path d="${car.installed?.aero ? "M31 363H209" : "M60 361H180"}" stroke="#15252c" stroke-width="${car.installed?.aero ? 13 : 7}"/><path d="${car.installed?.aero ? "M38 359H202" : "M65 359H175"}" stroke="#637477" stroke-width="2"/>${(car.components?.body ?? 100) < 65 ? '<path d="M165 73L175 98M168 78L180 103M58 330L78 346M60 338L82 355" stroke="#c7c9bc" stroke-width="2" opacity=".8"/>' : ""}<g fill="#212f31"><rect x="58" y="224" width="4" height="17" rx="2"/><rect x="178" y="224" width="4" height="17" rx="2"/></g></g>${G.Art.overlay(car)}</svg>`;
     },
     headquarters(s) {
       const name = escape(G.player(s).name),
@@ -1022,8 +1045,9 @@
         const lateral = Number.isFinite(focus.lateral)
             ? focus.lateral
             : (focus.lane || 0) * scene.factor,
-          lookahead =
-            cssW < 600
+          lookahead = r?.dynamicsVersion
+            ? 12
+            : cssW < 600
               ? mode === "follow"
                 ? 10
                 : 14
@@ -1057,7 +1081,9 @@
           (mode === "broadcast" &&
             cam.focusId !== focus?.companyId &&
             Math.hypot(targetX - cam.cx, targetY - cam.cy) > 150),
-        ease = jumped ? 1 : 1 - Math.exp(-elapsed * 3.6);
+        ease = jumped
+          ? 1
+          : 1 - Math.exp(-elapsed * (r?.dynamicsVersion ? 9 : 3.6));
       cam.cx += (targetX - cam.cx) * ease;
       cam.cy += (targetY - cam.cy) * ease;
       cam.scale +=
@@ -1101,6 +1127,15 @@
               ? a.lateral
               : (a.lane || 0) * scene.factor,
             p = worldPoint(index, a.progress, lateral);
+          if (r.dynamicsVersion)
+            p.steering = G.clamp(
+              G.Racecraft.sample(index, a.progress + 5).curvature *
+                (a.length || 4) *
+                0.65 -
+                (a.headingSlip || 0) * 0.6,
+              -0.45,
+              0.45,
+            );
           carCanvas(c, a, p, cam.scale, logo, r.entrants.indexOf(a) + 1);
           pitCrew(c, r, a, index);
           if (mode === "overview") {

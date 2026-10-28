@@ -88,16 +88,19 @@
         "Este currículum ha caducado o el piloto no está disponible médicamente.",
       );
       G.assert(!s.race, "Termina la carrera antes de negociar.");
+      G.Challenge.requireDriver(s, d);
       G.assert(
         G.ownedDrivers(s).length < G.player(s).driverCapacity,
         "La plantilla está completa. Amplía la oficina de equipo para abrir plazas.",
       );
       G.assert(
-        Number.isInteger(salary) && salary >= 200 && salary <= 10000,
+        Number.isInteger(salary) &&
+          salary >= (G.Pay.daily(d) ? 10 : 200) &&
+          salary <= 10000,
         "Salario inválido.",
       );
       G.assert(
-        [6, 12, 24].includes(months) &&
+        G.Pay.durations(s).includes(months) &&
           Number.isInteger(bonus) &&
           bonus >= 0 &&
           bonus <= 5000,
@@ -141,6 +144,7 @@
         G.Professionals.care(s, d.id).recruited = true;
       d.contract = {
         salary,
+        ...G.Pay.fields(d),
         bonus,
         start: s.day,
         end: s.day + months * 30,
@@ -154,7 +158,7 @@
         s,
         "Fichajes",
         `${d.name} firma con ${G.player(s).name}.`,
-        `El piloto de ${d.age} años acepta un contrato de ${months} meses por $${salary} mensuales y una prima de $${bonus}.`,
+        `El piloto de ${d.age} años acepta un contrato de ${months} meses por $${salary}/${G.Pay.unit(d)} y una prima de $${bonus}.`,
         "team",
         id,
       );
@@ -180,7 +184,7 @@
     },
     releaseQuote(d) {
       return Math.round(
-        d.contract.salary * (d.contract.clauses?.releaseMonths || 1) +
+        G.Pay.monthly(d.contract) * (d.contract.clauses?.releaseMonths || 1) +
           d.contract.accrued,
       );
     },

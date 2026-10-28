@@ -45,7 +45,7 @@
       );
     const panel =
       demands.length || offers.length
-        ? `<section class="panel padded professional-requests"><span class="eyebrow">DECISIONES DE PERSONAL</span><h2>Tu plantilla espera una respuesta.</h2>${demands.map((d) => `<div class="professional-request"><div><b>${U.escape(s.employees.find((e) => e.id === d.employeeId).name)}</b><p>Solicita ${U.money(d.salary)}/mes · responde antes del ${U.date(d.deadline, true)}.</p></div>${U.button("Negociar aumento", "pro-raise", "secondary", `data-id="${d.id}"`)}</div>`).join("")}${offers.map((o) => `<div class="professional-request"><div><b>Oferta de ${U.escape(s.companies.find((c) => c.id === o.buyerId).name)}</b><p>${U.escape(s.employees.find((e) => e.id === o.employeeId).name)}: ${U.money(o.salary)}/mes. Decisión el ${U.date(o.deadline, true)}; puede marcharse.</p></div>${U.button("Intentar retener", "pro-counter", "secondary", `data-id="${o.id}"`)}</div>`).join("")}</section>`
+        ? `<section class="panel padded professional-requests"><span class="eyebrow">DECISIONES DE PERSONAL</span><h2>Tu plantilla espera una respuesta.</h2>${demands.map((d) => `<div class="professional-request"><div><b>${U.escape(s.employees.find((e) => e.id === d.employeeId).name)}</b><p>Solicita ${U.money(d.salary)}/${G.Challenge.enabled(s) ? "día" : "mes"} · responde antes del ${U.date(d.deadline, true)}.</p></div>${U.button("Negociar aumento", "pro-raise", "secondary", `data-id="${d.id}"`)}</div>`).join("")}${offers.map((o) => `<div class="professional-request"><div><b>Oferta de ${U.escape(s.companies.find((c) => c.id === o.buyerId).name)}</b><p>${U.escape(s.employees.find((e) => e.id === o.employeeId).name)}: ${U.money(o.salary)}/${G.Challenge.enabled(s) ? "día" : "mes"}. Decisión el ${U.date(o.deadline, true)}; puede marcharse.</p></div>${U.button("Intentar retener", "pro-counter", "secondary", `data-id="${o.id}"`)}</div>`).join("")}</section>`
         : "";
     if (G.App.staffTab === "reports") {
       const cvs = s.professional.cvs
@@ -75,7 +75,7 @@
       e = s.employees.find((e) => e.id === id),
       p = P.profile(s, id),
       own = e.companyId === s.playerId;
-    const fields = `<section class="professional-profile"><div class="professional-level"><b>NV ${p.level}<small>/ 10</small></b><span>${Math.round(p.xp)} / ${p.level === 10 ? "MÁXIMO" : 150 + p.level * 75} XP</span><strong>${U.money(P.marketSalary(s, e))}/mes de referencia</strong></div>${U.bar("Estrés profesional", p.stress, p.stress > 70 ? "#bd5c44" : "#708b7a")}<p class="fine-print">La experiencia sube de nivel. El estrés y el descanso cambian precisión, velocidad y rendimiento.${P.resting(s, id) ? " Descanso hasta " + U.date(p.restUntil) + "; conserva su sueldo." : ""}</p>${["mechanic", "engineer"].includes(e.role) ? `<p>Especialidad: ${e.role === "mechanic" ? "servicio de boxes" : "diagnóstico y ajuste"}. El nivel, la habilidad y el estrés afectan al acierto. Velocidad individual: ${p.speed}/100.</p>` : ""}${own ? `<div class="professional-rest">${[1, 3, 7].map((days) => U.button(`Descansar ${days} día${days === 1 ? "" : "s"}`, "pro-rest", "secondary", `data-id="${id}" data-days="${days}" ${S.busy(s, id) ? "disabled" : ""}`)).join("")}</div>` : ""}</section>`;
+    const fields = `<section class="professional-profile"><div class="professional-level"><b>NV ${p.level}<small>/ 10</small></b><span>${Math.round(p.xp)} / ${p.level === 10 ? "MÁXIMO" : 150 + p.level * 75} XP</span><strong>${U.money(P.marketSalary(s, e))}/${G.Pay.unit(e)} de referencia</strong></div>${U.bar("Estrés profesional", p.stress, p.stress > 70 ? "#bd5c44" : "#708b7a")}<p class="fine-print">La experiencia sube de nivel. El estrés y el descanso cambian precisión, velocidad y rendimiento.${P.resting(s, id) ? " Descanso hasta " + U.date(p.restUntil) + "; conserva su sueldo." : ""}</p>${["mechanic", "engineer"].includes(e.role) ? `<p>Especialidad: ${e.role === "mechanic" ? "servicio de boxes" : "diagnóstico y ajuste"}. El nivel, la habilidad y el estrés afectan al acierto. Velocidad individual: ${p.speed}/100.</p>` : ""}${own ? `<div class="professional-rest">${[1, 3, 7].map((days) => U.button(`Descansar ${days} día${days === 1 ? "" : "s"}`, "pro-rest", "secondary", `data-id="${id}" data-days="${days}" ${S.busy(s, id) ? "disabled" : ""}`)).join("")}</div>` : ""}</section>`;
     document
       .querySelector(".modal-content")
       .insertAdjacentHTML("afterbegin", fields);
@@ -195,7 +195,7 @@
         G.assert(d, "Solicitud no disponible.");
         U.modal(
           "Negociar aumento",
-          `<p>Solicita ${U.money(d.salary)}/mes. Puedes negociar; una propuesta demasiado baja recibirá una contraoferta.</p><form id="pro-raise-form" data-id="${d.id}"><label class="form-field"><span>Salario mensual ($)</span><input type="number" name="salary" min="150" max="5000" value="${d.salary}" required></label><div class="modal-actions">${U.button("Rechazar petición", "pro-refuse", "text-button negative", `data-id="${d.id}"`)}<button type="submit" class="primary">Presentar propuesta</button></div></form>`,
+          `<p>Solicita ${U.money(d.salary)}/${G.Challenge.enabled(s) ? "día" : "mes"}. Puedes negociar; una propuesta demasiado baja recibirá una contraoferta.</p><form id="pro-raise-form" data-id="${d.id}"><label class="form-field"><span>Salario ${G.Challenge.enabled(s) ? "diario" : "mensual"} ($)</span><input type="number" name="salary" min="${G.Challenge.enabled(s) ? 10 : 150}" max="5000" value="${d.salary}" required></label><div class="modal-actions">${U.button("Rechazar petición", "pro-refuse", "text-button negative", `data-id="${d.id}"`)}<button type="submit" class="primary">Presentar propuesta</button></div></form>`,
         );
         return true;
       }
@@ -211,7 +211,7 @@
         G.assert(o, "Oferta no disponible.");
         U.modal(
           "Retener al profesional",
-          `<p>La competencia ofrece ${U.money(o.salary)}/mes. Igualar o mejorar esa oferta garantiza que rechace esta propuesta concreta; las relaciones futuras seguirán evolucionando.</p><form id="pro-counter-form" data-id="${o.id}"><label class="form-field"><span>Nuevo salario mensual ($)</span><input name="salary" type="number" min="${o.salary}" max="5000" value="${o.salary}" required></label><button class="primary" type="submit">Presentar contraoferta</button></form>`,
+          `<p>La competencia ofrece ${U.money(o.salary)}/${G.Challenge.enabled(s) ? "día" : "mes"}. Igualar o mejorar esa oferta garantiza que rechace esta propuesta concreta; las relaciones futuras seguirán evolucionando.</p><form id="pro-counter-form" data-id="${o.id}"><label class="form-field"><span>Nuevo salario ${G.Challenge.enabled(s) ? "diario" : "mensual"} ($)</span><input name="salary" type="number" min="${o.salary}" max="5000" value="${o.salary}" required></label><button class="primary" type="submit">Presentar contraoferta</button></form>`,
         );
         return true;
       }
@@ -312,7 +312,11 @@
           U.toast("Aumento acordado.");
         } else {
           form.querySelector('[name="salary"]').value = result.counter;
-          U.toast("Contraoferta: " + U.money(result.counter) + "/mes.");
+          U.toast(
+            "Contraoferta: " +
+              U.money(result.counter) +
+              (G.Challenge.enabled(s) ? "/día." : "/mes."),
+          );
         }
         return true;
       }

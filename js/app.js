@@ -229,6 +229,7 @@
     },
     action(name, data) {
       if (
+        G.ChallengeUI.action(this, name, data) ||
         G.OperationsUI.action(this, name, data) ||
         G.ProfessionalUI.action(this, name, data) ||
         G.StaffUI.action(this, name, data) ||
@@ -554,7 +555,7 @@
       this.pendingSlot = empty.slot;
       U.modal(
         "Toda leyenda necesita un nombre.",
-        `<p>Tu punto de partida: un garaje alquilado en Sevilla, un Honda Civic usado y $12,000. Contrata a tu primer piloto y disputa una temporada completa.</p><form id="new-game-form"><label class="form-field"><span>Nombre de tu compañía</span><input name="companyName" id="company-name" placeholder="Ej. Aster Motorsport" minlength="2" maxlength="32" required autocomplete="off"></label>${this.logoFields()}<div class="modal-actions"><button class="secondary" data-action="close">Volver</button><button class="primary" type="submit">Fundar compañía ${U.icon("arrow")}</button></div></form>`,
+        `<p>Tu punto de partida: un garaje alquilado en Sevilla, un utilitario usado y $4,200. Empiezas con pilotos locales de valoración 10–25. Los salarios se pagan cada día: conserva caja para competir y mantener el coche.</p><form id="new-game-form"><label class="form-field"><span>Nombre de tu compañía</span><input name="companyName" id="company-name" placeholder="Ej. Aster Motorsport" minlength="2" maxlength="32" required autocomplete="off"></label>${this.logoFields()}<div class="modal-actions"><button class="secondary" data-action="close">Volver</button><button class="primary" type="submit">Fundar compañía ${U.icon("arrow")}</button></div></form>`,
         true,
       );
       this.attachLogo("");
@@ -692,6 +693,7 @@
       const s = this.state,
         d = s.drivers.find((d) => d.id === id && !d.companyId);
       G.assert(d, "El piloto no está disponible.");
+      if (G.Challenge.enabled(s)) return G.ChallengeUI.negotiate(this, id);
       const n = s.negotiations[id];
       U.modal(
         "Negociación · " + U.escape(d.name),
@@ -715,7 +717,7 @@
         U.escape(d.name),
         `<div class="company-profile">${U.portrait(d)}<div><h3>${U.escape(d.name)}</h3><p>${d.age} años · ${U.escape(d.nation)} · ${G.Data.traits[d.trait].name}</p><p>${d.starts} salidas · ${d.points} puntos · Moral ${Math.round(d.morale)} %</p></div></div><div class="detail-stats">${visibleStats.map((k) => U.bar(G.Drivers.labels[k], d.stats[k])).join("")}</div>${
           own
-            ? `<div class="onboarding-note"><strong>Contrato · ${U.money(d.contract.salary)}/mes</strong>Vence ${U.date(d.contract.end)} · Fatiga ${Math.round(d.fatigue)} % · El descanso recupera 8 puntos de fatiga al día. La formación cuesta $18 por día y recupera solo 2 puntos.</div><div class="modal-actions">${[
+            ? `<div class="onboarding-note"><strong>Contrato · ${U.money(d.contract.salary)}/${G.Pay.unit(d)}</strong>Vence ${U.date(d.contract.end)} · Fatiga ${Math.round(d.fatigue)} % · El descanso recupera 8 puntos de fatiga al día. La formación cuesta $18 por día y recupera solo 2 puntos.</div><div class="modal-actions">${[
                 ["none", "Descansar"],
                 ["pace", "Entrenar velocidad"],
                 ["control", "Entrenar control"],
@@ -994,7 +996,9 @@
           this.persist();
           this.render();
           this.event(id);
-          U.toast("Inscripción confirmada. Se han descontado $370.");
+          U.toast(
+            "Inscripción confirmada. El coste está registrado en Finanzas.",
+          );
           break;
         }
       }

@@ -129,7 +129,10 @@
       return 2 + (G.Facilities.tier(s, id, "office") - 1) * 2;
     },
     monthly(s, id = s.playerId) {
-      return this.owned(s, id).reduce((n, e) => n + e.contract.salary, 0);
+      return this.owned(s, id).reduce(
+        (n, e) => n + G.Pay.monthly(e.contract),
+        0,
+      );
     },
     overdue(s, id = s.playerId) {
       return (
@@ -254,6 +257,11 @@
         !this.owned(s, id).some((other) => other.role === e.role),
         "Ya hay un responsable de esta especialidad en la plantilla.",
       );
+      if (G.Challenge.enabled(s))
+        G.assert(
+          c.level >= G.Challenge.staffLevel(s, e),
+          `Esta especialidad exige una compañía de nivel ${G.Challenge.staffLevel(s, e)}.`,
+        );
       const t = {
         salary: Number(terms.salary),
         months: Number(terms.months),
@@ -261,17 +269,19 @@
       };
       G.assert(
         Number.isInteger(t.salary) &&
-          t.salary >= 150 &&
+          t.salary >= G.Pay.minimum(e) &&
           t.salary <= 5000 &&
-          [6, 12, 24].includes(t.months) &&
+          G.Pay.durations(s).includes(t.months) &&
           Number.isInteger(t.bonus) &&
           t.bonus >= 0 &&
           t.bonus <= 2000,
         "Condiciones de personal inválidas.",
       );
       G.assert(
-        c.balance >= t.bonus + Math.ceil(t.salary / 2),
-        "Necesitas fondos para la prima y una reserva de media nómina.",
+        c.balance >= t.bonus + Math.ceil(t.salary * (G.Pay.daily(e) ? 7 : 0.5)),
+        G.Pay.daily(e)
+          ? "Necesitas fondos para la prima y una reserva de siete días de sueldo."
+          : "Necesitas fondos para la prima y una reserva de media nómina.",
       );
       return {
         employee: e,
@@ -321,6 +331,7 @@
       e.poorDays = 0;
       e.contract = {
         salary: q.salary,
+        ...G.Pay.fields(e),
         bonus: q.bonus,
         start: s.day,
         end: s.day + q.months * 30,
@@ -335,7 +346,7 @@
         s,
         "Fichajes",
         `${q.company.name} incorpora a ${e.name}.`,
-        `${this.roles[e.role].name}: $${q.salary}/mes durante ${q.months} meses. Su capacidad profesional depende de experiencia, motivación y convivencia.`,
+        `${this.roles[e.role].name}: $${q.salary}/${G.Pay.unit(e)} durante ${q.months} meses. Su capacidad profesional depende de experiencia, motivación y convivencia.`,
         "staff",
         eid,
       );
@@ -344,7 +355,10 @@
     releaseQuote(e) {
       return (
         Math.round(
-          (e.contract.salary + e.contract.accrued + e.contract.arrears) * 100,
+          (G.Pay.monthly(e.contract) +
+            e.contract.accrued +
+            e.contract.arrears) *
+            100,
         ) / 100
       );
     },
@@ -450,7 +464,7 @@
         Number.isInteger(salary) &&
           salary >= this.renewalMinimum(e) &&
           salary <= 5000 &&
-          [6, 12, 24].includes(months),
+          G.Pay.durations(s).includes(months),
         "El profesional no acepta la renovación.",
       );
       e.contract.salary = salary;
@@ -462,7 +476,7 @@
         s,
         "Fichajes",
         `${e.name} renueva su contrato.`,
-        `$${salary}/mes y ${months} meses adicionales. Se conservan las obligaciones anteriores.`,
+        `$${salary}/${G.Pay.unit(e)} y ${months} meses adicionales. Se conservan las obligaciones anteriores.`,
         "staff",
         eid,
       );
@@ -597,8 +611,10 @@
         if (e.status === "retired") continue;
         if (e.companyId) {
           const c = s.companies.find((c) => c.id === e.companyId);
-          e.contract.accrued += e.contract.salary / 30;
-          if (date.getUTCDate() === 1) {
+          e.contract.accrued += G.Pay.daily(e.contract)
+            ? e.contract.salary
+            : e.contract.salary / 30;
+          if (G.Pay.daily(e.contract) || date.getUTCDate() === 1) {
             e.contract.arrears =
               Math.round((e.contract.arrears + e.contract.accrued) * 100) / 100;
             e.contract.accrued = 0;
@@ -742,7 +758,10 @@
           e.contract.end - s.day <= 60 &&
           e.contract.end > s.day &&
           c.balance >=
-            (monthly - e.contract.salary + this.renewalMinimum(e)) * 4 &&
+            (monthly -
+              G.Pay.monthly(e.contract) +
+              G.Pay.monthlyRate(this.renewalMinimum(e), e)) *
+              4 &&
           !this.overdue(s, c.id)
         )
           management.push({
@@ -786,14 +805,17 @@
               (e) =>
                 e.status === "available" &&
                 e.role === role &&
+                (!G.Challenge.enabled(s) ||
+                  c.level >= G.Challenge.staffLevel(s, e)) &&
                 (e.lastCompanyId !== c.id || e.availableAfter <= s.day),
             )
             .sort((a, b) => b.skill / b.ask - a.skill / a.ask)[0];
           if (!e) return [];
           const salary = this.minimum(s, e, { months: 12, bonus: 0 }, c.id);
           if (
-            salary * 3 > budget ||
-            c.balance < (G.Companies.monthly(s, c.id) + salary) * 4
+            G.Pay.monthlyRate(salary, e) * 3 > budget ||
+            c.balance <
+              (G.Companies.monthly(s, c.id) + G.Pay.monthlyRate(salary, e)) * 4
           )
             return [];
           return [
@@ -881,7 +903,7 @@
             ) &&
             Object.hasOwn(this.personalities, e.personality) &&
             Number.isInteger(e.ask) &&
-            e.ask >= 150 &&
+            e.ask >= G.Pay.minimum(e) &&
             ["available", "active", "retired"].includes(e.status) &&
             (e.lastCompanyId === null || companies.has(e.lastCompanyId)) &&
             Number.isInteger(e.availableAfter) &&
@@ -905,7 +927,7 @@
                   "active" &&
                 e.contract &&
                 Number.isInteger(e.contract.salary) &&
-                e.contract.salary >= 150 &&
+                e.contract.salary >= G.Pay.minimum(e) &&
                 e.contract.salary <= 5000 &&
                 Number.isInteger(e.contract.bonus) &&
                 e.contract.bonus >= 0 &&
@@ -1011,7 +1033,7 @@
             companies.has(n.companyId) &&
             employeeIds.has(n.employeeId) &&
             Number.isInteger(n.salary) &&
-            n.salary >= 150 &&
+            n.salary >= (G.Challenge.enabled(s) ? 10 : 150) &&
             n.salary <= 5000 &&
             [6, 12, 24].includes(n.months) &&
             Number.isInteger(n.bonus) &&

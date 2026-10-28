@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.6.3
+# Racing Company Simulator · 0.6.4
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -14,24 +14,34 @@ El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejec
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
 
+## Novedades de la 0.6.4 · dificultad, variedad y conducción
+
+Las **partidas nuevas** comienzan con **$4.200**, un utilitario entre cinco modelos y doce candidatos locales de valoración **10–25**. Pilotos y especialistas cobran **cada día**; habilidad, experiencia, nivel y motivación determinan su referencia salarial. Los perfiles de calidad alta exigen mayor nivel empresarial. La firma muestra pago inicial, coste por día/30 días y autonomía estimada, y conserva todas las cláusulas. Los contratos de 1/3 meses permiten empezar con compromisos más cortos.
+
+Hay **24 modelos**, siete tipos de carrocería, proporciones y acabados propios, e ilustraciones específicas para las doce familias de piezas. Los pilotos combinan nombres, nacionalidades, edad, experiencia, dieciséis temperamentos y retratos procedurales; sus identidades se conservan en contratos, traspasos y guardados. Los nuevos candidatos y el ojeo mejoran con el desarrollo de la empresa.
+
+Las carreras nuevas incorporan trazada de entrada/ápice/salida, frenada anticipada, decisiones de adelantamiento y defensa, reacción según atención/experiencia y fatiga según resistencia. Los errores pueden ser correcciones, derrapes o trompos; no se impone un accidente por carrera. Las gomas se degradan mucho más y hay **17 opciones**: calle, cuatro compuestos y doce variantes de Fortis Endurance, Vértice Racing y Nómada Sport. Agarre, duración, clima y precio obligan a elegir. La inscripción estima vueltas de uso y el muro muestra intención, fatiga y desgaste. Tribunas y edificios se colocan fuera del recorrido y del carril de boxes.
+
+Los cambios visuales se aplican también a partidas anteriores. **Los contratos y carreras de guardados antiguos conservan sus reglas** para no cambiar obligaciones ni resultados a mitad. Para jugar con todo el equilibrio nuevo, empieza otra carrera empresarial. Consulta [las reglas y límites del equilibrio](docs/EQUILIBRIO_0_6_4.md).
+
 ## Tu primera temporada
 
 1. Funda una compañía y dibuja su logotipo. Hay pincel, borrador, colores, grosor, deshacer/rehacer, transparencia, vista previa y exportación PNG.
 2. Abre **Pilotos** desde la navegación o desde su edificio en la sede. Estudia los currículums y negocia salario, duración y prima. Las ofertas insuficientes reciben una contraoferta; insistir puede pausar la negociación.
-3. Selecciona **Garaje** para consultar el Civic EP3, su estado y su historial. Las reparaciones cuestan dinero y duran inicialmente dos días; equipamiento y personal pueden reducir el plazo. El diagnóstico profesional se solicita aparte y requiere un mecánico. Los neumáticos estándar cuestan $160. Desde allí puedes abrir el taller de modificaciones.
-4. En **Competiciones**, inscribe a tu piloto y coche. Cada ronda cuesta $370 con transporte. Puedes hacerlo hasta la jornada de carrera.
+3. Selecciona **Garaje** para consultar tu utilitario usado, su estado y su historial. Las reparaciones cuestan dinero y duran inicialmente dos días; equipamiento y personal pueden reducir el plazo. El diagnóstico profesional se solicita aparte y requiere un mecánico. El precio de renovar los neumáticos de calle depende del coche y del apoyo disponible. Desde allí puedes abrir el taller de modificaciones.
+4. En **Competiciones**, inscribe a tu piloto y coche. La inscripción y el transporte cuestan $370; las gomas de competición se pagan aparte. Puedes hacerlo hasta la jornada de carrera.
 5. Avanza día a día o hasta la próxima prueba. Cada día se procesan las mismas obligaciones. El calendario se detiene en las carreras: solo una renuncia confirmada permite no participar.
 6. Sigue la carrera en una retransmisión 2D con cronometraje, radio y telemetría. Usa **Atacar / Equilibrado / Conservar**, selecciona un piloto en la clasificación para seguirlo, cambia entre TV / seguimiento / circuito, ajusta el zoom y la velocidad ×1 / ×2 / ×4, o pausa con el botón o la barra espaciadora. Los resultados no están predeterminados.
 7. Completa las seis pruebas. Los premios, puntos de pilotos/equipos, kilometraje, fatiga, desgaste y reputación se registran al cruzar la meta. Al terminar recibirás una prima de clasificación y la temporada quedará archivada.
 8. Puedes abrir la siguiente temporada. Se conserva el mundo y se contabiliza el descanso hasta el siguiente 5 de enero. Revisa los contratos que vencen.
 
-**Finanzas** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $360 netos en un plazo inicial de tres días, con un máximo de uno cada siete días. Comparte las bahías y profesionales disponibles con las revisiones.
+**Finanzas** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $420 netos en partidas nuevas ($360 en las anteriores) en un plazo inicial de tres días, con un máximo de uno cada siete días. Comparte las bahías y profesionales disponibles con las revisiones.
 
 ## Alcance entregado
 
 - Menú, creación de compañía, identidad y sede 2D interactiva.
 - Calendario desde enero de 2026 y temporadas sucesivas.
-- Salarios devengados por día y liquidados el día 1; primas, alquiler, gastos logísticos, servicios, reparaciones, premios y descubierto con 14 días de recuperación. La bancarrota termina la partida.
+- Salarios pagados cada día en partidas nuevas (los contratos antiguos mantienen devengo diario y liquidación el día 1); primas, alquiler, gastos logísticos, servicios, reparaciones, premios y descubierto con 14 días de recuperación. La bancarrota termina la partida.
 - Un coche inicial y siete equipos rivales con recursos finitos, flotas y plantillas persistentes. La IA de la 0.2 evalúa compras/ventas, fichajes/traspasos, revisiones, neumáticos, formación, encargos y reducción de gastos según personalidad, necesidad y reserva salarial.
 - Pilotos con 12 atributos, rasgos, potencial oculto, contratos, descanso, formación básica y experiencia de carreras.
 - Copa Club con seis circuitos/rondas, clasificación de equipos y pilotos, resultados e historial de temporadas.
@@ -205,3 +215,5 @@ Consulta [la arquitectura](docs/ARQUITECTURA.md), [el plan por versiones](docs/R
 La 0.6.2 suma `tests/professionals.test.cjs` y `tests/browser-professionals.cjs`: niveles/estrés, aumentos y ofertas rivales, diagnóstico, CVs, minijuego completo con carrera activa, automatización, entrenamiento, lesiones/retiro, reanudación y compatibilidad 0.6.1. Consulta [la validación](docs/PRUEBAS.md).
 
 La 0.6.3 añade `tests/operations.test.cjs` y `tests/browser-operations.cjs`: políticas, presupuestos, acciones reales, pausa, formación sin cobros dobles, atención médica y migración auténtica 0.6.2. El [registro de pruebas](docs/PRUEBAS.md) documenta la cobertura y sus límites.
+
+La 0.6.4 añade `tests/challenge.test.cjs` para las reglas actuales y `tests/browser-challenge.cjs` para la nueva contratación/carrera en tres tamaños. Las pruebas previas fijan explícitamente las reglas históricas. `npm run test:balance` comprueba una temporada de supervivencia con ingresos y costes reales.

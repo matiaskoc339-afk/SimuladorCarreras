@@ -729,7 +729,7 @@
     salaryMinimum(d, months, bonus, k) {
       const conventional =
         d.ask * (months === 6 ? 1.1 : months === 24 ? 0.96 : 1) -
-        Math.min(bonus / 12, d.ask * 0.12);
+        Math.min(bonus / (G.Pay.daily(d) ? 360 : 12), d.ask * 0.12);
       if (!k) return Math.round(conventional);
       return Math.round(
         conventional *
@@ -765,16 +765,16 @@
         d.id,
       );
     },
-    renewDriver(s, id, salary, months = 12) {
+    renewDriver(s, id, salary, months = 12, companyId = s.playerId) {
       G.ensurePlayable(s);
       G.assert(!s.race, "Termina la carrera antes de renovar.");
-      const d = G.ownedDrivers(s).find((d) => d.id === id),
+      const d = G.ownedDrivers(s, companyId).find((d) => d.id === id),
         k = d?.contract?.clauses;
       G.assert(
         d &&
           d.contract.end - s.day <= 60 &&
           d.contract.end > s.day &&
-          [6, 12, 24].includes(months),
+          G.Pay.durations(s).includes(months),
         "La renovación se abre en los últimos 60 días.",
       );
       const minimum = Math.ceil(
@@ -782,7 +782,7 @@
       );
       G.assert(
         Number.isInteger(salary) && salary >= minimum && salary <= 10000,
-        `El representante pide al menos $${minimum} al mes.`,
+        `El representante pide al menos $${minimum}/${G.Pay.unit(d)}.`,
       );
       d.contract.salary = salary;
       d.contract.end += months * 30;
@@ -796,7 +796,7 @@
         s,
         "Fichajes",
         `${d.name} renueva su contrato.`,
-        `El contrato se amplía ${months} meses sin liquidar ni borrar el salario devengado. Nuevo salario: $${salary}/mes.`,
+        `El contrato se amplía ${months} meses sin liquidar ni borrar el salario devengado. Nuevo salario: $${salary}/${G.Pay.unit(d)}.`,
         "driver",
         id,
       );

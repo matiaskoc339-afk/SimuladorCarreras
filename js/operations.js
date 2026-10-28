@@ -538,7 +538,7 @@
         add(
           "jobs",
           s.playerId,
-          "Aceptar encargo de taller · $360 netos al entregar",
+          `Aceptar encargo de taller · $${G.Challenge.enabled(s) ? 420 : 360} netos al entregar`,
           0,
           days,
           reason,

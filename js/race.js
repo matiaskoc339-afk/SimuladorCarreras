@@ -962,7 +962,11 @@
       const def = G.Data.tracks[r.track],
         distance = def.length * def.laps,
         dt = this.dt,
-        scale = this.worldScale(r.track);
+        scale = this.worldScale(r.track),
+        pointAt = (distance) =>
+          r.dynamicsVersion
+            ? G.Racecraft.sample(r.track, distance)
+            : this.point(r.track, distance);
       r.cautions ||= [];
       for (let k = 0; k < steps && !r.finished; k++) {
         r.time += dt;
@@ -1035,7 +1039,9 @@
                 : front &&
                     front.gap < 26 &&
                     a.tires > 45 &&
-                    (a.trait === 1 || a.trait === 3)
+                    (r.dynamicsVersion
+                      ? G.Data.traits[a.trait].risk > 1.08
+                      : a.trait === 1 || a.trait === 3)
                   ? "attack"
                   : "balanced";
           }
@@ -1044,22 +1050,26 @@
           const skill =
             (0.8 + a.stats.pace / 300) *
             (1 - a.fatigue * 0.00055) *
-            a.paceFactor;
+            a.paceFactor *
+            (a.brain ? G.Racecraft.effect(a).pace : 1);
           const mech = (0.77 + a.condition * 0.0023) * G.Workshop.mechanical(a);
           const grip = a.grip * (0.85 + a.components.suspension * 0.0015),
             brakePower =
               (4 + a.brakes / 25) *
               (0.75 + a.components.brakes * 0.0025) *
-              (r.weekendVersion ? G.RaceWeekend.grip(r, a) : 1);
-          const point = this.point(r.track, a.progress),
+              (r.weekendVersion ? G.RaceWeekend.grip(r, a) : 1) *
+              (a.brain ? G.Racecraft.effect(a).braking : 1);
+          const point = pointAt(a.progress),
             curve = signedAngle(
-              this.point(r.track, a.progress + 20).angle,
-              this.point(r.track, a.progress - 20).angle,
+              pointAt(a.progress + 20).angle,
+              pointAt(a.progress - 20).angle,
             );
           const corner = G.clamp((64 - point.limit) / 46, 0, 1);
           let limit = 70;
-          for (const look of [0, 25, 55, 85]) {
-            const cornerLimit = this.point(r.track, a.progress + look).limit;
+          for (const look of a.brain
+            ? [0, 35, 75, 120, 180, 240]
+            : [0, 25, 55, 85]) {
+            const cornerLimit = pointAt(a.progress + look).limit;
             const cornerSpeed =
               cornerLimit *
               (0.78 + grip / 260) *
@@ -1076,8 +1086,11 @@
             mech *
             mode *
             (0.94 + (a.morale ?? 75) * 0.0008);
-          let lateralTarget =
-            Math.abs(curve) > 0.025 ? Math.sign(curve) * 1.15 : 0.15;
+          let lateralTarget = a.brain
+            ? G.Racecraft.line(r, a)
+            : Math.abs(curve) > 0.025
+              ? Math.sign(curve) * 1.15
+              : 0.15;
           let drafting = false,
             preparingPass = false;
           const passingSkill = G.clamp(a.stats.overtake / 100, 0, 1);
@@ -1091,7 +1104,11 @@
             const tryPass =
               (!yellow || front.b.dnf) &&
               front.gap < 20 + passingSkill * 16 &&
-              (target > front.b.speed + 0.7 - passingSkill * 0.5 ||
+              (target >
+                front.b.speed +
+                  (r.dynamicsVersion
+                    ? 0.35 - passingSkill * 0.25
+                    : 0.7 - passingSkill * 0.5) ||
                 a.mode === "attack") &&
               r.time > 1.2;
             if (tryPass) {
@@ -1121,7 +1138,9 @@
                 // Un piloto menos hábil levanta mientras prepara la maniobra; la
                 // habilidad facilita encontrar el hueco, no aumenta la potencia.
                 if (Math.abs(lateralTarget - a.lateral) > 0.6)
-                  target *= 0.95 + passingSkill * 0.05;
+                  target *= r.dynamicsVersion
+                    ? 0.985 + passingSkill * 0.015
+                    : 0.95 + passingSkill * 0.05;
               }
             }
             if (
@@ -1146,9 +1165,31 @@
             rear.gap > 7 &&
             corner < 0.7
           ) {
-            const defense = G.clamp((a.stats.defense - 25) / 65, 0, 1);
+            const defense = G.clamp(
+              r.dynamicsVersion
+                ? a.stats.defense / 100
+                : (a.stats.defense - 25) / 65,
+              0,
+              1,
+            );
             lateralTarget +=
               (G.clamp(rear.b.lateral, -2, 2) - lateralTarget) * defense;
+          }
+          if (a.brain) {
+            const decision = G.Racecraft.decide(r, a, snapshots, {
+              target,
+              lateralTarget,
+              front,
+              rear,
+              corner,
+              curve,
+              yellow,
+              preparingPass,
+            });
+            target = decision.target;
+            lateralTarget = decision.lateral;
+            preparingPass = decision.passing;
+            if (a.mode === "save") target *= 0.91;
           }
           // Un piloto disciplinado deja espacio antes de converger sobre un coche emparejado.
           const beside = snapshots.find(
@@ -1239,6 +1280,7 @@
           );
           G.Workshop.wear(a, moved, dt, a.braking ? 1 : 0);
           if (r.weekendVersion) G.RaceWeekend.moved(s, r, a, moved, dt);
+          if (a.brain) G.Racecraft.moved(r, a, moved, dt);
           const pressure =
             front && front.gap < 12 ? 1 : rear && rear.gap < 10 ? 0.7 : 0;
           if (

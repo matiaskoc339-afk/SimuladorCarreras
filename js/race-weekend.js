@@ -48,7 +48,8 @@
       if (!d || s.day % 30 || d.lastRestock === s.day) return;
       d.lastRestock = s.day;
       for (const [id, c] of Object.entries(this.compounds)) {
-        if (id === "road" || d.stock[id] > 24) continue;
+        if (id === "road" || !Object.hasOwn(d.stock, id) || d.stock[id] > 24)
+          continue;
         const cost = Math.round(c.price * 0.4) * 8;
         if (s.partsSupplier.balance >= cost) {
           s.partsSupplier.balance -= cost;
@@ -313,12 +314,7 @@
     wearFactor(r, a) {
       const c = this.compounds[a.compound],
         wet = r.weather.wetness;
-      return (
-        c.wear *
-        (a.compound === "wet" || a.compound === "inter"
-          ? 1 + (1 - wet) * 1.8
-          : 1)
-      );
+      return c.wear * (G.Rubber.wet(a.compound) ? 1 + (1 - wet) * 1.8 : 1);
     },
     errorFactor(r, a) {
       return (
@@ -421,14 +417,16 @@
           if (
             (a.puncture ||
               a.fuel < 0.4 ||
-              a.tires < 18 ||
+              a.tires < (r.dynamicsVersion ? G.Rubber.threshold(a) : 18) ||
               (this.grip(r, a) < 0.82 && w.wetness > 0.25)) &&
             remaining > 160
           ) {
             try {
               this.requestPit(s, a.companyId, {
                 compound:
-                  a.puncture || a.tires < 18 || this.grip(r, a) < 0.82
+                  a.puncture ||
+                  a.tires < (r.dynamicsVersion ? G.Rubber.threshold(a) : 18) ||
+                  this.grip(r, a) < 0.82
                     ? this.bestCompound(r)
                     : "keep",
                 repair:
@@ -489,9 +487,7 @@
         r.weather.trackTemp +
         a.speed * 0.8 +
         (a.mode === "attack" ? 15 : 6) -
-        (a.compound === "wet" || a.compound === "inter"
-          ? r.weather.wetness * 18
-          : 0);
+        (G.Rubber.wet(a.compound) ? r.weather.wetness * 18 : 0);
       a.tyreTemp += (temp - a.tyreTemp) * dt * 0.06;
       if (a.compound === "road") {
         a.roadCondition = a.tires;
@@ -973,6 +969,7 @@
       const w = b.weather;
       return {
         track: rec.track,
+        ...(rec.dynamicsVersion ? { dynamicsVersion: 1 } : {}),
         time: t,
         step: Math.floor(t * 20),
         trackWidth: 12.4,
@@ -1016,6 +1013,7 @@
       G.assert(
         rec &&
           rec.version === 1 &&
+          (rec.dynamicsVersion === undefined || rec.dynamicsVersion === 1) &&
           Number.isInteger(rec.track) &&
           G.Data.tracks[rec.track] &&
           typeof rec.eventId === "string" &&
@@ -1090,7 +1088,10 @@
                 a[7] < 64 &&
                 Number.isInteger(a[8]) &&
                 a[8] >= 0 &&
-                a[8] < 5,
+                a[8] <
+                  (rec.dynamicsVersion
+                    ? Object.keys(this.compounds).length
+                    : 5),
             ),
           "Fotograma corrupto.",
         );

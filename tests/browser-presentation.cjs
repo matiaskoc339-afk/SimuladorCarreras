@@ -23,7 +23,7 @@ const fs = require("node:fs");
     });
     await page.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Aster Motorsport", "", 601);
+        s = G.createLegacyGame("Aster Motorsport", "", 601);
       G.App.setState(s, 1);
     });
     await page.waitForTimeout(600);

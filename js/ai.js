@@ -102,7 +102,9 @@
       if (workshopFree && !c.job && s.day - c.lastJob >= 7)
         add(
           "servicio",
-          c.balance < G.Companies.monthly(s, c.id) * 2 ? 98 : 30,
+          G.Challenge.enabled(s) || c.balance < G.Companies.monthly(s, c.id) * 2
+            ? 98
+            : 30,
           "Aprovechar el taller libre para financiar las próximas nóminas.",
           null,
           0,
@@ -111,6 +113,7 @@
       candidates.push(...G.Workshop.aiCandidates(s, c, money, days, p));
       candidates.push(...G.Facilities.aiCandidates(s, c, money));
       candidates.push(...G.Staff.aiCandidates(s, c, money));
+      candidates.push(...G.Challenge.aiCandidates(s, c));
       for (const car of cars) {
         if (G.Market.listed(s, car.id)) continue;
         if (
@@ -153,7 +156,8 @@
           !car.repair &&
           !G.Market.locked(s, car.id) &&
           ((rankedCars.length > 1 && car !== rankedCars[0]) ||
-            c.balance < G.Companies.monthly(s, c.id) * 0.8)
+            c.balance <
+              (G.Challenge.enabled(s) ? 0 : G.Companies.monthly(s, c.id) * 0.8))
         ) {
           add(
             "venta",
@@ -198,7 +202,11 @@
         }
       if (drivers.length < c.driverCapacity)
         for (const d of s.drivers) {
-          if (!G.Professionals.available(s, d)) continue;
+          if (
+            !G.Professionals.available(s, d) ||
+            (G.Challenge.enabled(s) && c.level < G.Challenge.driverLevel(d))
+          )
+            continue;
           if (
             d.companyId === c.id ||
             G.Market.locked(s, d.id) ||
@@ -208,7 +216,8 @@
           const salary = G.Companies.salary(d),
             fee = G.Companies.fee(s, d),
             cost = fee + 300;
-          if (cost > money || salary * 3 > money - cost) continue;
+          if (cost > money || G.Pay.monthlyRate(salary, d) * 3 > money - cost)
+            continue;
           const current = lineup.driver,
             gain = current
               ? G.Drivers.rating(d) - G.Drivers.rating(current)
@@ -256,6 +265,22 @@
           }
         }
       for (const d of drivers) {
+        if (
+          G.Challenge.enabled(s) &&
+          d.contract.end - s.day <= 60 &&
+          d.contract.end > s.day &&
+          c.balance > G.Companies.monthly(s, c.id) * 2
+        ) {
+          const salary = Math.ceil(d.contract.salary * 1.08);
+          add(
+            "renovación de piloto",
+            89,
+            "Conservar el asiento con aumento pactado y reserva de dos meses.",
+            d.id,
+            0,
+            () => G.Contracts.renewDriver(s, d.id, salary, 12, c.id),
+          );
+        }
         const other = drivers.some(
           (x) => x !== d && G.Drivers.rating(x) > G.Drivers.rating(d),
         );

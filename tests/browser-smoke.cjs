@@ -18,6 +18,9 @@ const fs = require("node:fs");
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
+    await page.evaluate(() => {
+      RCS.createGame = RCS.createLegacyGame;
+    });
     await page.getByRole("button", { name: /Fundar mi compañía/ }).click();
     await page.locator("#company-name").fill("Aster Motorsport");
     const box = await page.locator("#logo-canvas").boundingBox();

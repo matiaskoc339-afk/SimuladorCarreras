@@ -17,7 +17,7 @@ const fs = require("node:fs");
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     const base = await p.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Aster Estrategia", "", 817),
+        s = G.createLegacyGame("Aster Estrategia", "", 817),
         d = s.drivers.find((d) => !d.companyId),
         car = G.ownedCars(s)[0];
       G.Drivers.offer(s, d.id, d.ask, 12);

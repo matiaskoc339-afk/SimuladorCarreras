@@ -171,12 +171,16 @@
       };
       s.professional.demands.push(d);
       p.lastRaise = s.day;
-      S.remember(e, s, `Solicita una revisión salarial de $${salary}/mes.`);
+      S.remember(
+        e,
+        s,
+        `Solicita una revisión salarial de $${salary}/${G.Pay.unit(e)}.`,
+      );
       G.news(
         s,
         "Compañía",
         `${e.name} solicita un aumento.`,
-        `$${salary}/mes; espera una respuesta en catorce días. Puedes negociar, aceptar o rechazar.`,
+        `$${salary}/${G.Pay.unit(e)}; espera una respuesta en catorce días. Puedes negociar, aceptar o rechazar.`,
         "staff",
         e.id,
       );
@@ -219,7 +223,11 @@
       d.status = "accepted";
       e.motivation = Math.min(100, e.motivation + 10);
       e.loyalty = Math.min(100, e.loyalty + 5);
-      S.remember(e, s, `Acuerda $${salary}/mes tras negociar su aumento.`);
+      S.remember(
+        e,
+        s,
+        `Acuerda $${salary}/${G.Pay.unit(e)} tras negociar su aumento.`,
+      );
       return { accepted: true };
     },
     poach(s, eid, buyerId) {
@@ -235,6 +243,11 @@
           !this.resting(s, eid),
         "Oferta rival no disponible.",
       );
+      if (G.Challenge.enabled(s))
+        G.assert(
+          buyer.level >= G.Challenge.staffLevel(s, e),
+          "La compañía rival no tiene nivel para este profesional.",
+        );
       G.assert(
         !s.professional.offers.some(
           (o) => o.employeeId === eid && o.status === "pending",
@@ -259,10 +272,13 @@
               S.minimum(s, e, { months: 12, bonus: 0 }, buyerId),
             ) / 10,
           ) * 10,
-        fee = Math.ceil(e.contract.salary * 0.5);
+        fee = Math.ceil(G.Pay.monthly(e.contract) * 0.5);
       G.assert(
         salary <= 5000 &&
-          buyer.balance >= fee + (G.Companies.monthly(s, buyerId) + salary) * 4,
+          buyer.balance >=
+            fee +
+              (G.Companies.monthly(s, buyerId) + G.Pay.monthlyRate(salary, e)) *
+                4,
         "El rival no puede financiar la oferta y su reserva.",
       );
       const o = {
@@ -282,7 +298,7 @@
         s,
         "Fichajes",
         `${buyer.name} presenta una oferta a ${e.name}.`,
-        `$${salary}/mes. El profesional decidirá dentro de siete días; su salario, lealtad, estrés y tu respuesta influyen.`,
+        `$${salary}/${G.Pay.unit(e)}. El profesional decidirá dentro de siete días; su salario, lealtad, estrés y tu respuesta influyen.`,
         "staff",
         eid,
       );
@@ -328,12 +344,17 @@
         !e?.contract ||
         e.companyId !== o.sellerId ||
         buyer?.status !== "active" ||
+        (G.Challenge.enabled(s) &&
+          buyer.level < G.Challenge.staffLevel(s, e)) ||
         seller?.status !== "active" ||
         S.busy(s, e.id) ||
         S.owned(s, buyer.id).length >= S.capacity(s, buyer.id) ||
         S.owned(s, buyer.id).some((other) => other.role === e.role) ||
         buyer.balance <
-          o.fee + (G.Companies.monthly(s, buyer.id) + o.salary) * 4 ||
+          o.fee +
+            (G.Companies.monthly(s, buyer.id) +
+              G.Pay.monthlyRate(o.salary, e)) *
+              4 ||
         o.salary < S.minimum(s, e, { months: 12, bonus: 0 }, buyer.id)
       ) {
         o.status = "cancelled";
@@ -545,11 +566,14 @@
       s.sequence = proxy.sequence;
       s.professional.rng = proxy.rng;
       const surprise = G.random(s.professional) < 0.015 + p.level * 0.004;
-      const base = 27 + p.level * 4.5 + (surprise ? 8 : 0);
+      const base =
+        (G.Challenge.enabled(s) ? 10 : 27) +
+        p.level * (G.Challenge.enabled(s) ? 5 : 4.5) +
+        (surprise ? 8 : 0);
       for (const key of G.Drivers.stats)
         d.stats[key] = G.clamp(
           Math.round(base + (G.random(s.professional) - 0.5) * 16),
-          20,
+          G.Challenge.enabled(s) ? 3 : 20,
           90,
         );
       d.potential = G.clamp(
@@ -562,7 +586,9 @@
         35,
         98,
       );
-      d.ask = Math.round((400 + G.Drivers.rating(d) * 5) / 10) * 10;
+      d.ask = G.Challenge.enabled(s)
+        ? G.Challenge.driverAsk(d)
+        : Math.round((400 + G.Drivers.rating(d) * 5) / 10) * 10;
       s.drivers.push(d);
       this.addDriver(s, d);
       const report = this.estimate(
@@ -676,8 +702,8 @@
           d.companyId !== s.playerId &&
           s.companies.find((c) => c.id === d.companyId).balance >=
             (G.Companies.monthly(s, d.companyId) +
-              d.salary -
-              e.contract.salary) *
+              G.Pay.monthlyRate(d.salary, e) -
+              G.Pay.monthly(e.contract)) *
               3
         ) {
           e.contract.salary = d.salary;
@@ -799,7 +825,7 @@
             d.day <= s.day &&
             d.deadline === d.day + 14 &&
             Number.isInteger(d.salary) &&
-            d.salary >= 150 &&
+            d.salary >= (G.Challenge.enabled(s) ? 10 : 150) &&
             d.salary <= 5000 &&
             ["pending", "accepted", "refused", "ignored", "cancelled"].includes(
               d.status,
@@ -816,7 +842,7 @@
             o.day <= s.day &&
             o.deadline === o.day + 7 &&
             Number.isInteger(o.salary) &&
-            o.salary >= 150 &&
+            o.salary >= (G.Challenge.enabled(s) ? 10 : 150) &&
             o.salary <= 5000 &&
             Number.isInteger(o.fee) &&
             o.fee >= 0 &&

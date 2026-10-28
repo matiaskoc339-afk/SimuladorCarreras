@@ -39,12 +39,12 @@
       }
       form.querySelector(".modal-actions").insertAdjacentHTML(
         "beforebegin",
-        `<div class="entry-strategy"><h3>Prepara la salida</h3><div class="form-row"><label class="form-field"><span>Neumáticos</span><select id="entry-compound" name="compound">${Object.entries(
-          W.compounds,
+        `<div class="entry-strategy"><h3>Prepara la salida</h3><div class="form-row"><label class="form-field"><span>Neumáticos</span><select id="entry-compound" name="compound">${G.Rubber.options(
+          s,
         )
           .map(
             ([id, c]) =>
-              `<option value="${id}">${c.name}${c.price ? " · " + U.money(c.price) + " nuevo" : ""}</option>`,
+              `<option value="${id}">${c.name}${c.price ? " · " + U.money(G.Rubber.price(s, id)) + " nuevo" : ""}</option>`,
           )
           .join(
             "",
@@ -73,6 +73,21 @@
             "Inscripción y transporte: $370. Total hoy: " +
             U.money(q.total) +
             ".";
+          if (G.Challenge.enabled(s)) {
+            const d = s.drivers.find(
+                (d) => d.id === form.elements.driver.value,
+              ),
+              car = s.cars.find((c) => c.id === form.elements.car.value),
+              compound = form.elements.compound.value,
+              condition =
+                compound === "road" ? car.tires : q.set?.condition || 100;
+            const laps = G.Rubber.estimate(
+              { stats: d.stats, tires: condition, tireWear: car.tireWear || 1 },
+              compound,
+              e.track,
+            );
+            msg.textContent += ` Referencia en seco y ritmo normal: unas ${laps} vueltas hasta el 22 % de estado. La prueba dura ${G.Data.tracks[e.track].laps} vueltas. Ataque, lluvia sobre seco, fatiga y derrapes acortan el stint; conservar prolonga la duración.`;
+          }
           submit.textContent = "Confirmar inscripción · $" + q.total;
           submit.disabled = G.player(s).balance < q.total;
         } catch (err) {
@@ -85,12 +100,12 @@
     },
     pitHTML(s) {
       const a = s.race.entrants.find((a) => a.companyId === s.playerId);
-      return `<div class="weekend-metrics" id="weekend-metrics"></div><details class="pit-strategy" id="pit-strategy" ${G.App.pitOpen ? "open" : ""}><summary>Boxes y estrategia <span id="pit-status">${a ? phases[a.pit.phase] : "Sin coche propio en pista"}</span></summary><div class="pit-strategy-body"><div class="weekend-orders"><button class="secondary weekend-order" data-action="order" data-value="fuel">Ahorrar combustible</button><button class="secondary weekend-order" data-action="order" data-value="defend">Defender posición</button></div><form id="pit-form"><div class="pit-fields"><label class="form-field"><span>Juego para la parada</span><select name="compound" id="pit-compound"><option value="keep">Mantener gomas</option>${Object.entries(
-        W.compounds,
+      return `<div class="weekend-metrics" id="weekend-metrics"></div><details class="pit-strategy" id="pit-strategy" ${G.App.pitOpen ? "open" : ""}><summary>Boxes y estrategia <span id="pit-status">${a ? phases[a.pit.phase] : "Sin coche propio en pista"}</span></summary><div class="pit-strategy-body"><div class="weekend-orders"><button class="secondary weekend-order" data-action="order" data-value="fuel">Ahorrar combustible</button><button class="secondary weekend-order" data-action="order" data-value="defend">Defender posición</button></div><form id="pit-form"><div class="pit-fields"><label class="form-field"><span>Juego para la parada</span><select name="compound" id="pit-compound"><option value="keep">Mantener gomas</option>${G.Rubber.options(
+        s,
       )
         .map(
           ([id, c]) =>
-            `<option value="${id}">${id === "road" ? "Volver a las gomas de calle" : c.name + " · " + U.money(c.price) + " nuevo"}</option>`,
+            `<option value="${id}">${id === "road" ? "Volver a las gomas de calle" : c.name + " · " + U.money(G.Rubber.price(s, id)) + " nuevo"}</option>`,
         )
         .join(
           "",

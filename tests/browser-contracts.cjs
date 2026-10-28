@@ -17,7 +17,7 @@ const fs = require("node:fs");
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     const ids = await p.evaluate(() => {
       const G = RCS,
-        s = G.createGame("Aster Contratos", "", 744);
+        s = G.createLegacyGame("Aster Contratos", "", 744);
       G.App.setState(s, 1);
       const o = s.commercial.offers.find(
         (o) =>

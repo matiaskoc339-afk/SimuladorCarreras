@@ -42,7 +42,7 @@
         const car = G.makeCar(
           s,
           null,
-          i % G.Data.models.length,
+          i % Math.min(4, G.Data.models.length),
           ["#a3b7a5", "#a48e7a", "#8398b5", "#ab9970"][i % 4],
         );
         car.condition = G.integer(s, 62, 97);
@@ -103,7 +103,8 @@
           );
         if (c.job)
           G.assert(
-            Number.isInteger(c.job.end) && c.job.net === 360,
+            Number.isInteger(c.job.end) &&
+              c.job.net === (G.Challenge.enabled(s) ? 420 : 360),
             "Encargo empresarial inválido.",
           );
       }

@@ -172,8 +172,8 @@
           wet = r.weather.wetness,
           compound = W.bestCompound(r),
           badCompound =
-            (wet > 0.3 && !["inter", "wet"].includes(a.compound)) ||
-            (wet < 0.08 && ["inter", "wet"].includes(a.compound));
+            (wet > 0.3 && !G.Rubber.wet(a.compound)) ||
+            (wet < 0.08 && G.Rubber.wet(a.compound));
         let mode = fuelLow
           ? "fuel"
           : a.tires < 35 || a.condition < 50 || wet > 0.7

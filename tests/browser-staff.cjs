@@ -16,7 +16,10 @@ const fs = require("node:fs");
     p.on("pageerror", (e) => errors.push(e.message));
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     await p.evaluate(() =>
-      RCS.App.setState(RCS.createGame("Aster Profesionales", "", 1070), 1),
+      RCS.App.setState(
+        RCS.createLegacyGame("Aster Profesionales", "", 1070),
+        1,
+      ),
     );
     await p.locator('.rail [data-go="staff"]').click();
     await p

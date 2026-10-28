@@ -16,7 +16,7 @@ const { chromium } = require("playwright"),
     p.on("pageerror", (e) => errors.push(e.message));
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     await p.evaluate(() =>
-      RCS.App.setState(RCS.createGame("Aster Operaciones", "", 1263), 1),
+      RCS.App.setState(RCS.createLegacyGame("Aster Operaciones", "", 1263), 1),
     );
     await p.locator('.rail-nav [data-go="operations"]').click();
     assert.match(
