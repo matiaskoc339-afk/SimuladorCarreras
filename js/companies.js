@@ -7,6 +7,7 @@
       return (
         540 +
         G.Facilities.upkeep(s, id) * 30 +
+        G.Staff.monthly(s, id) +
         G.Contracts.nextPayments(s, id) +
         G.ownedDrivers(s, id).reduce(
           (n, d) => n + d.contract.salary + (d.training ? 540 : 0),
@@ -308,6 +309,7 @@
       }
     },
     bankrupt(s, c) {
+      G.Staff.bankrupt(s, c.id);
       if (G.Facilities.site(s, c.id)?.project)
         G.Facilities.cancel(s, c.id, true);
       G.Contracts.bankrupt(s, c.id);

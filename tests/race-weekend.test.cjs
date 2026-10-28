@@ -343,6 +343,8 @@ test("Carrera0.4 auténtica: resultado, economía, contratos y entidades exactam
   const actual = json(s);
   delete actual.raceSupplies;
   delete actual.expansion; // Bloque nuevo; el estado y algoritmo 0.4 se conservan.
+  delete actual.staffing;
+  actual.employees = []; // Las plantillas anteriores no contenían personal.
   assert.deepEqual(
     actual,
     JSON.parse(

@@ -69,7 +69,7 @@
         .filter((c) => c.repair)
         .map(
           (c) =>
-            `<p><b>${c.brand} ${c.model}</b> · ${pending(s, c)}<br>Coste abonado: ${this.money(c.repair.cost)}. Fuera de servicio hasta finalizar.</p>`,
+            `<p><b>${c.brand} ${c.model}</b> · ${pending(s, c)}<br>Coste abonado: ${this.money(c.repair.cost)}. Fuera de servicio hasta finalizar.${c.repair.staffSupport ? `<br>Apoyo asignado: ${this.escape(s.employees.find((e) => e.id === c.repair.staffSupport.employeeId)?.name || "Profesional registrado")}.` : ""}</p>`,
         )
         .join(
           "",
@@ -89,7 +89,7 @@
             unit = stock[0],
             reason = unit ? W.fit(s, car, unit) : "Sin existencias.",
             compatible = !reason;
-          return `<article class="panel part-card" data-part-component="${d.component}" data-part-compatible="${compatible}" data-part-search="${this.escape([d.name, d.description, G.Parts.components[d.component], ...(d.models || []).map((i) => G.Data.models[i].generation)].join(" ").toLowerCase())}"><div class="part-diagram ${d.component}"><span>${G.Parts.slots[d.slot]}</span><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M18 48L30 20H85L102 45L89 55H28Z M38 20V53 M80 20V53 M24 35H96 M50 26H70V47H50Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="52" r="7" fill="#1b292d" stroke="currentColor"/><circle cx="98" cy="52" r="7" fill="#1b292d" stroke="currentColor"/></svg><b>${String(stock.length).padStart(2, "0")} <small>UNIDADES</small></b></div><div class="padded"><span class="eyebrow">${d.models ? d.models.map((i) => G.Data.models[i].generation).join(" / ") : "MULTIMODELO"}</span><h3>${d.name}</h3><p>${d.description}</p><div class="part-effects">${effects(d)}</div><div class="fit-note ${compatible ? "positive" : "muted"}">${compatible ? "Compatible con esta configuración" : this.escape(reason)}</div><div class="market-price"><b>${this.money(unit ? Math.round((d.price * unit.condition) / 100) : d.price)}</b>${this.button("Ver pieza y montaje", "part-preview", "secondary", `data-id="${unit?.id || ""}" data-car="${car.id}" ${unit ? "" : "disabled"}`)}</div><small class="muted">Mano de obra ${this.money(d.labor)} · ${G.Facilities.duration(s, s.playerId, d.days)} días · Compra separada de instalación</small></div></article>`;
+          return `<article class="panel part-card" data-part-component="${d.component}" data-part-compatible="${compatible}" data-part-search="${this.escape([d.name, d.description, G.Parts.components[d.component], ...(d.models || []).map((i) => G.Data.models[i].generation)].join(" ").toLowerCase())}"><div class="part-diagram ${d.component}"><span>${G.Parts.slots[d.slot]}</span><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M18 48L30 20H85L102 45L89 55H28Z M38 20V53 M80 20V53 M24 35H96 M50 26H70V47H50Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="52" r="7" fill="#1b292d" stroke="currentColor"/><circle cx="98" cy="52" r="7" fill="#1b292d" stroke="currentColor"/></svg><b>${String(stock.length).padStart(2, "0")} <small>UNIDADES</small></b></div><div class="padded"><span class="eyebrow">${d.models ? d.models.map((i) => G.Data.models[i].generation).join(" / ") : "MULTIMODELO"}</span><h3>${d.name}</h3><p>${d.description}</p><div class="part-effects">${effects(d)}</div><div class="fit-note ${compatible ? "positive" : "muted"}">${compatible ? "Compatible con esta configuración" : this.escape(reason)}</div><div class="market-price"><b>${this.money(unit ? Math.round((d.price * unit.condition) / 100) : d.price)}</b>${this.button("Ver pieza y montaje", "part-preview", "secondary", `data-id="${unit?.id || ""}" data-car="${car.id}" ${unit ? "" : "disabled"}`)}</div><small class="muted">Mano de obra ${this.money(d.labor)} · ${G.Staff.plan(s, s.playerId, "install", d.days).days} días · Compra separada de instalación</small></div></article>`;
         })
         .join(
           "",
@@ -209,7 +209,7 @@
           const d = G.Parts.definition(p.definitionId);
           A.confirm(
             "Programar instalación",
-            `${d.name}: ${U.money(d.labor)} de mano de obra y ${G.Facilities.duration(s, s.playerId, d.days)} días de taller. Las prestaciones cambiarán al terminar y la pieza anterior se recuperará.`,
+            `${d.name}: ${U.money(d.labor)} de mano de obra y ${G.Staff.plan(s, s.playerId, "install", d.days).days} días de taller. Las prestaciones cambiarán al terminar y la pieza anterior se recuperará.`,
             () => {
               A.workshopTab = "diagnosis";
               A.mutate(() => W.install(s, data.car, p.id), "workshop");
@@ -278,7 +278,7 @@
           : "Selecciona un vehículo en el taller.";
       U.modal(
         d.name,
-        `<p class="eyebrow gold">${p.id} · ${G.Parts.slots[d.slot]} · ESTADO ${Math.round(p.condition)} %</p><p>${d.description}</p><div class="onboarding-note"><strong>${reason ? U.escape(reason) : "Compatible con el coche seleccionado"}</strong>${d.requires ? "Requisitos: " + d.requires.map((id) => G.Parts.definition(id).name).join(" y ") : "No requiere otras piezas."}<br>Mano de obra: ${U.money(d.labor)} · ${G.Facilities.duration(s, s.playerId, d.days)} días</div>${
+        `<p class="eyebrow gold">${p.id} · ${G.Parts.slots[d.slot]} · ESTADO ${Math.round(p.condition)} %</p><p>${d.description}</p><div class="onboarding-note"><strong>${reason ? U.escape(reason) : "Compatible con el coche seleccionado"}</strong>${d.requires ? "Requisitos: " + d.requires.map((id) => G.Parts.definition(id).name).join(" y ") : "No requiere otras piezas."}<br>Mano de obra: ${U.money(d.labor)} · ${G.Staff.plan(s, s.playerId, "install", d.days).days} días</div>${
           car
             ? `<table class="part-comparison"><thead><tr><th>ATRIBUTO</th><th>ACTUAL</th><th>TRAS MONTAR</th><th>CAMBIO</th></tr></thead><tbody>${W.attributes
                 .concat(["cooling", "stress", "acceleration", "tireWear"])

@@ -160,6 +160,7 @@
           "workshop",
           "contracts",
           "facilities",
+          "staff",
         ].includes(view)
       )
         return;
@@ -222,6 +223,7 @@
     },
     action(name, data) {
       if (
+        G.StaffUI.action(this, name, data) ||
         G.FacilitiesUI.action(this, name, data) ||
         G.RaceUI.action(this, name, data) ||
         G.ContractsUI.action(this, name, data) ||
@@ -723,7 +725,10 @@
       if (own)
         document
           .querySelector(".modal-content")
-          .insertAdjacentHTML("beforeend", G.ContractsUI.driverDetails(s, d));
+          .insertAdjacentHTML(
+            "beforeend",
+            G.ContractsUI.driverDetails(s, d) + G.StaffUI.driverDetails(s, d),
+          );
       if (G.Companies.willing(s, d))
         document
           .querySelector(".modal-content")
@@ -792,6 +797,11 @@
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
       if (!n) return;
+      if (n.target === "staff") {
+        this.go("staff");
+        if (n.entityId) G.StaffUI.news(this, n.entityId);
+        return;
+      }
       if (n.target === "facilities") {
         if (n.entityId && n.entityId !== this.state.playerId)
           this.company(n.entityId);
@@ -879,6 +889,7 @@
       const values = new FormData(form),
         s = this.state;
       if (
+        G.StaffUI.submit(this, form, values) ||
         G.RaceUI.submit(this, form, values) ||
         G.ContractsUI.submit(this, form, values) ||
         G.BusinessUI.submit(this, form, values)

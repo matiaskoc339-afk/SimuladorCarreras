@@ -60,6 +60,7 @@
       return Math.max(
         0,
         c.balance -
+          G.Staff.liability(s, c.id) -
           accrued -
           (G.Companies.monthly(s, c.id) / 30) * this.policy(c).reserve -
           370,
@@ -109,6 +110,7 @@
         );
       candidates.push(...G.Workshop.aiCandidates(s, c, money, days, p));
       candidates.push(...G.Facilities.aiCandidates(s, c, money));
+      candidates.push(...G.Staff.aiCandidates(s, c, money));
       for (const car of cars) {
         if (G.Market.listed(s, car.id)) continue;
         if (

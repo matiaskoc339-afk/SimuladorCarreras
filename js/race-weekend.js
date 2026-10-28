@@ -829,10 +829,8 @@
         a.speed = 0;
         p.phase = "box";
         p.remaining =
-          6 +
-          G.random(r) * 2 +
-          (p.repair ? 12 : 0) +
-          p.fuel * 1.2 +
+          (6 + G.random(r) * 2 + (p.repair ? 12 : 0) + p.fuel * 1.2) *
+            G.Staff.pitFactor(a) +
           a.unservedPenalty;
         const cost = 55 + (p.repair ? 140 : 0) + p.fuel * 5;
         G.Economy.transact(

@@ -76,29 +76,32 @@
         s.day - (companyId === s.playerId ? s.lastJob : c.lastJob) >= 7,
         "El siguiente encargo estará disponible en unos días.",
       );
+      const plan = G.Staff.plan(s, companyId, "repair", 3);
       if (companyId === s.playerId) {
         s.job = {
-          end: s.day + G.Facilities.duration(s, companyId, 3),
+          end: s.day + plan.days,
           net: 360,
+          staffSupport: plan.staffSupport,
         };
         s.lastJob = s.day;
       } else {
         c.job = {
-          end: s.day + G.Facilities.duration(s, companyId, 3),
+          end: s.day + plan.days,
           net: 360,
+          staffSupport: plan.staffSupport,
         };
         c.lastJob = s.day;
       }
     },
     assess(s) {
       for (const c of s.companies.filter((c) => c.status === "active")) {
-        if (c.balance < 0) {
+        if (c.balance < 0 || G.Staff.overdue(s, c.id) > 0) {
           c.debtDays++;
           if (c.debtDays === 1)
             G.news(
               s,
               "Finanzas",
-              `${c.name} entra en descubierto.`,
+              `${c.name} ${c.balance < 0 ? "entra en descubierto" : "tiene nóminas pendientes"}.`,
               "La administración concede 14 días consecutivos para recuperar un saldo positivo. Los encargos de taller pueden ayudar.",
               "finance",
               c.id,
@@ -159,6 +162,7 @@
       for (const c of s.companies.filter((c) => c.status === "active")) {
         const job = c.id === s.playerId ? s.job : c.job;
         if (job && s.day >= job.end) {
+          G.Staff.credit(s, c.id, job.staffSupport);
           this.transact(
             s,
             c.id,

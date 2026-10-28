@@ -416,6 +416,8 @@ test("Migración auténtica 0.5: conserva carrera, RNG, economía, activos y res
   );
   const actual = json(s);
   delete actual.expansion;
+  delete actual.staffing;
+  actual.employees = []; // Las plantillas anteriores no contenían personal.
   assert.deepEqual(
     actual,
     JSON.parse(
@@ -457,6 +459,8 @@ test("Archivo: instantáneas independientes de nombres y estado actuales", () =>
 test("Migración de resúmenes: recupera la temporada completa aún presente y conserva resúmenes anteriores sin inventar rondas", () => {
   const { G, s } = completedSeason();
   delete s.expansion;
+  delete s.staffing;
+  s.employees = []; // Simula una versión anterior al personal.
   s.history.push({
     year: 2025,
     champion: "Resumen heredado",

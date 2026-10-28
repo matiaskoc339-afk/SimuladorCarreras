@@ -15,6 +15,7 @@
         s.day++;
         G.Facilities.complete(s);
         G.Economy.daily(s);
+        G.Staff.daily(s);
         G.RaceWeekend.daily(s);
         G.Contracts.daily(s);
         G.Drivers.daily(s);

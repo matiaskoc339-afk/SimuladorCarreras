@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.6
+# Racing Company Simulator · 0.6.1
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -18,14 +18,14 @@ Los scripts clásicos y recursos relativos permiten abrir `index.html` directame
 
 1. Funda una compañía y dibuja su logotipo. Hay pincel, borrador, colores, grosor, deshacer/rehacer, transparencia, vista previa y exportación PNG.
 2. Abre **Pilotos** desde la navegación o desde su edificio en la sede. Estudia los currículums y negocia salario, duración y prima. Las ofertas insuficientes reciben una contraoferta; insistir puede pausar la negociación.
-3. Selecciona **Garaje** para consultar el Civic EP3, su estado y su historial. Las revisiones cuestan dinero y duran dos días; los neumáticos estándar cuestan $160. Desde allí puedes abrir el nuevo taller de modificaciones.
+3. Selecciona **Garaje** para consultar el Civic EP3, su estado y su historial. Las revisiones cuestan dinero y duran inicialmente dos días; equipamiento y personal pueden reducir el plazo. Los neumáticos estándar cuestan $160. Desde allí puedes abrir el taller de modificaciones.
 4. En **Competiciones**, inscribe a tu piloto y coche. Cada ronda cuesta $370 con transporte. Puedes hacerlo hasta la jornada de carrera.
 5. Avanza día a día o hasta la próxima prueba. Cada día se procesan las mismas obligaciones. El calendario se detiene en las carreras: solo una renuncia confirmada permite no participar.
 6. Sigue la carrera en una retransmisión 2D con cronometraje, radio y telemetría. Usa **Atacar / Equilibrado / Conservar**, selecciona un piloto en la clasificación para seguirlo, cambia entre TV / seguimiento / circuito, ajusta el zoom y la velocidad ×1 / ×2 / ×4, o pausa con el botón o la barra espaciadora. Los resultados no están predeterminados.
 7. Completa las seis pruebas. Los premios, puntos de pilotos/equipos, kilometraje, fatiga, desgaste y reputación se registran al cruzar la meta. Al terminar recibirás una prima de clasificación y la temporada quedará archivada.
 8. Puedes abrir la siguiente temporada. Se conserva el mundo y se contabiliza el descanso hasta el siguiente 5 de enero. Revisa los contratos que vencen.
 
-**Finanzas** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $360 netos en tres días, con un máximo de uno cada siete días. Comparte el taller con las revisiones.
+**Finanzas** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $360 netos en un plazo inicial de tres días, con un máximo de uno cada siete días. Comparte las bahías y profesionales disponibles con las revisiones.
 
 ## Alcance entregado
 
@@ -41,9 +41,33 @@ Los scripts clásicos y recursos relativos permiten abrir `index.html` directame
 
 Los nombres de coches son referencias descriptivas. Todas las ilustraciones, circuitos, retratos e identidades son dibujos originales generados localmente con SVG/Canvas. Las cifras son **parámetros de juego**, no datos certificados de fabricantes. Los circuitos son ficticios. No se usan logotipos oficiales.
 
+## Novedades de la 0.6.1 · personal especializado
+
+Abre **Personal** desde la navegación o desde la oficina de la sede. Hay **25 profesionales iniciales**, con identidad, edad, experiencia, habilidad, aprendizaje, personalidad, motivación y lealtad. El mercado es compartido: un rival puede contratar al candidato que estabas estudiando. Cada sesenta días se incorpora una candidatura por especialidad solo si quedan menos de dos disponibles. Cargar la partida no repone candidatos.
+
+La oficina inicial admite **dos empleados**, independientemente de las plazas de pilotos. Cada ampliación añade dos plazas. Puedes contratar un responsable de cada una de las cinco especialidades disponibles:
+
+- **Mecánico:** apoya una reparación o encargo; con rendimiento efectivo de al menos 40 reduce una jornada, respetando el mínimo de un día. Solo puede apoyar un trabajo simultáneo. Si está libre al salir a carrera, contribuye al servicio de boxes.
+- **Ingeniero de motores:** apoya instalaciones/desmontajes bajo las mismas reglas de disponibilidad y plazo. En carrera, su preparación reduce el objetivo térmico y el desgaste del motor; no restaura componentes.
+- **Entrenador:** aumenta el progreso diario de velocidad/control de los pilotos que tienen formación asignada y pagada. Respeta el potencial individual; no entrena gratuitamente a pilotos sin un plan activo.
+- **Ojeador:** evalúa cualquier piloto por $75 de gastos, con entrega entre tres y siete días. Prepara un informe a la vez y conserva el intervalo estimado de potencial, con incertidumbre según su rendimiento. La evaluación puede equivocarse; no revela el potencial exacto. Despedirlo o finalizar su contrato interrumpe sus informes pendientes sin devolución de los gastos.
+- **Estratega:** coordina el trabajo de boxes junto al mecánico. La reducción combinada del servicio no supera el 25 % y no acorta las sanciones. El apoyo se fija al iniciar la carrera y excluye al personal ocupado en el taller.
+
+**Contratos y nóminas:** negocia salario, prima y seis/doce/veinticuatro meses. Puede haber contraofertas y una pausa tras insistir con propuestas insuficientes. La prima se paga al firmar y se exige una reserva de media nómina. El sueldo se devenga diariamente y vence el día 1. Si no alcanza la caja, permanece pendiente, empeora la motivación y activa el mismo plazo de insolvencia de 14 días, incluso con caja no negativa. Se reintenta el pago al avanzar y también puedes liquidar los atrasos desde Personal. La previsión, patrimonio y decisiones rivales incluyen estas obligaciones.
+
+Rescindir exige un mes de indemnización más lo devengado y vencido. Un trabajador asignado al taller debe terminar antes; contratar a otro después no reescribe el plazo del trabajo. Las renovaciones se abren en los últimos 60 días, conservan lo adeudado y amplían el vencimiento actual. El fin de contrato, dimisión, retiro o bancarrota libera a la persona; las liquidaciones impagadas permanecen como obligaciones reales. Los retirados conservan su identidad e historial.
+
+**Convivencia:** las relaciones dependen de personalidad y trabajo en equipo, evolucionan diariamente y modifican el rendimiento. Los conflictos dejan memoria y una noticia contextual; una motivación inferior a 25 durante 30 días permite dimitir cuando no hay un trabajo de taller asignado. La experiencia y la habilidad mejoran lentamente al trabajar con motivación suficiente. Los cumpleaños y el retiro a los 65 años se procesan una sola vez por fecha.
+
+**Rivales:** contratan sobre el mismo mercado, con reserva para cuatro meses del nuevo gasto. Pueden renovar empleados, liquidar contratos para reducir nómina y ampliar su oficina cuando falta espacio. No reciben profesionales ni fondos gratuitos.
+
+La interfaz separa **Mi plantilla / Mercado laboral / Ojeo / Relaciones**. Las fichas de pilotos enlazan sus informes y el taller muestra el profesional asignado. Se corrige también la validación de guardado de las bahías ampliadas: admite los trabajos simultáneos autorizados y rechaza asignar el mismo empleado a dos de ellos.
+
+Esta entrega incorpora las cinco especialidades descritas. Jefes de taller, ingeniería general, suspensión, gerentes, administración, marketing, investigadores, dirección deportiva y personal médico, así como automatización, academia e I+D, continúan pendientes. El equilibrio durante décadas todavía debe validarse con el resto de sistemas.
+
 ## Novedades de la 0.6 · sede y progresión, primera entrega
 
-Abre **Instalaciones y progreso** desde la navegación o desde la sede. Esta entrega inicia la expansión empresarial; empleados, automatización, academia e investigación siguen pendientes.
+Abre **Instalaciones y progreso** desde la navegación o desde la sede. Esta primera entrega inició la expansión empresarial; el personal se incorpora en 0.6.1. Automatización, academia e investigación siguen pendientes.
 
 - **Cuatro instalaciones reales:** garaje, taller, almacén y oficina de equipo, con cinco niveles cada una. Una obra simultánea por compañía, pagada a una constructora persistente, con fecha de entrega. Hasta entonces se conserva la capacidad actual. Los rivales también pueden invertir, respetando una reserva para tres meses de operación.
 - **Capacidad física:** el garaje pasa de dos a un máximo de diez coches; el almacén, de ocho a cuarenta repuestos; la oficina, de dos a seis pilotos. No aumenta la cantidad de coches admitidos por compañía en Copa Club: sigue siendo uno.

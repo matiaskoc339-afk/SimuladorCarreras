@@ -220,8 +220,15 @@
             );
             d.stats[d.training] = Math.min(
               d.potential,
-              d.stats[d.training] + 0.015 * (d.age < 25 ? 1 : 0.5),
+              d.stats[d.training] +
+                0.015 *
+                  (d.age < 25 ? 1 : 0.5) *
+                  G.Staff.training(s, d.companyId),
             );
+            const trainer = G.Staff.owned(s, d.companyId).find(
+              (e) => e.role === "trainer",
+            );
+            if (trainer) trainer.contributions.sessions++;
           }
         }
         if (d.contract && s.day >= d.contract.end) {

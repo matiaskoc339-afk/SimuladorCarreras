@@ -8711,3 +8711,373 @@ input[type="range"] {
 .growth-path-row > b {
   color: var(--muted);
 }
+
+/* Personal, contratación y ojeo */
+.staff-overview {
+  margin-bottom: 24px;
+}
+.staff-tabs {
+  margin: 24px 0;
+}
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.staff-card {
+  padding: 24px;
+  min-width: 0;
+}
+.staff-card-head,
+.staff-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.staff-card-head > div {
+  min-width: 0;
+  flex: 1;
+}
+.staff-card-head h3 {
+  font-size: 20px;
+  margin: 5px 0 4px;
+}
+.staff-card-head p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+}
+.staff-portrait {
+  position: relative;
+  display: block;
+  width: 67px;
+  height: 80px;
+  overflow: hidden;
+  color: #8faba8;
+  background: #e7eeea;
+  border: 1px solid #d6e1da;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+.staff-portrait svg {
+  width: 100%;
+  height: 100%;
+}
+.staff-portrait b {
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  color: #fff;
+  font: 10px var(--mono);
+}
+.staff-portrait.engineer {
+  color: #7896ac;
+  background: #e8edf1;
+}
+.staff-portrait.trainer {
+  color: #9da87f;
+  background: #edf0e6;
+}
+.staff-portrait.scout {
+  color: #ad997d;
+  background: #f0ece6;
+}
+.staff-portrait.strategist {
+  color: #9d91b1;
+  background: #eeebf3;
+}
+.staff-rating {
+  font: 32px var(--mono);
+  text-align: right;
+  color: var(--ink);
+}
+.staff-rating small {
+  display: block;
+  font: 8px var(--sans);
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.staff-personality {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 20px 0;
+}
+.staff-role-description {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  min-height: 65px;
+}
+.staff-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
+}
+.staff-card-footer b {
+  font-size: 20px;
+}
+.staff-card-footer b small {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.staff-card-footer span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.staff-card-footer button {
+  flex-shrink: 0;
+}
+.staff-role-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.staff-role-filter button {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.staff-role-filter button.selected {
+  background: #253b41;
+  color: #fff;
+  border-color: #253b41;
+}
+.staff-effects {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.staff-effects > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.staff-effects span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.staff-effects b {
+  font-size: 20px;
+}
+.staff-effects small {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.staff-profile-head {
+  margin-bottom: 24px;
+}
+.staff-profile-head h3 {
+  font-size: 18px;
+  margin: 10px 0;
+}
+.staff-profile-head p {
+  color: var(--muted);
+}
+.staff-profile-bars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+  margin: 24px 0;
+}
+.staff-memory {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.staff-memory summary {
+  font-size: 13px;
+  cursor: pointer;
+}
+.staff-memory p {
+  font-size: 12px;
+}
+.staff-memory small {
+  color: var(--muted);
+}
+.staff-bond {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.staff-bond > div {
+  flex: 1;
+  min-width: 0;
+}
+.staff-bond b {
+  font-size: 14px;
+}
+.staff-bond b span {
+  color: var(--muted);
+}
+.staff-bond small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.staff-bond > span:last-child {
+  font-family: var(--mono);
+  width: 30px;
+  text-align: right;
+}
+.staff-pay-alert {
+  align-items: center;
+  gap: 20px;
+}
+.staff-pay-alert p {
+  font-size: 12px;
+  margin: 7px 0 0;
+}
+.staff-pay-alert button {
+  flex-shrink: 0;
+}
+.staff-arrears {
+  font-size: 12px;
+  margin: 15px 0 0;
+}
+.scouting-desk > p {
+  color: var(--muted);
+  max-width: 740px;
+  line-height: 1.8;
+}
+.scouting-desk form {
+  margin-top: 24px;
+}
+.scout-order-summary {
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+.scout-order-summary span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.scout-report {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.scout-report > div {
+  min-width: 0;
+  flex: 1;
+}
+.scout-report h3 {
+  margin: 9px 0;
+  font-size: 18px;
+}
+.scout-report p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.scout-report button {
+  flex-shrink: 0;
+}
+.scout-estimate {
+  padding: 30px 0;
+}
+.scout-estimate strong {
+  font: 52px var(--mono);
+  color: #365d50;
+  display: block;
+}
+.scout-estimate span {
+  color: var(--muted);
+  display: block;
+  margin-top: 8px;
+}
+.staff-race-support {
+  background: #eef2ed;
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  color: #384e43;
+}
+.staff-race-support b {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 7px;
+}
+.staff-race-support span {
+  display: block;
+  font-size: 10px;
+  line-height: 1.8;
+}
+@media (max-width: 1100px) {
+  .staff-grid {
+    grid-template-columns: 1fr;
+  }
+  .staff-effects {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 650px) {
+  .staff-card {
+    padding: 18px;
+  }
+  .staff-card-head,
+  .staff-profile-head {
+    gap: 12px;
+  }
+  .staff-card-head h3 {
+    font-size: 17px;
+  }
+  .staff-card-head .eyebrow {
+    font-size: 8px;
+  }
+  .staff-portrait {
+    width: 52px;
+    height: 68px;
+  }
+  .staff-rating {
+    font-size: 26px;
+  }
+  .staff-effects,
+  .staff-profile-bars {
+    grid-template-columns: 1fr;
+  }
+  .staff-card-footer {
+    flex-wrap: wrap;
+  }
+  .staff-bond {
+    flex-wrap: wrap;
+  }
+  .staff-bond > div {
+    flex-basis: 100%;
+  }
+  .staff-pay-alert,
+  .scout-report {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .scout-report button {
+    align-self: flex-start;
+  }
+  .staff-role-filter {
+    gap: 6px;
+  }
+  .staff-role-filter button {
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+  .staff-overview .stat {
+    min-width: 0;
+  }
+}

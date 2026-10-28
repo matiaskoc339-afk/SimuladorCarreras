@@ -1,3 +1,17 @@
+# Validación de la versión 0.6.1 · personal
+
+`npm test`: **173 escenarios aprobados, sin fallos ni omisiones**: los 137 anteriores y 36 de personal. `npm run test:browser`: **ocho recorridos aprobados**, incluido el nuevo `browser-staff.cjs`. Se mantienen los siete recorridos anteriores. La apertura `file://` continúa omitida por la política de Chromium; inicio HTTP verificado.
+
+Los nuevos escenarios comprueban mercado persistente e idempotencia; contraoferta, prima y contratación única; pausa por insistencia; capacidad, roles y fondos; asignación real, crédito al terminar y guardado de dos reparaciones simultáneas; instalación con ingeniero; encargos con mecánico; contratos demasiado cortos para un trabajo; formación pagada con entrenador y límite de potencial; desgaste/temperatura de motor; servicio de boxes reducido sin acortar sanciones; informe pagado, espera, recarga y cancelación; devengo, vencimiento, atrasos, liquidación manual, bancarrota con caja no negativa y recuperación; rescisión; cambios de empleador; renovación; cumpleaños/retiro; conflictos, compatibilidad y dimisión; candidaturas por escasez; contratación/renovación/recorte rival y ampliación de oficina; patrimonio; consultas sin mutación; migración auténtica 0.6 con estado final exacto; validación de entidades y contratos corruptos.
+
+El navegador negocia una contraoferta y una prima, contrata mecánico/ojeador, programa una reparación que tarda un día y bloquea la rescisión del trabajador ocupado. Encarga y guarda un informe a mitad, recarga mediante la interfaz y lo termina. Amplía la oficina con el calendario real y una carrera simulada por el motor; incorpora entrenador/ingeniero, verifica la mejora de formación y el montaje con responsable. Usa una ventana de contrato controlada para renovar, rescinde y paga atrasos. Consulta cuatro secciones a 1440, 1024 y 390 px y realiza una importación 0.6 desde el formulario. Capturas `test-results/staff061-*.png`.
+
+Los casos controlados aíslan cada obligación y su integración. No demuestran el balance a largo plazo ni la existencia de las restantes especialidades, academia, automatización o investigación. La migración añade empleados con RNG e IDs independientes sin cambiar activos, instalaciones ni una carrera anterior en curso.
+
+---
+
+## Registro histórico de la 0.6
+
 # Validación de la versión 0.6 · instalaciones y progresión
 
 `npm test`: **137 escenarios aprobados, sin fallos ni omisiones**: los 112 anteriores y 25 de instalaciones/archivo. `npm run test:browser`: **siete recorridos aprobados**, incluido el nuevo `browser-facilities.cjs` y los seis anteriores. La apertura `file://` sigue omitida por la política de Chromium; inicio HTTP verificado.

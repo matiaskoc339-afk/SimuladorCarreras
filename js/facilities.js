@@ -194,7 +194,8 @@
           spares +
           investment -
           principal -
-          accrued,
+          accrued -
+          G.Staff.liability(s, id),
       );
     },
     price(key, tier) {
@@ -482,7 +483,8 @@
               ? G.Workshop.occupied(s, c.id) >= c.sparesCapacity - 2
               : key === "workshop"
                 ? G.ownedCars(s, c.id).length > 1
-                : G.ownedDrivers(s, c.id).length >= c.driverCapacity;
+                : G.ownedDrivers(s, c.id).length >= c.driverCapacity ||
+                  G.Staff.owned(s, c.id).length >= G.Staff.capacity(s, c.id);
         if (!need && !missingBuild) return [];
         return [
           {

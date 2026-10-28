@@ -228,6 +228,7 @@
       const reason = this.fit(s, car, part);
       G.assert(!reason, reason);
       const def = G.Parts.definition(part.definitionId);
+      const plan = G.Staff.plan(s, companyId, "install", def.days);
       G.Economy.spendCompany(
         s,
         companyId,
@@ -241,7 +242,8 @@
         partId,
         slot: def.slot,
         start: s.day,
-        end: s.day + G.Facilities.duration(s, companyId, def.days),
+        end: s.day + plan.days,
+        staffSupport: plan.staffSupport,
         cost: def.labor,
       };
       part.reservedFor = job.id;
@@ -269,6 +271,7 @@
       const cost = Math.round(
         G.Parts.definition(unit.definitionId).labor * 0.6,
       );
+      const plan = G.Staff.plan(s, companyId, "remove", 1);
       G.Economy.spendCompany(
         s,
         companyId,
@@ -283,6 +286,7 @@
         slot,
         start: s.day,
         end: s.day + 1,
+        staffSupport: plan.staffSupport,
         cost,
       };
       return car.repair;
@@ -329,12 +333,14 @@
         "Taller",
         `Revisión · ${component === "all" ? car.model : G.Parts.components[component]}`,
       );
+      const plan = G.Staff.plan(s, companyId, "repair", days);
       car.repair = {
         id: G.uid(s, "work"),
         type: "repair",
         component,
         start: s.day,
-        end: s.day + G.Facilities.duration(s, companyId, days),
+        end: s.day + plan.days,
+        staffSupport: plan.staffSupport,
         cost,
       };
       return car.repair;
@@ -386,6 +392,7 @@
           text = "Desmontaje: " + def.name;
         }
       }
+      G.Staff.credit(s, car.companyId, job.staffSupport);
       car.repair = null;
       this.recalculate(s, car);
       car.history.unshift({ day: s.day, type: text });
@@ -437,13 +444,15 @@
         (a.mode === "attack" ? 18 : a.mode === "save" ? 3 : 8) +
         a.stress * 42 -
         (a.cooling - 1) * 12 +
-        (100 - a.components.cooling) * 0.16;
+        (100 - a.components.cooling) * 0.16 -
+        (a.staffSupport?.engineer || 0) * 0.04;
       a.thermal += (temp - a.thermal) * dt * 0.025;
       const rates = {
         engine:
           0.00024 *
           (1 + a.stress + Math.max(0, a.thermal - 100) / 30) *
-          (1 + (100 - a.reliability) / 140),
+          (1 + (100 - a.reliability) / 140) *
+          (1 - (a.staffSupport?.engineer || 0) * 0.0012),
         transmission: 0.00019 * (1 + a.stress * 0.5),
         brakes: 0.00013 * (1 + braking * 1.8),
         suspension: 0.00016,
@@ -574,9 +583,7 @@
       }
       for (const c of s.companies)
         G.assert(
-          G.ownedCars(s, c.id).filter((car) => car.repair).length <= 1 &&
-            (!(c.id === s.playerId ? s.job : c.job) ||
-              !G.ownedCars(s, c.id).some((car) => car.repair)),
+          G.Facilities.workload(s, c.id) <= G.Facilities.bays(s, c.id),
           "El taller tiene trabajos simultáneos incompatibles.",
         );
       if (s.race?.mechanicalVersion === 3)

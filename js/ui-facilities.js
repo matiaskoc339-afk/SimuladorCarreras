@@ -16,7 +16,7 @@
     return {
       garage: `${cap.cars} plazas de vehículos`,
       warehouse: `${cap.spares} repuestos en almacén`,
-      office: `${cap.drivers} plazas de pilotos`,
+      office: `${cap.drivers} pilotos · ${2 + (tier - 1) * 2} profesionales`,
       workshop: `${[1, 1, 2, 2, 3][tier - 1]} bahía${tier < 3 ? "" : "s"} · trabajo de 4 días en ${Math.max(1, Math.ceil(4 * [1, 0.75, 0.6, 0.5, 0.4][tier - 1]))} días`,
     }[key];
   }
