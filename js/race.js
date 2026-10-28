@@ -597,6 +597,7 @@
             points: row.points,
           })),
         });
+        G.Facilities.archiveSeason(s);
         G.news(
           s,
           "Temporada",

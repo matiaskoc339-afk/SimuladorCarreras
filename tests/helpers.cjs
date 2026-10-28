@@ -35,6 +35,7 @@ function engine() {
     "contracts",
     "race",
     "race-weekend",
+    "facilities",
     "calendar",
     "storage",
   ])

@@ -1,4 +1,4 @@
-# Arquitectura de la 0.3
+# Arquitectura de Racing Company Simulator
 
 ## Un mundo, un estado
 
@@ -128,3 +128,21 @@ La lluvia evoluciona hacia objetivos temporales reproducibles y la superficie se
 La grabación conserva metadatos y tuplas compactas de estado de todos los coches, meteorología, banderas y acontecimientos. Se muestrea inicialmente cada 0,5 s y se reduce adaptativamente al superar 480 fotogramas. Se mantienen hasta 120 eventos y una grabación terminada; no se guarda un segundo mundo ni se vuelve a simular. El visor interpola estados entre muestras y conserva los tiempos de meta. Cámara, velocidad del visor y búsqueda viven fuera de la partida, pausando y restaurando el directo. El vídeo no ejecuta física, pagos ni contratos.
 
 `ui-race-weekend.js` amplía inscripción, telemetría, órdenes, almacén, resultados y Competiciones. El formulario de boxes conserva foco y valores durante actualizaciones. La repetición usa un Canvas propio con controles de tiempo y selección de momentos. Las partidas antiguas en carrera mantienen su interfaz compatible y reciben estas opciones en la siguiente salida.
+
+## Instalaciones, progresión y archivo de la 0.6
+
+`facilities.js` añade `s.expansion.version = 1` sin consumir RNG ni IDs durante la inicialización. Contiene una constructora con saldo, una sede por compañía y un archivo deportivo. Cada sede registra niveles construidos, capacidades base migradas, una obra, última revisión, máximo nivel empresarial, contador de crisis y 40 movimientos recientes. Se conserva el esquema global 3 y las claves de las ranuras.
+
+La cotización comprueba fondos, actividad, nivel, instalación y obra existente antes de mover dinero. Contratar paga el coste completo a la constructora y asigna un ID único a la obra. La capacidad cambia únicamente cuando `Facilities.complete` entrega el proyecto, al inicio de una jornada. Los bloques ya construidos siguen operando durante las obras. Cancelar devuelve `floor(coste × 0.5 × fracción pendiente)` desde la constructora; elimina el proyecto y conserva el nivel anterior. La bancarrota usa esa misma liquidación sin reactivar la empresa.
+
+Garaje, oficina y almacén derivan sus capacidades de los valores base conservados y los niveles construidos. Taller deriva bahías y multiplicador de plazo. `Workshop.available` y `Economy.job` comparten `Facilities.workload`: cada reparación/montaje y el encargo ocupan una bahía. El coche con trabajo propio permanece bloqueado incluso si hay otra plaza. Las fechas se fijan al contratar, usando el equipamiento actual; ampliar después no reescribe trabajos. La IA consulta el mismo aforo y puede realizar una ampliación como una de sus decisiones por utilidad, con su presupuesto real y reserva de mantenimiento.
+
+La conservación se cobra como operación diaria desde la entrega; la previsión mensual incluye treinta días adicionales. La UI monetaria admite centavos para reflejar importes como $0.50/día. El patrimonio de desarrollo y Finanzas incluye coches, repuestos almacenados y una valoración conservadora de las ampliaciones, restando capital bancario pendiente y nóminas devengadas. Un préstamo no aumenta por sí solo ese patrimonio.
+
+La revisión diaria de nivel es idempotente por fecha, considera objetivos económicos/deportivos y permite como máximo un cambio, con 90 días entre ascensos. La crisis cuenta 90 jornadas consecutivas de poca caja y baja reputación, reiniciándose cuando deja de cumplirse. El descenso no reduce instalaciones ni capacidades. Los desbloqueos construidos permanecen; futuras ampliaciones siguen sujetos al nivel actual.
+
+Al cerrar una temporada, `Facilities.archiveSeason` copia clasificaciones de equipos/pilotos y seis resultados por ronda con nombres y modelo de coche, antes de reemplazar `s.season`. No copia simulación ni fotogramas. Se identifica por año y no vuelve a pagar ni modificar la temporada al consultarlo. La apertura de otra temporada y la migración de una temporada ya completa pueden llamar a esa misma operación sin duplicar registros. Los resúmenes de `s.history` anteriores se mantienen; sus rondas ausentes no se reconstruyen. El visor utiliza instantáneas, conservando los nombres aunque cambien las entidades actuales.
+
+La validación incluye IDs únicos de obras, plazos/costes, nivel físico, capacidad derivada, titular de sede, crisis y estructura histórica; comprueba también que los puntos de pilotos correspondan a las rondas guardadas. Las fixtures auténticas de 0.5 verifican el estado final completo de una carrera anterior, exceptuando el nuevo bloque `expansion`. La excepción de migración 0.4 se amplía únicamente para ignorar ese mismo bloque; se mantiene la comparación íntegra de la economía y la simulación anterior.
+
+`ui-facilities.js` incorpora gestión de obras, revisión de inversión, metas de nivel, diario de desarrollo, panel de sede y consulta de temporadas. Las acciones de lectura no mutan la partida. `render.js` conserva el mapa con edificios ampliados, almacén, niveles y señalización de obras. Personal, academia, automatización e investigación todavía no son sistemas implementados.

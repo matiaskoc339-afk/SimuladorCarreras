@@ -52,6 +52,11 @@
         ...s.drivers,
         ...s.cars,
         ...s.season.events,
+        ...(s.expansion?.sites
+          ? Object.values(s.expansion.sites)
+              .filter((site) => site?.project)
+              .map((site) => site.project)
+          : []),
         ...(s.raceSupplies ? s.raceSupplies.sets : []),
         ...(s.commercial
           ? [
@@ -180,6 +185,7 @@
               "car",
               "driver",
               "contracts",
+              "facilities",
             ].includes(n.target),
           "Noticia inválida.",
         );
@@ -393,6 +399,7 @@
           );
       }
       G.RaceWeekend.validate(s);
+      G.Facilities.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);
@@ -443,8 +450,10 @@
       );
       return {
         state: this.validate(
-          G.RaceWeekend.initialize(
-            G.Contracts.initialize(G.World.migrate(state)),
+          G.Facilities.initialize(
+            G.RaceWeekend.initialize(
+              G.Contracts.initialize(G.World.migrate(state)),
+            ),
           ),
         ),
         savedAt: e.savedAt,

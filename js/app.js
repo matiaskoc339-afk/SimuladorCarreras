@@ -159,6 +159,7 @@
           "companies",
           "workshop",
           "contracts",
+          "facilities",
         ].includes(view)
       )
         return;
@@ -221,6 +222,7 @@
     },
     action(name, data) {
       if (
+        G.FacilitiesUI.action(this, name, data) ||
         G.RaceUI.action(this, name, data) ||
         G.ContractsUI.action(this, name, data) ||
         G.WorkshopUI.action(this, name, data) ||
@@ -319,7 +321,11 @@
           break;
         case "repair":
           this.mutate(() => G.Economy.repair(s, data.id));
-          U.toast("Revisión iniciada. El coche estará listo en dos días.");
+          U.toast(
+            "Revisión iniciada. El coche estará listo el " +
+              U.date(s.cars.find((c) => c.id === data.id).repair.end, true) +
+              ".",
+          );
           break;
         case "tires":
           this.mutate(() => G.Economy.tires(s, data.id));
@@ -327,7 +333,11 @@
           break;
         case "job":
           this.mutate(() => G.Economy.job(s));
-          U.toast("Encargo aceptado. Se cobrarán $360 netos en tres días.");
+          U.toast(
+            "Encargo aceptado. Se cobrarán $360 netos el " +
+              U.date(s.job.end, true) +
+              ".",
+          );
           break;
         case "negotiate":
           this.negotiate(data.id);
@@ -782,6 +792,12 @@
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
       if (!n) return;
+      if (n.target === "facilities") {
+        if (n.entityId && n.entityId !== this.state.playerId)
+          this.company(n.entityId);
+        else this.go("facilities");
+        return;
+      }
       if (n.target === "contracts") {
         this.go("contracts");
         if (n.entityId) G.ContractsUI.detail(this, n.entityId);

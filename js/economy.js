@@ -69,7 +69,7 @@
       G.assert(
         !s.race &&
           !(companyId === s.playerId ? s.job : c.job) &&
-          !G.ownedCars(s, companyId).some((car) => car.repair),
+          G.Facilities.workload(s, companyId) < G.Facilities.bays(s, companyId),
         "El taller está ocupado.",
       );
       G.assert(
@@ -77,10 +77,16 @@
         "El siguiente encargo estará disponible en unos días.",
       );
       if (companyId === s.playerId) {
-        s.job = { end: s.day + 3, net: 360 };
+        s.job = {
+          end: s.day + G.Facilities.duration(s, companyId, 3),
+          net: 360,
+        };
         s.lastJob = s.day;
       } else {
-        c.job = { end: s.day + 3, net: 360 };
+        c.job = {
+          end: s.day + G.Facilities.duration(s, companyId, 3),
+          net: 360,
+        };
         c.lastJob = s.day;
       }
     },
@@ -116,6 +122,15 @@
     daily(s) {
       const date = G.dateAt(s.day);
       for (const c of s.companies.filter((c) => c.status === "active")) {
+        const upkeep = G.Facilities.upkeep(s, c.id);
+        if (upkeep)
+          this.transact(
+            s,
+            c.id,
+            -upkeep,
+            "Operación",
+            "Conservación de instalaciones",
+          );
         this.transact(
           s,
           c.id,

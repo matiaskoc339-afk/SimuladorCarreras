@@ -86,7 +86,7 @@
       G.assert(!s.race, "Termina la carrera antes de negociar.");
       G.assert(
         G.ownedDrivers(s).length < G.player(s).driverCapacity,
-        "La plantilla está completa (2 plazas).",
+        "La plantilla está completa. Amplía la oficina de equipo para abrir plazas.",
       );
       G.assert(
         Number.isInteger(salary) && salary >= 200 && salary <= 10000,

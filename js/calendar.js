@@ -13,6 +13,7 @@
         const due = G.nextEvent(s);
         if (due && due.day <= s.day) return { blocked: true, event: due };
         s.day++;
+        G.Facilities.complete(s);
         G.Economy.daily(s);
         G.RaceWeekend.daily(s);
         G.Contracts.daily(s);
@@ -20,6 +21,7 @@
         G.AI.daily(s);
         G.Contracts.aiDaily(s);
         G.Economy.assess(s);
+        G.Facilities.daily(s);
         const event = G.nextEvent(s);
         if (event && event.day - s.day === 7)
           G.news(
@@ -41,6 +43,7 @@
         "Completa todas las rondas antes de abrir otra temporada.",
       );
       G.ensurePlayable(s);
+      G.Facilities.archiveSeason(s);
       const current = G.dateAt(s.day);
       const year = Math.max(
           s.season.year + 1,

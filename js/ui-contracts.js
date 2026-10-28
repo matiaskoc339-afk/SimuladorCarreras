@@ -116,7 +116,7 @@
   U.finance = function (s) {
     return (
       finance.call(this, s) +
-      `<section class="panel padded spaced"><div class="section-title"><div><span class="eyebrow">CAPITAL Y COMPROMISOS</span><h2>Presupuesto para el siguiente paso.</h2></div><button class="primary" data-go="contracts">Patrocinios y financiación →</button></div><div class="spec-grid">${this.stat("Deuda pendiente", this.money(C.debt(s)))}${this.stat("Acuerdos activos", C.live(s).length)}${this.stat("Patrimonio neto estimado", this.money(G.player(s).balance + G.ownedCars(s).reduce((n, c) => n + G.Market.value(c), 0) - s.commercial.loans.filter((l) => l.companyId === s.playerId).reduce((n, l) => n + l.schedule.filter((p) => !p.paid).reduce((sum, p) => sum + p.principal, 0), 0)))}</div><p>Los patrocinios por ronda son condicionales. Un anticipo o préstamo aumenta la caja, pero puede generar obligaciones futuras. Consulta el calendario de cuotas y las devoluciones pactadas.</p></section>`
+      `<section class="panel padded spaced"><div class="section-title"><div><span class="eyebrow">CAPITAL Y COMPROMISOS</span><h2>Presupuesto para el siguiente paso.</h2></div><button class="primary" data-go="contracts">Patrocinios y financiación →</button></div><div class="spec-grid">${this.stat("Deuda pendiente", this.money(C.debt(s)))}${this.stat("Acuerdos activos", C.live(s).length)}${this.stat("Patrimonio neto estimado", this.money(G.Facilities.equity(s, s.playerId)))}</div><p>Los patrocinios por ronda son condicionales. Un anticipo o préstamo aumenta la caja, pero puede generar obligaciones futuras. Consulta el calendario de cuotas y las devoluciones pactadas.</p></section>`
     );
   };
   G.ContractsUI = {

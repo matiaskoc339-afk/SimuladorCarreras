@@ -208,8 +208,8 @@
         "Termina la carrera o retira el anuncio de venta.",
       );
       G.assert(
-        !(companyId === s.playerId ? s.job : c.job) &&
-          !G.ownedCars(s, companyId).some((c) => c.repair),
+        !car.repair &&
+          G.Facilities.workload(s, companyId) < G.Facilities.bays(s, companyId),
         "El taller está ocupado.",
       );
     },
@@ -241,7 +241,7 @@
         partId,
         slot: def.slot,
         start: s.day,
-        end: s.day + def.days,
+        end: s.day + G.Facilities.duration(s, companyId, def.days),
         cost: def.labor,
       };
       part.reservedFor = job.id;
@@ -334,7 +334,7 @@
         type: "repair",
         component,
         start: s.day,
-        end: s.day + days,
+        end: s.day + G.Facilities.duration(s, companyId, days),
         cost,
       };
       return car.repair;
@@ -628,12 +628,12 @@
     return p ? G.Parts.definition(p.definitionId).price : 160;
   };
   W.aiCandidates = function (s, c, budget, days, profile) {
-    if (c.job || G.ownedCars(s, c.id).some((car) => car.repair)) return [];
+    if (G.Facilities.workload(s, c.id) >= G.Facilities.bays(s, c.id)) return [];
     const rows = [],
       add = (action, utility, reason, targetId, cost, run) =>
         rows.push({ action, utility, reason, targetId, cost, run });
     for (const car of G.ownedCars(s, c.id).filter(
-      (car) => !G.Market.listed(s, car.id),
+      (car) => !car.repair && !G.Market.listed(s, car.id),
     )) {
       for (const [key, health] of Object.entries(car.components))
         if (key !== "tires" && health < 40) {

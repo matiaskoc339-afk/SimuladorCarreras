@@ -342,6 +342,7 @@ test("Carrera0.4 auténtica: resultado, economía, contratos y entidades exactam
   );
   const actual = json(s);
   delete actual.raceSupplies;
+  delete actual.expansion; // Bloque nuevo; el estado y algoritmo 0.4 se conservan.
   assert.deepEqual(
     actual,
     JSON.parse(

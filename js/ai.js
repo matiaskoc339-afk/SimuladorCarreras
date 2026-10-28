@@ -96,8 +96,9 @@
           );
       }
       // Un encargo crea ingresos por trabajo y ocupa el mismo taller usado para revisar coches.
-      const workshopFree = !c.job && !cars.some((car) => car.repair);
-      if (workshopFree && s.day - c.lastJob >= 7)
+      const workshopFree =
+        G.Facilities.workload(s, c.id) < G.Facilities.bays(s, c.id);
+      if (workshopFree && !c.job && s.day - c.lastJob >= 7)
         add(
           "servicio",
           c.balance < G.Companies.monthly(s, c.id) * 2 ? 98 : 30,
@@ -107,10 +108,12 @@
           () => G.Economy.job(s, c.id),
         );
       candidates.push(...G.Workshop.aiCandidates(s, c, money, days, p));
+      candidates.push(...G.Facilities.aiCandidates(s, c, money));
       for (const car of cars) {
         if (G.Market.listed(s, car.id)) continue;
         if (
           workshopFree &&
+          !car.repair &&
           car.condition < 82 &&
           (car.condition < 55 || p.car >= 1)
         ) {
@@ -127,6 +130,7 @@
         }
         if (
           workshopFree &&
+          !car.repair &&
           car.tires < 45 &&
           c.balance >= G.Workshop.tireCost(s, car) + 370
         )

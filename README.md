@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.5
+# Racing Company Simulator · 0.6
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -40,6 +40,21 @@ Los scripts clásicos y recursos relativos permiten abrir `index.html` directame
 - Cinco partidas, guardado automático/manual, exportación/importación JSON, validación de formato/versión/entidades, checksum y copia anterior por ranura. Una carrera en curso se guarda con sus participantes y RNG, sin pagar recompensas de nuevo al cargar.
 
 Los nombres de coches son referencias descriptivas. Todas las ilustraciones, circuitos, retratos e identidades son dibujos originales generados localmente con SVG/Canvas. Las cifras son **parámetros de juego**, no datos certificados de fabricantes. Los circuitos son ficticios. No se usan logotipos oficiales.
+
+## Novedades de la 0.6 · sede y progresión, primera entrega
+
+Abre **Instalaciones y progreso** desde la navegación o desde la sede. Esta entrega inicia la expansión empresarial; empleados, automatización, academia e investigación siguen pendientes.
+
+- **Cuatro instalaciones reales:** garaje, taller, almacén y oficina de equipo, con cinco niveles cada una. Una obra simultánea por compañía, pagada a una constructora persistente, con fecha de entrega. Hasta entonces se conserva la capacidad actual. Los rivales también pueden invertir, respetando una reserva para tres meses de operación.
+- **Capacidad física:** el garaje pasa de dos a un máximo de diez coches; el almacén, de ocho a cuarenta repuestos; la oficina, de dos a seis pilotos. No aumenta la cantidad de coches admitidos por compañía en Copa Club: sigue siendo uno.
+- **Taller operativo:** los niveles 3 y 5 abren la segunda y tercera bahía. Encargos y trabajos comparten esas plazas; un mismo coche no puede recibir dos trabajos simultáneos. El equipamiento reduce los plazos de trabajos nuevos, con un mínimo de un día; conserva el vencimiento de los ya contratados. La pantalla muestra todas las tareas y los plazos efectivos.
+- **Coste de crecer:** las ampliaciones añaden conservación diaria desde la entrega, visible también en Finanzas. Una cancelación devuelve la mitad de la parte pendiente de ejecutar; movilización y trabajo realizado no se recuperan. La devolución se descuenta de la constructora y se registra una sola vez. La bancarrota liquida la obra pendiente.
+- **Diez niveles empresariales:** objetivos acumulados de trayectoria, carreras, podios/victorias, reputación, patrimonio, reserva de un mes de operación y ampliaciones. El primer ascenso exige al menos 120 días y tres carreras; el nivel 10 exige al menos veinte años. Se revisan al avanzar una jornada, con 90 días entre cambios. Los niveles 3, 5 y 7 permiten instalaciones de nivel 3, 4 y 5. No se entregan fondos ni activos por ascender. Los desbloqueos de nuevas categorías y el resto del mundo continuarán con sus sistemas correspondientes.
+- **Descenso con consecuencias:** 90 días consecutivos con reputación inferior a la mitad de la exigida por el nivel y menos de un mes de caja provocan un descenso. Recuperarse reinicia el contador. Los edificios, plazas, contratos y vehículos ya adquiridos se conservan.
+- **Sede visible:** las ampliaciones cambian edificios, etiquetas y capacidad; una obra muestra su estado en el mapa. Se mantiene una sola sede.
+- **Archivo deportivo:** cada temporada completada conserva nombres históricos, clasificación de pilotos y equipos y resultados de las seis rondas. En **Archivo histórico → Consultar pilotos y carreras** puedes abrirlos después de empezar otra temporada, sin volver a simular ni cobrar premios. Las partidas antiguas conservan sus resúmenes y recuperan el detalle de la temporada todavía presente; no se inventan resultados que nunca se guardaron.
+
+Los precios y metas son parámetros iniciales de juego, pendientes del balance a largo plazo. Se mantienen los guardados y las carreras anteriores: la migración no cambia activos, facturas, resultados ni RNG. No se requieren cuentas ni paquetes adicionales.
 
 ## Novedades de la 0.5 · estrategia en pista
 

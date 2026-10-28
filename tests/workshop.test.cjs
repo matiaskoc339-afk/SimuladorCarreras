@@ -146,6 +146,7 @@ test("Almacén lleno y desmontaje: reserva plaza futura sin desbordar ni produci
     p = install(G, s, car, "brakes-club");
   p.condition = 72;
   G.player(s).sparesCapacity = 1;
+  G.Facilities.site(s).base.spares = 1; // Almacén reducido del escenario controlado.
   G.Workshop.remove(s, car.id, "brakes");
   assert.equal(G.Workshop.occupied(s), 1);
   const before = JSON.stringify(s);

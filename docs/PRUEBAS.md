@@ -1,3 +1,17 @@
+# Validación de la versión 0.6 · instalaciones y progresión
+
+`npm test`: **137 escenarios aprobados, sin fallos ni omisiones**: los 112 anteriores y 25 de instalaciones/archivo. `npm run test:browser`: **siete recorridos aprobados**, incluido el nuevo `browser-facilities.cjs` y los seis anteriores. La apertura `file://` sigue omitida por la política de Chromium; inicio HTTP verificado.
+
+Los escenarios nuevos comprueban: pago a constructora y capacidad diferida; entrega/cancelación únicas; fondos/nivel/carrera/actividad; mantenimiento desde entrega; compra de tercera unidad; tercera plaza de pilotos; almacén ampliado; bahías compartidas; reducción de plazo sin alterar trabajos ya contratados; ascenso, requisitos y descenso sin desalojos; recuperación de crisis; patrimonio neto tras crédito y reserva de liquidez para ascender; construcción rival con reserva; liquidación en bancarrota; guardado durante obra y avance agrupado/individual; migración auténtica 0.5 con estado final exacto; temporada real de seis carreras, archivo independiente, cambio de temporada y rechazo de datos corruptos.
+
+El nuevo recorrido usa botones para contratar, cancelar, guardar, cargar y entregar una obra; verifica centavos y costes, bloqueo de calendario durante la carrera, ampliación del mapa y capacidad. Simula las seis rondas con el motor existente, consulta el archivo después de abrir 2027 y verifica ausencia de mutación al leer resultados. Usa un escenario controlado para comprobar el ascenso al avanzar un día. Recorre instalaciones y archivo a 1440, 1024 y 390 px e importa una carrera 0.5 desde el formulario real. Capturas: `test-results/expansion06-*.png`.
+
+Los escenarios financiados/controlados aíslan condiciones y persistencia; no acreditan el balance de veinte temporadas. Personal, academia, automatización, I+D, nuevas categorías y equilibrio a décadas continúan pendientes.
+
+---
+
+## Registro histórico de la 0.5
+
 # Validación de la versión 0.5
 
 `npm test`: 112 escenarios aprobados, sin fallos ni omisiones. Conserva los 89 anteriores y añade 23 del fin de semana. El recorrido nuevo de navegador se añade como sexto, conservando los cinco previos.
