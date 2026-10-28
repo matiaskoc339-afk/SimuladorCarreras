@@ -1,3 +1,19 @@
+# Validación de la versión 0.6.3 · gerencia, delegación y medicina
+
+`npm test`: **230 escenarios aprobados, sin fallos ni omisiones**, incluidos los 200 anteriores y 30 nuevos. `npm run test:browser`: **diez recorridos aprobados**, los nueve anteriores y `browser-operations.cjs`. Se mantiene el juego sin dependencias de ejecución. La apertura `file://` continúa omitida por la política de Chromium del entorno; inicio HTTP verificado.
+
+Las pruebas nuevas comprueban candidatos de gerente/médico con RNG e IDs independientes; inicialización idempotente y guardado; previsión sin mutaciones; reparación pagada una vez con plazo real; límite por intervención y topes diario/área/mes; reserva de caja y previsión; gasto que no se reinicia al guardar o cambiar políticas; renovación del presupuesto por mes; inscripciones y calendario protegidos; bahías; transferencia física de repuestos y dinero al proveedor; stock, compatibilidad, condición, precio, capacidad y objetivo de inventario; montaje y reserva, entrega y conservación de mejoras sanas; prioridades, nivel y habilidad del gerente; pausa, descanso, rescisión e impagos; formación sin duplicar la cuota básica, entrenador, carga y descanso; órdenes manuales; ojeo con filtros/plazo/contrato; encargos con entrega neta única; reanudación determinista; cotización y tratamiento con médico, contratos, ocupación y paciente bloqueado; acierto/fallo al segundo día, menor plazo con experto, estrés, gasto único, un intento por episodio y ausencia de curación instantánea; retiro definitivo, recuperación natural, recarga y bancarrota; validación de políticas, cuentas, referencias, contador y casos corruptos.
+
+Se conservaron **fixtures auténticas 0.6.2 antes de modificar el motor**: carrera durante un cambio manual con dos tuercas aflojadas, y práctica en marcha. La migración mantiene exactamente la simulación y los resultados tras completar las mismas acciones, excluyendo solo el bloque de operaciones y sus candidatos/perfiles adicionales. Las fixtures de versiones anteriores siguen verificándose. Las expectativas de personal inicial pasan de 25 a 35 porque se incorporan diez entidades reales; no se sustituyen las anteriores ni se consume su RNG al importar.
+
+El navegador contrata gerente y médico desde sus perfiles; configura políticas con formularios y confirma los topes; ejecuta mantenimiento y compra reales; conserva gasto al recargar; autoriza montaje y completa su plazo mediante el botón de calendario; inicia un tratamiento, guarda/carga a mitad y verifica la recuperación al terminar; pausa la delegación; recorre las tres áreas a 1440, 1024 y 390 px e importa una práctica 0.6.2 pausada. Nueve capturas `test-results/ops063-*.png` comprueban ausencia de errores de consola y desbordamiento. El resultado médico acertado se fuerza en este caso controlado para verificar consecuencias; el fallo y el sorteo persistente se comprueban en las pruebas del motor.
+
+La inspección visual confirmó formularios legibles, controles de selección de tamaño correcto, registro de costes y disponibilidad médica. Los topes protegen las órdenes delegadas; los gastos manuales, nóminas y operación ordinaria siguen en Finanzas. Los casos controlados no demuestran equilibrio a décadas. Academia, departamentos especializados, I+D y las restantes áreas del análisis continúan pendientes.
+
+---
+
+## Registro histórico de la 0.6.2
+
 # Validación de la versión 0.6.2 · especialistas, boxes y pista
 
 `npm test`: **200 escenarios aprobados, sin fallos ni omisiones**, incluidos los 173 anteriores y 27 nuevos. `npm run test:browser`: **nueve recorridos aprobados**; los ocho anteriores y `browser-professionals.cjs`. La apertura `file://` continúa omitida por la política de Chromium del entorno; el juego se valida por HTTP. No se añaden dependencias al juego ni al runner de pruebas del motor.

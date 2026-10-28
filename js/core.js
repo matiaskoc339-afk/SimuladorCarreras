@@ -178,6 +178,7 @@
     G.Facilities.initialize(s);
     G.Staff.initialize(s);
     G.Professionals.initialize(s);
+    G.Operations.initialize(s);
     return s;
   };
   G.nextEvent = (s) => s.season.events.find((e) => e.status === "scheduled");

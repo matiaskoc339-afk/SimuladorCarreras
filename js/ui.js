@@ -100,6 +100,7 @@
             ["workshop", "tool", "Taller"],
             ["team", "team", "Pilotos"],
             ["staff", "team", "Personal"],
+            ["operations", "tool", "Operaciones y salud"],
             ["practice", "flag", "Entrenamiento en pista"],
           ],
         ],
@@ -237,7 +238,9 @@
     },
     team(s) {
       const hired = G.ownedDrivers(s),
-        free = s.drivers.filter((d) => !d.companyId && G.Professionals.available(s, d));
+        free = s.drivers.filter(
+          (d) => !d.companyId && G.Professionals.available(s, d),
+        );
       return (
         this.heading(
           "SALA DE PILOTOS",

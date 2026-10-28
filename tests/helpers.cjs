@@ -40,6 +40,7 @@ function engine() {
     "professionals",
     "practice",
     "pit-crew",
+    "operations",
     "calendar",
     "storage",
   ])

@@ -166,6 +166,7 @@
           "facilities",
           "staff",
           "practice",
+          "operations",
         ].includes(view)
       )
         return;
@@ -228,6 +229,7 @@
     },
     action(name, data) {
       if (
+        G.OperationsUI.action(this, name, data) ||
         G.ProfessionalUI.action(this, name, data) ||
         G.StaffUI.action(this, name, data) ||
         G.FacilitiesUI.action(this, name, data) ||
@@ -810,6 +812,10 @@
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
       if (!n) return;
+      if (n.target === "operations") {
+        this.go("operations");
+        return;
+      }
       if (n.target === "practice") {
         this.go("practice");
         return;
@@ -906,6 +912,7 @@
       const values = new FormData(form),
         s = this.state;
       if (
+        G.OperationsUI.submit(this, form, values) ||
         G.ProfessionalUI.submit(this, form, values) ||
         G.StaffUI.submit(this, form, values) ||
         G.RaceUI.submit(this, form, values) ||

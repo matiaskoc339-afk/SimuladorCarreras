@@ -17,6 +17,7 @@
     locked(s, id) {
       return (
         !!s.race ||
+        G.Operations.patientBusy(s, id) ||
         [G.Practice.active(s)?.carId, G.Practice.active(s)?.driverId].includes(
           id,
         ) ||

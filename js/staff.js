@@ -66,7 +66,9 @@
         debts: [],
       };
       // Secuencia y RNG propios: importar no altera la carrera ni los IDs anteriores.
-      for (const role of Object.keys(this.roles))
+      for (const role of Object.keys(this.roles).filter(
+        (role) => !["manager", "doctor"].includes(role),
+      ))
         for (let i = 0; i < 5; i++) s.employees.push(this.generate(s, role));
       return s;
     },
@@ -81,14 +83,17 @@
         day: Math.floor((date - Date.UTC(year, 0, 1, 12)) / 86400000),
       };
     },
-    generate(s, role) {
-      const x = s.staffing,
+    generate(s, role, source = s.staffing, prefix = "employee") {
+      const x = source,
         skill = G.integer(x, 42, 80),
         age = G.integer(x, 24, 55),
         born = G.integer(x, 0, 364),
         now = this.birthday(s);
       return {
-        id: this.uid(s, "employee"),
+        id:
+          prefix === "employee"
+            ? this.uid(s, "employee")
+            : `${prefix}-${++source.sequence}`,
         name: `${G.Data.firstNames[G.integer(x, 0, 15)]} ${G.Data.lastNames[G.integer(x, 0, 11)]}`,
         role,
         age,
@@ -699,7 +704,9 @@
       }
       if (s.day - x.lastRecruit >= 60) {
         x.lastRecruit = s.day;
-        for (const role of Object.keys(this.roles))
+        for (const role of Object.keys(this.roles).filter(
+          (role) => !["manager", "doctor"].includes(role),
+        ))
           if (
             s.employees.filter(
               (e) => e.role === role && e.status === "available",
@@ -853,8 +860,11 @@
         employeeIds = new Set(s.employees.map((e) => e.id));
       for (const e of s.employees) {
         G.assert(
-          /^employee-[0-9]+$/.test(e.id) &&
-            Number(e.id.split("-")[1]) <= x.sequence &&
+          ((/^employee-[0-9]+$/.test(e.id) &&
+            Number(e.id.split("-")[1]) <= x.sequence) ||
+            (/^specialist-[0-9]+$/.test(e.id) &&
+              ["manager", "doctor"].includes(e.role) &&
+              Number(e.id.split("-")[1]) <= (s.operations?.sequence || 0))) &&
             typeof e.name === "string" &&
             e.name.length <= 100 &&
             Object.hasOwn(this.roles, e.role) &&

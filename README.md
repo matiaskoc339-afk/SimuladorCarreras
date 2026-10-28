@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.6.2
+# Racing Company Simulator · 0.6.3
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -41,7 +41,21 @@ Los scripts clásicos y recursos relativos permiten abrir `index.html` directame
 
 Los nombres de coches son referencias descriptivas. Todas las ilustraciones, circuitos, retratos e identidades son dibujos originales generados localmente con SVG/Canvas. Las cifras son **parámetros de juego**, no datos certificados de fabricantes. Los circuitos son ficticios. No se usan logotipos oficiales.
 
-## Novedades de la 0.6.2 · niveles, boxes y entrenamiento
+## Novedades de la 0.6.3 · gerencia, políticas y salud
+
+Abre **Operaciones y salud**. Sus tres secciones son **Delegación**, **Actividad y gastos** y **Salud de pilotos**. Se incorporan cinco gerentes y cinco médicos al mercado laboral: **35 candidatos iniciales y siete especialidades**. Ambos roles usan contratos, niveles 1–10, estrés, descanso, salarios, aumentos y ofertas rivales existentes. Continúan contando para las plazas reales de la oficina.
+
+**Gerencia:** contrata un gerente y guarda las políticas que quieras activar. Puede ejecutar mantenimiento por componentes/neumáticos, comprar repuestos autorizados, montar inventario compatible, formar a pilotos con entrenador, encargar ojeo y aceptar encargos del taller. Su nivel, habilidad, estrés y motivación limitan las tareas que puede supervisar cada jornada. La formación delegada no inicia prácticas en pista ni firma contratos de pilotos.
+
+Configura un tope **mensual total**, otro **diario**, límites por área, prioridades y una **reserva de caja más meses de previsión**. Mantenimiento tiene un coste máximo por intervención; compras/montajes, una lista explícita de referencias y límites de calidad/precio/mano de obra. Todas las condiciones se comprueban antes de pagar. Las órdenes usan los mismos saldos, existencias, piezas, bahías, especialistas y plazos que las acciones manuales. No se retiran inscripciones ni se inicia un trabajo que invada la jornada previa a carrera.
+
+El gerente evalúa una vez al día, al avanzar o al pulsar **Evaluar hoy**. El registro muestra qué hizo, cuánto costó y qué quedó bloqueado por presupuesto, reserva, calendario, ocupación o ausencia de personal. Cambiar políticas o recargar conserva los importes gastados. Pausar detiene nuevas órdenes y formación delegada; los trabajos ya contratados siguen su plazo. Una orden manual de entrenamiento/descanso retira al piloto del programa delegado. Los sueldos, tratamientos, operación ordinaria y decisiones manuales siguen en Finanzas y quedan fuera de este presupuesto de órdenes automáticas.
+
+**Médico deportivo:** selecciona un piloto lesionado y consulta precio, probabilidad y reducción máxima antes de confirmar. El tratamiento cuesta **$120 y dos jornadas**, requiere al menos cuatro días de recuperación pendientes y contratos que cubran el curso. Nivel/habilidad/estrés cambian el acierto y el ahorro posible de **1–4 días**, limitado también por la lesión. El médico queda ocupado. Si falla, se conserva la fecha anterior; si acierta, el piloto mantiene el descanso restante. Solo un tratamiento por episodio; no cura instantáneamente ni revierte una retirada definitiva. Guardar mantiene el mismo resultado sorteado.
+
+La delegación empieza **desactivada**, también al importar una partida. Las fixtures auténticas de la 0.6.2 conservan exactamente carreras en boxes manuales y entrenamientos en marcha. Las otras profesiones, la academia física, I+D, mercado avanzado, libreas y evolución generacional siguen pendientes en el [análisis actualizado](docs/ANALISIS_MECANICAS.md).
+
+## Base de la 0.6.2 · niveles, boxes y entrenamiento
 
 Las cinco especialidades tienen **nivel 1–10**, experiencia por tareas, estrés y descansos remunerados de 1, 3 o 7 días. El nivel eleva sus expectativas salariales y su eficacia; el estrés las reduce. Pueden solicitar aumentos, recibir ofertas de la competencia y marcharse por mejores condiciones. **Personal** muestra las peticiones y permite negociar o igualar una oferta rival. Las transferencias liquidan sueldos, pagan compensación y conservan a la misma persona con su historial.
 
@@ -55,9 +69,9 @@ Se conservan guardados durante entrenamiento o cambio manual. Las carreras que y
 
 ## Base de personal especializado de la 0.6.1
 
-Abre **Personal** desde la navegación o desde la oficina de la sede. Hay **25 profesionales iniciales**, con identidad, edad, experiencia, habilidad, aprendizaje, personalidad, motivación y lealtad. El mercado es compartido: un rival puede contratar al candidato que estabas estudiando. Cada sesenta días se incorpora una candidatura por especialidad solo si quedan menos de dos disponibles. Cargar la partida no repone candidatos.
+Abre **Personal** desde la navegación o desde la oficina de la sede. La 0.6.1 introdujo **25 profesionales iniciales**, con identidad, edad, experiencia, habilidad, aprendizaje, personalidad, motivación y lealtad. El mercado es compartido: un rival puede contratar al candidato que estabas estudiando. Cada sesenta días se incorpora una candidatura por especialidad solo si quedan menos de dos disponibles. Cargar la partida no repone candidatos.
 
-La oficina inicial admite **dos empleados**, independientemente de las plazas de pilotos. Cada ampliación añade dos plazas. Puedes contratar un responsable de cada una de las cinco especialidades disponibles:
+La oficina inicial admite **dos empleados**, independientemente de las plazas de pilotos. Cada ampliación añade dos plazas. Puedes contratar un responsable de cada una de las cinco especialidades originales:
 
 - **Mecánico:** apoya una reparación o encargo; con rendimiento efectivo de al menos 40 reduce una jornada, respetando el mínimo de un día. Solo puede apoyar un trabajo simultáneo. Si está libre al salir a carrera, contribuye al servicio de boxes.
 - **Ingeniero de motores:** apoya instalaciones/desmontajes bajo las mismas reglas de disponibilidad y plazo. En carrera, su preparación reduce el objetivo térmico y el desgaste del motor; no restaura componentes.
@@ -75,11 +89,11 @@ Rescindir exige un mes de indemnización más lo devengado y vencido. Un trabaja
 
 La interfaz separa **Mi plantilla / Mercado laboral / Ojeo / Relaciones**. Las fichas de pilotos enlazan sus informes y el taller muestra el profesional asignado. Se corrige también la validación de guardado de las bahías ampliadas: admite los trabajos simultáneos autorizados y rechaza asignar el mismo empleado a dos de ellos.
 
-Esta entrega incorpora las cinco especialidades descritas. Jefes de taller, ingeniería general, suspensión, gerentes, administración, marketing, investigadores, dirección deportiva y personal médico, así como automatización empresarial general, academia e I+D, continúan pendientes. La automatización del estratega y el entrenamiento en pista ya están incorporados. El equilibrio durante décadas todavía debe validarse con el resto de sistemas.
+La 0.6.3 añade gerente y médico a las cinco especialidades originales. Jefes de taller, ingeniería general, suspensión, administración, marketing, investigadores y dirección deportiva, así como academia e I+D, continúan pendientes. La delegación de operaciones, el estratega automático y el entrenamiento en pista ya están incorporados. El equilibrio durante décadas todavía debe validarse con el resto de sistemas.
 
 ## Novedades de la 0.6 · sede y progresión, primera entrega
 
-Abre **Instalaciones y progreso** desde la navegación o desde la sede. Esta primera entrega inició la expansión empresarial; el personal se incorpora en 0.6.1. La automatización empresarial general, academia e investigación siguen pendientes.
+Abre **Instalaciones y progreso** desde la navegación o desde la sede. Esta primera entrega inició la expansión empresarial; el personal se incorpora en 0.6.1. La delegación de operaciones se añade en 0.6.3; academia e investigación siguen pendientes.
 
 - **Cuatro instalaciones reales:** garaje, taller, almacén y oficina de equipo, con cinco niveles cada una. Una obra simultánea por compañía, pagada a una constructora persistente, con fecha de entrega. Hasta entonces se conserva la capacidad actual. Los rivales también pueden invertir, respetando una reserva para tres meses de operación.
 - **Capacidad física:** el garaje pasa de dos a un máximo de diez coches; el almacén, de ocho a cuarenta repuestos; la oficina, de dos a seis pilotos. No aumenta la cantidad de coches admitidos por compañía en Copa Club: sigue siendo uno.
@@ -189,3 +203,5 @@ npm run test:browser
 Consulta [la arquitectura](docs/ARQUITECTURA.md), [el plan por versiones](docs/ROADMAP.md) y [la especificación original](docs/ESPECIFICACION.md).
 
 La 0.6.2 suma `tests/professionals.test.cjs` y `tests/browser-professionals.cjs`: niveles/estrés, aumentos y ofertas rivales, diagnóstico, CVs, minijuego completo con carrera activa, automatización, entrenamiento, lesiones/retiro, reanudación y compatibilidad 0.6.1. Consulta [la validación](docs/PRUEBAS.md).
+
+La 0.6.3 añade `tests/operations.test.cjs` y `tests/browser-operations.cjs`: políticas, presupuestos, acciones reales, pausa, formación sin cobros dobles, atención médica y migración auténtica 0.6.2. El [registro de pruebas](docs/PRUEBAS.md) documenta la cobertura y sus límites.

@@ -603,7 +603,11 @@
       for (const d of s.drivers) {
         this.addDriver(s, d);
         const c = this.care(s, d.id);
-        c.stress = Math.max(0, c.stress - (d.training ? 3 : 9));
+        c.stress = Math.max(
+          0,
+          c.stress -
+            (d.training && !G.Operations?.controlsTraining(s, d) ? 3 : 9),
+        );
         if (
           !d.companyId &&
           !c.recruited &&

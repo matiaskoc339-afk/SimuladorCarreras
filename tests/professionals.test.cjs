@@ -594,6 +594,10 @@ test("Migración auténtica 0.6.1 en boxes: mantiene apoyo antiguo, resultado y 
     JSON.parse(fixture("v61-results.json")),
   );
   const actual = json(s);
+  delete actual.operations;
+  actual.employees = actual.employees.filter(
+    (e) => !e.id.startsWith("specialist-"),
+  );
   delete actual.professional;
   assert.deepEqual(actual, JSON.parse(fixture("v61-finished.json")));
   G.Storage.validate(s);

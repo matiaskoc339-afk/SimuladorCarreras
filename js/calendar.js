@@ -20,9 +20,11 @@
         G.Facilities.complete(s);
         G.Economy.daily(s);
         G.Staff.daily(s);
+        G.Operations.medicalDaily(s);
         G.RaceWeekend.daily(s);
         G.Contracts.daily(s);
         G.Drivers.daily(s);
+        G.Operations.daily(s);
         G.AI.daily(s);
         G.Contracts.aiDaily(s);
         G.Economy.assess(s);

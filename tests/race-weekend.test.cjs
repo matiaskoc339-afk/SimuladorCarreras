@@ -342,6 +342,10 @@ test("Carrera0.4 auténtica: resultado, economía, contratos y entidades exactam
     ),
   );
   const actual = json(s);
+  delete actual.operations;
+  actual.employees = actual.employees.filter(
+    (e) => !e.id.startsWith("specialist-"),
+  );
   delete actual.professional; // Bloque aditivo de la nueva versión.
   delete actual.raceSupplies;
   delete actual.expansion; // Bloque nuevo; el estado y algoritmo 0.4 se conservan.

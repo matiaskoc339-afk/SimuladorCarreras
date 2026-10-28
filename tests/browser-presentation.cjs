@@ -33,7 +33,7 @@ const fs = require("node:fs");
     });
     // Todas las áreas tienen texto visible en la navegación principal.
     const navigation = page.locator(".rail-nav [data-go]");
-    assert.equal(await navigation.count(), 14);
+    assert.equal(await navigation.count(), 15);
     for (const el of await navigation.all())
       assert.ok((await el.innerText()).trim().length > 3);
     await page.locator('.rail-nav [data-go="workshop"]').click();

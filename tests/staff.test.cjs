@@ -44,15 +44,15 @@ function race(G, s) {
   delete s.race.professionalVersion; // Aísla el modelo de apoyo técnico 0.6.1.
   return s.race;
 }
-test("Personal persistente: 25 candidatos, semilla independiente e inicialización idempotente", () => {
+test("Personal persistente: 35 candidatos, semilla independiente e inicialización idempotente", () => {
   const { G, s } = game(),
     other = game();
-  assert.equal(s.employees.length, 25);
+  assert.equal(s.employees.length, 35);
   assert.deepEqual(json(s.employees), json(other.s.employees));
   const before = json(s);
   G.Staff.initialize(s);
   assert.deepEqual(json(s), before);
-  assert.equal(new Set(s.employees.map((e) => e.id)).size, 25);
+  assert.equal(new Set(s.employees.map((e) => e.id)).size, 35);
   assert.deepEqual(json(G.Storage.unpack(G.Storage.pack(s)).state), before);
 });
 test("Negociación: contraoferta, prima única, contrato y rechazo de doble contratación", () => {
@@ -659,6 +659,10 @@ test("Migración auténtica 0.6: conserva carrera, almacén ampliado y estado fi
     ),
   );
   const actual = json(s);
+  delete actual.operations;
+  actual.employees = actual.employees.filter(
+    (e) => !e.id.startsWith("specialist-"),
+  );
   delete actual.professional; // Bloque aditivo de la nueva versión.
   delete actual.staffing;
   actual.employees = [];

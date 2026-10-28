@@ -9449,3 +9449,312 @@ input[type="range"] {
   color: #c2d4c8;
   border-color: #435e56;
 }
+
+/* Gestión delegada y salud deportiva. */
+.operations-intro {
+  margin-bottom: 24px;
+}
+.operations-intro > p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+  margin-top: 18px;
+}
+.operations-person {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.operations-person > div {
+  flex: 1;
+  min-width: 160px;
+}
+.operations-person h3 {
+  margin: 7px 0;
+  font-size: 22px;
+}
+.operations-person p {
+  color: var(--muted);
+  font-size: 13px;
+}
+.operations-avatar {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 68px;
+  border-radius: 8px;
+  background: #dbe7da;
+  color: #476650;
+  font: 22px var(--mono);
+}
+.operations-intro .operations-ready {
+  color: #47785a;
+}
+.operations-intro .operations-wait {
+  color: #956c35;
+}
+.operations-overview {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.operations-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+.operations-form-grid .form-field {
+  margin: 0;
+  min-width: 0;
+}
+.operations-form-grid input,
+.operations-form-grid select {
+  width: 100%;
+  max-width: 100%;
+}
+.operations-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.operations-policy {
+  min-width: 0;
+}
+.operations-policy-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+.operations-policy-head h2 {
+  margin-top: 10px;
+  line-height: 1.3;
+}
+.operations-policy > p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 13px;
+  margin-top: 17px;
+}
+.operations-switch {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 12px;
+}
+.operations-switch input,
+.operations-choice-list input,
+.operations-parts-list input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #66836e;
+  flex-shrink: 0;
+}
+.operations-choice-list {
+  grid-column: 1/-1;
+}
+.operations-choice-list > .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+}
+.operations-choice-list label,
+.operations-parts-list label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+.operations-choice-list small,
+.operations-parts-list small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 7px;
+  line-height: 1.6;
+}
+.operations-policy-note {
+  grid-column: 1/-1;
+  font-size: 13px;
+  color: var(--muted);
+}
+.operations-parts-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 30px;
+  margin-top: 15px;
+}
+.operations-save {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  margin-top: 24px;
+  padding: 22px 25px;
+  background: #e3ebe0;
+  border-radius: 7px;
+}
+.operations-save > p {
+  color: #58725e;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.operations-save button {
+  flex-shrink: 0;
+}
+.operations-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.operations-preview-row small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.operations-preview-row strong {
+  flex-shrink: 0;
+  font: 14px var(--mono);
+}
+.operations-area-spending {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+.operations-area-spending > div {
+  border-left: 2px solid #c6d6c3;
+  padding-left: 15px;
+}
+.operations-area-spending span,
+.operations-area-spending small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.operations-area-spending b {
+  display: block;
+  font: 21px var(--mono);
+  margin: 9px 0;
+}
+.operations-log-row {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 100px;
+  gap: 18px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.operations-log-row time,
+.operations-log-row small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.operations-log-row h3 {
+  font-size: 16px;
+  margin: 8px 0;
+}
+.operations-log-row p {
+  line-height: 1.8;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.operations-log-row > b {
+  font: 14px var(--mono);
+  text-align: right;
+}
+.operations-medical-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.operations-patient {
+  min-width: 0;
+}
+.operations-patient-title {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.operations-patient-title > svg {
+  width: 68px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 5px;
+}
+.operations-patient-title h2 {
+  margin: 9px 0;
+}
+.operations-patient-title p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.operations-health-bars {
+  margin: 20px 0;
+}
+.operations-patient .onboarding-note {
+  font-size: 13px;
+  line-height: 1.8;
+}
+@media (max-width: 1150px) {
+  .operations-policy-grid,
+  .operations-medical-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 650px) {
+  .operations-overview,
+  .operations-form-grid,
+  .operations-parts-list {
+    grid-template-columns: 1fr;
+  }
+  .operations-person h3 {
+    font-size: 19px;
+  }
+  .operations-policy-head,
+  .operations-budget .section-title,
+  .operations-save {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .operations-switch {
+    align-self: flex-start;
+  }
+  .operations-area-spending {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .operations-log-row {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+  .operations-log-row time {
+    grid-column: 1/-1;
+  }
+  .operations-patient-title {
+    align-items: flex-start;
+  }
+}
+.operations-switch input[type="checkbox"],
+.operations-choice-list input[type="checkbox"],
+.operations-parts-list input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  min-width: 17px;
+  min-height: 17px;
+  max-width: 17px;
+  padding: 0;
+  flex: 0 0 17px;
+  appearance: auto;
+}

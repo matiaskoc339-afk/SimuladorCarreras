@@ -175,6 +175,7 @@
         type === null || G.Professionals.fit(s, d.id),
         "El piloto necesita recuperarse antes de entrenar.",
       );
+      G.Operations.releaseTraining(s, id);
       d.training = type;
     },
     releaseQuote(d) {
@@ -189,6 +190,10 @@
         (d) => d.id === id && d.companyId === s.playerId,
       );
       G.assert(d, "Piloto no disponible.");
+      G.assert(
+        !G.Operations.patientBusy(s, id),
+        "Termina el tratamiento médico antes de rescindir este contrato.",
+      );
       G.assert(
         G.Practice.active(s)?.driverId !== id,
         "Termina el entrenamiento antes de rescindir el contrato.",
@@ -219,10 +224,16 @@
     },
     daily(s) {
       for (const d of s.drivers) {
-        d.fatigue = G.clamp(d.fatigue - (d.training ? 2 : 8), 0, 100);
+        d.fatigue = G.clamp(
+          d.fatigue -
+            (d.training && !G.Operations.controlsTraining(s, d) ? 2 : 8),
+          0,
+          100,
+        );
         if (
           d.companyId &&
           d.training &&
+          !G.Operations.controlsTraining(s, d) &&
           s.companies.find((c) => c.id === d.companyId)?.status === "active"
         ) {
           const c = s.companies.find((c) => c.id === d.companyId);
