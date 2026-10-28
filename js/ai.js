@@ -198,6 +198,7 @@
         }
       if (drivers.length < c.driverCapacity)
         for (const d of s.drivers) {
+          if (!G.Professionals.available(s, d)) continue;
           if (
             d.companyId === c.id ||
             G.Market.locked(s, d.id) ||

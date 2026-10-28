@@ -93,6 +93,7 @@
       });
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
+          if (G.Practice.active(this.state || {})) this.practicePaused = true;
           this.persist();
           if (this.state?.race) {
             this.paused = true;
@@ -116,7 +117,10 @@
       this.lastAuto = 0;
       this.saveError = false;
       this.loadLogo();
-      this.view = s.race ? "race" : "hq";
+      this.practicePaused = !!G.Practice.active(s);
+      this.practiceSpeed = 10;
+      G.ProfessionalUI.practiceAccumulator = 0;
+      this.view = s.race ? "race" : G.Practice.active(s) ? "practice" : "hq";
       this.close();
       this.render();
     },
@@ -161,6 +165,7 @@
           "contracts",
           "facilities",
           "staff",
+          "practice",
         ].includes(view)
       )
         return;
@@ -223,6 +228,7 @@
     },
     action(name, data) {
       if (
+        G.ProfessionalUI.action(this, name, data) ||
         G.StaffUI.action(this, name, data) ||
         G.FacilitiesUI.action(this, name, data) ||
         G.RaceUI.action(this, name, data) ||
@@ -696,9 +702,16 @@
         d = s.drivers.find((d) => d.id === id);
       G.assert(d, "Piloto no disponible.");
       const own = d.companyId === s.playerId;
+      const discovered = s.professional.cvs.some(
+        (cv) => cv.driverId === d.id && cv.companyId === s.playerId,
+      );
+      const visibleStats =
+        own || !discovered
+          ? G.Drivers.stats
+          : ["pace", "brakes", "control", "consistency"];
       U.modal(
         U.escape(d.name),
-        `<div class="company-profile">${U.portrait(d)}<div><h3>${U.escape(d.name)}</h3><p>${d.age} años · ${U.escape(d.nation)} · ${G.Data.traits[d.trait].name}</p><p>${d.starts} salidas · ${d.points} puntos · Moral ${Math.round(d.morale)} %</p></div></div><div class="detail-stats">${G.Drivers.stats.map((k) => U.bar(G.Drivers.labels[k], d.stats[k])).join("")}</div>${
+        `<div class="company-profile">${U.portrait(d)}<div><h3>${U.escape(d.name)}</h3><p>${d.age} años · ${U.escape(d.nation)} · ${G.Data.traits[d.trait].name}</p><p>${d.starts} salidas · ${d.points} puntos · Moral ${Math.round(d.morale)} %</p></div></div><div class="detail-stats">${visibleStats.map((k) => U.bar(G.Drivers.labels[k], d.stats[k])).join("")}</div>${
           own
             ? `<div class="onboarding-note"><strong>Contrato · ${U.money(d.contract.salary)}/mes</strong>Vence ${U.date(d.contract.end)} · Fatiga ${Math.round(d.fatigue)} % · El descanso recupera 8 puntos de fatiga al día. La formación cuesta $18 por día y recupera solo 2 puntos.</div><div class="modal-actions">${[
                 ["none", "Descansar"],
@@ -717,7 +730,7 @@
                   "",
                 )}</div><div class="modal-actions">${U.button("Rescindir contrato", "release", "text-button negative", `data-id="${id}"`)}</div>`
             : !d.companyId
-              ? `<div class="modal-actions">${U.button("Negociar contrato", "negotiate", "primary", `data-id="${id}"`)}</div>`
+              ? `<div class="modal-actions">${U.button("Negociar contrato", "negotiate", "primary", `data-id="${id}" ${G.Professionals.available(s, d) ? "" : "disabled"}`)}</div>`
               : ""
         }`,
         true,
@@ -725,11 +738,11 @@
       if (own)
         document
           .querySelector(".modal-content")
-          .insertAdjacentHTML(
-            "beforeend",
-            G.ContractsUI.driverDetails(s, d) + G.StaffUI.driverDetails(s, d),
-          );
-      if (G.Companies.willing(s, d))
+          .insertAdjacentHTML("beforeend", G.ContractsUI.driverDetails(s, d));
+      document
+        .querySelector(".modal-content")
+        .insertAdjacentHTML("beforeend", G.StaffUI.driverDetails(s, d));
+      if (G.Companies.willing(s, d) && G.Professionals.available(s, d))
         document
           .querySelector(".modal-content")
           .insertAdjacentHTML(
@@ -797,6 +810,10 @@
     newsTarget(id) {
       const n = this.state.news.find((n) => n.id === id);
       if (!n) return;
+      if (n.target === "practice") {
+        this.go("practice");
+        return;
+      }
       if (n.target === "staff") {
         this.go("staff");
         if (n.entityId) G.StaffUI.news(this, n.entityId);
@@ -889,6 +906,7 @@
       const values = new FormData(form),
         s = this.state;
       if (
+        G.ProfessionalUI.submit(this, form, values) ||
         G.StaffUI.submit(this, form, values) ||
         G.RaceUI.submit(this, form, values) ||
         G.ContractsUI.submit(this, form, values) ||
@@ -1064,6 +1082,7 @@
         }
       }
       G.RaceUI.frame(time);
+      G.ProfessionalUI.frame(this, time, elapsed);
       if (!s?.race) G.Sound.silence();
       requestAnimationFrame((t) => this.frame(t));
     },

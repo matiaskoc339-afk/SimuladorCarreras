@@ -1,3 +1,21 @@
+# Validación de la versión 0.6.2 · especialistas, boxes y pista
+
+`npm test`: **200 escenarios aprobados, sin fallos ni omisiones**, incluidos los 173 anteriores y 27 nuevos. `npm run test:browser`: **nueve recorridos aprobados**; los ocho anteriores y `browser-professionals.cjs`. La apertura `file://` continúa omitida por la política de Chromium del entorno; el juego se valida por HTTP. No se añaden dependencias al juego ni al runner de pruebas del motor.
+
+Los nuevos escenarios cubren niveles/sueldo/eficacia y XP; descanso remunerado, estrés y bloqueo de apoyo; aumentos aceptados, negociados, rechazados e ignorados; oferta de competencia con fondos y plaza reales, compensación, liquidación, contraoferta, cancelación y conservación de identidad; diagnóstico obligatorio con mecánico, apoyo del ingeniero, cobro único y efecto físico del ajuste; calibración estadística de un informe al 80 %; nuevos CVs, calidad por nivel, caducidad de candidatos sin contratar, conservación de agentes libres con contrato anterior y guardado; boxes manuales con rivales en marcha, secuencia de cuatro ruedas y fijaciones, errores, seguridad, reincorporación, stock y pago único; éxito/fallo del mecánico, velocidad individual y sanción completa; estratega contextual, menor estrés y prioridad manual; previsión de entrenamiento, efecto del nivel/descanso, vueltas reales, desgaste, kilómetros, mejora y operación diaria; reanudación determinista, interrupción, lesión/recuperación y accidente que termina la carrera deportiva; bloqueos médicos, retirada de inscripción y liberación de gomas; atributos ya superiores al potencial sin regresión; validación de perfiles, referencias y física corruptos.
+
+La nueva fixture **auténtica 0.6.1 en boxes**, creada antes de cambiar el motor, conserva exactamente su carrera al migrar y reproduce resultados y estado final completo, excluyendo únicamente `s.professional`. Siguen verificándose las fixtures anteriores. Las pruebas específicas del modelo de boxes 0.5 y apoyo 0.6.1 utilizan explícitamente la ruta antigua sin marcador profesional; los escenarios nuevos prueban la ruta nueva, incluido el minijuego y su persistencia.
+
+El nuevo recorrido usa la interfaz para contratar mecánico/entrenador, consultar nivel, revisar/ajustar el coche, negociar un aumento y retener ante una oferta rival. Selecciona piloto/entrenador/coche y consulta riesgo antes de confirmar una práctica; la pausa, guarda/carga y la termina con el bucle real de animación a ×20. Da descanso remunerado y verifica su estado. En otra carrera, llega al puesto usando la física, confirma que los rivales avanzan y completa las cuatro ruedas pulsando las herramientas; guarda/carga con dos tuercas aflojadas y sale por el carril real. Comprueba el control del estratega, abre un nuevo CV con datos básicos/porcentaje de acierto e importa la fixture 0.6.1. Escenarios controlados preparan ofertas, inscripción y entrada a boxes; no fabrican una finalización del minijuego. Ocho capturas a 1440, 1024 y 390 px verifican personal, práctica y boxes sin errores de consola ni desbordamiento. Archivos `test-results/pro062-*.png`.
+
+La inspección visual también verificó contraste del panel durante la retransmisión y seguimiento del coche de entrenamiento. Se corrigió la representación de una pista vacía y se permite elegir seguimiento o circuito completo. Los accidentes médicos se fuerzan en pruebas controladas para comprobar sus consecuencias, sin afirmar que su frecuencia a largo plazo esté equilibrada.
+
+La simulación sigue siendo 2D. Esta validación cubre los cinco roles disponibles y estas reglas; no demuestra equilibrio durante décadas ni incorpora las otras profesiones, academia o I+D del prompt maestro.
+
+---
+
+## Registro histórico de la 0.6.1
+
 # Validación de la versión 0.6.1 · personal
 
 `npm test`: **173 escenarios aprobados, sin fallos ni omisiones**: los 137 anteriores y 36 de personal. `npm run test:browser`: **ocho recorridos aprobados**, incluido el nuevo `browser-staff.cjs`. Se mantienen los siete recorridos anteriores. La apertura `file://` continúa omitida por la política de Chromium; inicio HTTP verificado.

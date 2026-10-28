@@ -177,6 +177,7 @@
     G.RaceWeekend.initialize(s);
     G.Facilities.initialize(s);
     G.Staff.initialize(s);
+    G.Professionals.initialize(s);
     return s;
   };
   G.nextEvent = (s) => s.season.events.find((e) => e.status === "scheduled");

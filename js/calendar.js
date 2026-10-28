@@ -6,6 +6,10 @@
       G.ensurePlayable(s);
       G.assert(!s.race, "Termina la carrera antes de avanzar el calendario.");
       G.assert(
+        !G.Practice.active(s),
+        "Termina el entrenamiento en pista antes de avanzar el calendario.",
+      );
+      G.assert(
         Number.isInteger(count) && count >= 1 && count <= 400,
         "Avance no válido.",
       );
@@ -40,7 +44,7 @@
     },
     nextSeason(s) {
       G.assert(
-        s.season.phase === "complete" && !s.race,
+        s.season.phase === "complete" && !s.race && !G.Practice.active(s),
         "Completa todas las rondas antes de abrir otra temporada.",
       );
       G.ensurePlayable(s);

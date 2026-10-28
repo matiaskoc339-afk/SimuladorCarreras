@@ -83,6 +83,10 @@
       G.ensurePlayable(s);
       const d = s.drivers.find((d) => d.id === id);
       G.assert(d && !d.companyId, "Este piloto ya no está disponible.");
+      G.assert(
+        G.Professionals.available(s, d),
+        "Este currículum ha caducado o el piloto no está disponible médicamente.",
+      );
       G.assert(!s.race, "Termina la carrera antes de negociar.");
       G.assert(
         G.ownedDrivers(s).length < G.player(s).driverCapacity,
@@ -133,6 +137,8 @@
         `Prima de contratación · ${d.name}`,
       );
       d.companyId = s.playerId;
+      if (G.Professionals.care(s, d.id))
+        G.Professionals.care(s, d.id).recruited = true;
       d.contract = {
         salary,
         bonus,
@@ -160,8 +166,14 @@
         (d) => d.id === id && d.companyId === s.playerId,
       );
       G.assert(
-        d && [null, "pace", "control"].includes(type),
+        d &&
+          G.Practice.active(s)?.driverId !== id &&
+          [null, "pace", "control"].includes(type),
         "Plan de entrenamiento inválido.",
+      );
+      G.assert(
+        type === null || G.Professionals.fit(s, d.id),
+        "El piloto necesita recuperarse antes de entrenar.",
       );
       d.training = type;
     },
@@ -177,6 +189,10 @@
         (d) => d.id === id && d.companyId === s.playerId,
       );
       G.assert(d, "Piloto no disponible.");
+      G.assert(
+        G.Practice.active(s)?.driverId !== id,
+        "Termina el entrenamiento antes de rescindir el contrato.",
+      );
       const cost = this.releaseQuote(d);
       G.Economy.spend(
         s,
@@ -228,7 +244,12 @@
             const trainer = G.Staff.owned(s, d.companyId).find(
               (e) => e.role === "trainer",
             );
-            if (trainer) trainer.contributions.sessions++;
+            if (
+              trainer &&
+              !G.Professionals.resting(s, trainer.id) &&
+              !G.Staff.busy(s, trainer.id)
+            )
+              trainer.contributions.sessions++;
           }
         }
         if (d.contract && s.day >= d.contract.end) {

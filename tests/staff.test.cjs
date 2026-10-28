@@ -41,6 +41,7 @@ function race(G, s) {
   G.Race.register(s, e.id, d.id, G.ownedCars(s)[0].id);
   G.Calendar.advance(s, e.day - s.day);
   G.Race.start(s, e.id);
+  delete s.race.professionalVersion; // Aísla el modelo de apoyo técnico 0.6.1.
   return s.race;
 }
 test("Personal persistente: 25 candidatos, semilla independiente e inicialización idempotente", () => {
@@ -658,6 +659,7 @@ test("Migración auténtica 0.6: conserva carrera, almacén ampliado y estado fi
     ),
   );
   const actual = json(s);
+  delete actual.professional; // Bloque aditivo de la nueva versión.
   delete actual.staffing;
   actual.employees = [];
   assert.deepEqual(

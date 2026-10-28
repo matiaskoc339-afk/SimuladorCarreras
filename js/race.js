@@ -85,6 +85,10 @@
         (c) => c.id === carId && c.companyId === s.playerId,
       );
       G.assert(d && c, "Elige un piloto contratado y un vehículo propio.");
+      G.assert(
+        G.Professionals.fit(s, d.id),
+        "El piloto está lesionado o retirado de la competición.",
+      );
       G.assert(d.fatigue < 90, "El piloto necesita descansar.");
       G.assert(
         !c.repair && !G.Market.listed(s, c.id) && G.Workshop.ready(c),
@@ -176,10 +180,22 @@
             : G.Companies.lineup(s, c.id).car;
         if (c.id === s.playerId)
           G.assert(
-            d && car && !car.repair && G.Workshop.ready(car) && d.fatigue < 90,
+            d &&
+              G.Professionals.fit(s, d.id) &&
+              car &&
+              !car.repair &&
+              G.Workshop.ready(car) &&
+              d.fatigue < 90,
             "La alineación no está disponible. Revisa piloto, contrato y mantenimiento; también puedes renunciar.",
           );
-        if (!d || !car || car.repair || car.condition < 35) continue;
+        if (
+          !d ||
+          !G.Professionals.fit(s, d.id) ||
+          !car ||
+          car.repair ||
+          car.condition < 35
+        )
+          continue;
         if (c.id !== s.playerId) {
           if (c.balance < 370) continue;
           G.Economy.transact(
@@ -1005,7 +1021,14 @@
               .map((b) => ({ b, gap: -this.relative(me, b, def.length) }))
               .filter((x) => x.gap > 0 && x.gap < 28)
               .sort((x, y) => x.gap - y.gap)[0];
-          if (a.companyId !== s.playerId) {
+          if (
+            a.companyId !== s.playerId &&
+            !(
+              r.professionalVersion &&
+              a.professional?.auto &&
+              a.professional.strategist
+            )
+          ) {
             a.mode =
               a.tires < 30 || a.components.engine < 45
                 ? "save"

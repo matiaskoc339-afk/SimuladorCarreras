@@ -105,7 +105,11 @@
       for (const c of this.live(s, id)) {
         const p = s.commercial.providers.find((p) => p.id === c.providerId);
         const d = G.ownedDrivers(s, id).find(
-          (d) => d.id === c.driverId && d.contract && d.fatigue < 90,
+          (d) =>
+            d.id === c.driverId &&
+            d.contract &&
+            d.fatigue < 90 &&
+            G.Professionals.fit(s, d.id),
         );
         if (d) normal.driver = d;
         const car = G.ownedCars(s, id)
@@ -174,7 +178,7 @@
         const imposed =
           p.kind === "manufacturer"
             ? [...s.drivers]
-                .filter((d) => !d.companyId)
+                .filter((d) => !d.companyId && G.Professionals.available(s, d))
                 .sort(
                   (a, b) =>
                     G.Drivers.rating(a) - G.Drivers.rating(b) ||

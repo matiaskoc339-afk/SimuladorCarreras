@@ -53,6 +53,7 @@ const fs = require("node:fs");
     await p.getByRole("button", { name: "Pausar", exact: true }).click();
     // Pronóstico controlado para comprobar una transición meteorológica con la misma física.
     await p.evaluate(() => {
+      delete RCS.App.state.race.professionalVersion; // Ejercita la compatibilidad del modelo 0.5.
       const w = RCS.App.state.race.weather;
       w.rain = 0;
       w.wetness = 0;

@@ -27,7 +27,9 @@
     lineup(s, id) {
       const normal = {
         driver: G.ownedDrivers(s, id)
-          .filter((d) => d.contract && d.fatigue < 90)
+          .filter(
+            (d) => d.contract && d.fatigue < 90 && G.Professionals.fit(s, d.id),
+          )
           .sort(
             (a, b) =>
               G.Drivers.rating(b) -
@@ -121,6 +123,10 @@
         !seller || (seller.id === s.playerId ? consent : this.willing(s, d)),
         "Su compañía no acepta un traspaso.",
       );
+      G.assert(
+        G.Professionals.available(s, d),
+        "Piloto no disponible médicamente o currículum caducado.",
+      );
       const fee = agreedFee ?? this.fee(s, d),
         cost = fee + bonus;
       G.assert(
@@ -159,6 +165,8 @@
           );
       }
       d.companyId = buyerId;
+      if (G.Professionals.care(s, d.id))
+        G.Professionals.care(s, d.id).recruited = true;
       d.contract = {
         salary,
         bonus,

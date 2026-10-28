@@ -1050,6 +1050,7 @@
         rotation = mode === "broadcast" ? -0.1 : 0;
       }
       const jumped =
+          opt.snap === true ||
           cam.mode !== mode ||
           cam.track !== index ||
           !Number.isFinite(cam.cx) ||
@@ -1078,7 +1079,9 @@
       effects(c, r, index);
       const cautions =
         r?.cautions?.filter((zone) => zone.until > r.time) ||
-        (r?.yellowUntil > r.time ? [{ progress: r.yellowProgress || 0 }] : []);
+        (r && r.yellowUntil > r.time
+          ? [{ progress: r.yellowProgress || 0 }]
+          : []);
       for (const zone of cautions) {
         const p = worldPoint(index, zone.progress, -10);
         c.save();

@@ -17,6 +17,9 @@
     locked(s, id) {
       return (
         !!s.race ||
+        [G.Practice.active(s)?.carId, G.Practice.active(s)?.driverId].includes(
+          id,
+        ) ||
         s.season.events.some(
           (e) =>
             e.status === "scheduled" &&

@@ -198,6 +198,7 @@
       return value;
     },
     available(s, car, companyId = s.playerId) {
+      G.assert(G.Practice.active(s)?.carId !== car?.id, "El coche está entrenando en pista.");
       const c = s.companies.find((c) => c.id === companyId);
       G.assert(
         c?.status === "active" && car?.companyId === companyId,

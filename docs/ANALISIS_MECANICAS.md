@@ -1,6 +1,6 @@
 # Comparación del prompt maestro con la versión 0.5
 
-Estado revisado: versión `0.5.0`, commit `bf89cf3`. Especificación: [prompt original completo](PROMPT_MAESTRO.md), apartados 1–42. Este informe describe la copia local de la 0.5. Las incorporaciones posteriores de instalaciones, progresión y archivo deportivo se registran en el [roadmap actualizado](ROADMAP.md) y el [README](../README.md).
+Estado revisado: versión `0.5.0`, commit `bf89cf3`. Especificación: [prompt original completo](PROMPT_MAESTRO.md), apartados 1–42. Este informe describe la copia local de la 0.5. Las incorporaciones posteriores de instalaciones, progresión, archivo deportivo y personal se registran en el [roadmap actualizado](ROADMAP.md) y el [README](../README.md). La 0.6.2 incorpora además [las reglas de especialistas, boxes manuales, entrenamiento y estratega](REGLAS_ESPECIALISTAS.md); este informe conserva su fecha de revisión original.
 
 La base permite gestionar una compañía, competir durante una temporada y continuar con los mismos activos. El mayor trabajo pendiente es convertir ese equipo de Copa Club en una empresa que crezca, contrate personal y evolucione durante generaciones. También quedan requisitos parciales dentro de áreas que ya tienen una primera versión funcional.
 

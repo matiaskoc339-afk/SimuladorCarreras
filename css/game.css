@@ -9081,3 +9081,371 @@ input[type="range"] {
     min-width: 0;
   }
 }
+
+/* Niveles, decisiones laborales, pista de entrenamiento y boxes manuales */
+.professional-profile {
+  padding: 20px;
+  margin-bottom: 24px;
+  background: #f0f4ef;
+  border: 1px solid #d5e0d4;
+  border-radius: 7px;
+}
+.professional-level {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.professional-level > b {
+  font: 30px var(--mono);
+  color: #305547;
+}
+.professional-level > b small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.professional-level > span {
+  font: 12px var(--mono);
+  color: var(--muted);
+}
+.professional-level > strong {
+  margin-left: auto;
+  font-size: 13px;
+}
+.professional-rest {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.professional-profile > p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.professional-requests {
+  margin-bottom: 25px;
+  border-left: 3px solid #c19751;
+}
+.professional-request {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+.professional-request p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+.professional-request > button {
+  flex-shrink: 0;
+}
+.professional-review .section-title p {
+  color: var(--muted);
+  font-size: 13px;
+  max-width: 650px;
+  margin-top: 10px;
+}
+.professional-report-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 13px;
+}
+.professional-components {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 26px;
+}
+.accuracy-stamp {
+  background: #eef3ed;
+  color: #4c6653;
+  padding: 22px;
+  border-radius: 6px;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.accuracy-stamp b {
+  display: block;
+  font: 38px var(--mono);
+  margin-top: 8px;
+  color: #244d3c;
+}
+.accuracy-stamp small {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 1.7;
+}
+.practice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+  gap: 22px;
+}
+.practice-track {
+  min-width: 0;
+  overflow: hidden;
+}
+#practice-canvas {
+  display: block;
+  width: 100%;
+  height: 420px;
+  background: #b4bea7;
+}
+.practice-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  padding: 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.practice-metrics b {
+  color: var(--ink);
+}
+.practice-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 18px 18px;
+}
+.practice-plan .form-field {
+  margin-bottom: 16px;
+}
+.practice-plan .onboarding-note {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.practice-plan .onboarding-note strong {
+  margin-bottom: 9px;
+}
+.professional-strategy {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: #e9f0e9;
+  border: 1px solid #cbdacb;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  color: #355144;
+  font-size: 12px;
+}
+.manual-pit {
+  padding: 24px;
+  margin-bottom: 22px;
+  border: 2px solid #d69745;
+  scroll-margin-top: 20px;
+}
+.manual-pit-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  justify-content: space-between;
+}
+.manual-pit-heading h2 {
+  margin: 10px 0;
+  font-size: 24px;
+}
+.manual-pit-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  max-width: 740px;
+}
+.manual-pit-heading > b {
+  flex-shrink: 0;
+  font: 18px var(--mono);
+  color: #9c642c;
+}
+.manual-pit-body {
+  display: grid;
+  grid-template-columns: minmax(270px, 0.8fr) minmax(0, 1.2fr);
+  gap: 30px;
+  margin-top: 20px;
+}
+.pit-wheelboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+.pit-wheelboard .pit-wheel:nth-of-type(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+.pit-wheelboard .pit-wheel:nth-of-type(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+.pit-wheelboard .pit-wheel:nth-of-type(3) {
+  grid-column: 3;
+  grid-row: 1;
+}
+.pit-wheelboard .pit-wheel:nth-of-type(4) {
+  grid-column: 3;
+  grid-row: 2;
+}
+.manual-pit-car {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+}
+.manual-pit-car svg {
+  width: 100px;
+  height: 200px;
+}
+.pit-wheel {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 14px 8px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+  background: #f5f7f3;
+}
+.pit-wheel b {
+  display: block;
+  margin-top: 12px;
+  color: var(--ink);
+  font: 18px var(--mono);
+}
+.pit-wheel.selected {
+  border-color: #b07939;
+  background: #f7ecd9;
+  color: #82551f;
+}
+.pit-wheel.done {
+  border-color: #5c9674;
+  background: #edf5ed;
+}
+.pit-toolbox h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.pit-toolbox > p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.pit-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+.manual-pit-rivals {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+@media (max-width: 1100px) {
+  .practice-layout {
+    grid-template-columns: 1fr;
+  }
+  .practice-plan {
+    max-width: none;
+  }
+  .manual-pit-body {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+@media (max-width: 650px) {
+  .professional-level {
+    gap: 12px;
+  }
+  .professional-level > strong {
+    margin-left: 0;
+    width: 100%;
+  }
+  .professional-request,
+  .professional-report-line,
+  .professional-strategy,
+  .manual-pit-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .professional-request button,
+  .professional-strategy button {
+    align-self: flex-start;
+  }
+  .professional-components,
+  .manual-pit-body {
+    grid-template-columns: 1fr;
+  }
+  #practice-canvas {
+    height: 300px;
+  }
+  .practice-track .panel-heading {
+    flex-wrap: wrap;
+  }
+  .practice-track h2 {
+    font-size: 17px;
+  }
+  .manual-pit {
+    padding: 17px;
+  }
+  .manual-pit-heading h2 {
+    font-size: 20px;
+  }
+  .pit-wheelboard {
+    grid-template-columns: minmax(0, 1fr) 82px minmax(0, 1fr);
+  }
+  .manual-pit-car svg {
+    width: 82px;
+    height: 180px;
+  }
+  .pit-tools button {
+    flex: 1 1 40%;
+  }
+}
+/* El servicio manual comparte el contraste de la retransmisión nocturna. */
+.is-racing .manual-pit {
+  background: #182b30;
+  color: #e3e8df;
+  --ink: #e3e8df;
+  --muted: #afc0bc;
+  --line: #3a5053;
+}
+.manual-pit-heading .eyebrow {
+  color: #e8bd7b;
+}
+.manual-pit-heading > b {
+  color: #edc18a;
+}
+.is-racing .manual-pit .pit-wheel {
+  background: #223a3e;
+  color: #c1cec6;
+}
+.is-racing .manual-pit .pit-wheel.selected {
+  background: #514027;
+  border-color: #e0b16c;
+  color: #f6d69d;
+}
+.is-racing .manual-pit .pit-wheel.done {
+  background: #294d3a;
+  border-color: #78a88a;
+}
+.is-racing .manual-pit .secondary,
+.is-racing .professional-strategy .secondary {
+  background: #233c41;
+  color: #e2ebe3;
+  border-color: #526b6b;
+}
+.is-racing .professional-strategy {
+  background: #1c3336;
+  color: #c2d4c8;
+  border-color: #435e56;
+}

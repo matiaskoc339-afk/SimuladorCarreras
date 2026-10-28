@@ -52,6 +52,15 @@
         ...s.drivers,
         ...(s.employees || []),
         ...(s.staffing ? [...s.staffing.assignments, ...s.staffing.debts] : []),
+        ...(s.professional
+          ? [
+              ...s.professional.demands,
+              ...s.professional.offers,
+              ...s.professional.inspections,
+              ...s.professional.cvs,
+              ...s.professional.practices,
+            ]
+          : []),
         ...s.cars,
         ...s.season.events,
         ...(s.expansion?.sites
@@ -189,6 +198,7 @@
               "contracts",
               "facilities",
               "staff",
+              "practice",
             ].includes(n.target),
           "Noticia inválida.",
         );
@@ -404,6 +414,9 @@
       G.RaceWeekend.validate(s);
       G.Facilities.validate(s);
       G.Staff.validate(s);
+      G.Professionals.validate(s);
+      G.Practice.validate(s);
+      G.PitCrew.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);
@@ -454,10 +467,12 @@
       );
       return {
         state: this.validate(
-          G.Staff.initialize(
-            G.Facilities.initialize(
-              G.RaceWeekend.initialize(
-                G.Contracts.initialize(G.World.migrate(state)),
+          G.Professionals.initialize(
+            G.Staff.initialize(
+              G.Facilities.initialize(
+                G.RaceWeekend.initialize(
+                  G.Contracts.initialize(G.World.migrate(state)),
+                ),
               ),
             ),
           ),

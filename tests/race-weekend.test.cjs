@@ -15,6 +15,7 @@ function grid(seed = 810, options = {}) {
   G.Calendar.advance(s, e.day);
   G.Race.start(s, e.id);
   const r = s.race;
+  delete r.professionalVersion; // Regresión del modelo de fin de semana 0.5, conservado para carreras antiguas.
   r.entrants = r.entrants.filter((a) => a.companyId === s.playerId);
   r.weather.rain = 0;
   r.weather.wetness = 0;
@@ -341,6 +342,7 @@ test("Carrera0.4 auténtica: resultado, economía, contratos y entidades exactam
     ),
   );
   const actual = json(s);
+  delete actual.professional; // Bloque aditivo de la nueva versión.
   delete actual.raceSupplies;
   delete actual.expansion; // Bloque nuevo; el estado y algoritmo 0.4 se conservan.
   delete actual.staffing;

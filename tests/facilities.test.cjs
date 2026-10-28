@@ -415,6 +415,7 @@ test("Migración auténtica 0.5: conserva carrera, RNG, economía, activos y res
     ),
   );
   const actual = json(s);
+  delete actual.professional; // Bloque aditivo de la nueva versión.
   delete actual.expansion;
   delete actual.staffing;
   actual.employees = []; // Las plantillas anteriores no contenían personal.
@@ -460,6 +461,7 @@ test("Migración de resúmenes: recupera la temporada completa aún presente y c
   const { G, s } = completedSeason();
   delete s.expansion;
   delete s.staffing;
+  delete s.professional;
   s.employees = []; // Simula una versión anterior al personal.
   s.history.push({
     year: 2025,

@@ -8,35 +8,35 @@
         base: 160,
         rate: 2,
         description:
-          "Apoya una reparación o encargo; reduce una jornada si su rendimiento alcanza 40. También ayuda en boxes.",
+          "Especialista de boxes y mantenimiento. Sus niveles, velocidad y estrés afectan al acierto; revisa coches y apoya reparaciones.",
       },
       engineer: {
         name: "Ingeniero de motores",
         base: 260,
         rate: 3,
         description:
-          "Apoya montajes y desmontajes. En carrera reduce la carga térmica y el desgaste del motor.",
+          "Especialista en diagnóstico y ajustes. Apoya montajes, mejora las revisiones del mecánico y colabora en boxes.",
       },
       trainer: {
         name: "Entrenador",
         base: 180,
         rate: 2,
         description:
-          "Mejora el progreso de la formación de velocidad y control, respetando el potencial del piloto.",
+          "Dirige entrenamientos en pista y formación diaria. Su nivel y descanso mejoran el progreso y reducen estrés y riesgo de lesión.",
       },
       scout: {
         name: "Ojeador",
         base: 140,
         rate: 2,
         description:
-          "Prepara informes de potencial con un margen de incertidumbre. Cada investigación cuesta $75 y ocupa varios días.",
+          "Presenta CVs nuevos e informes de potencial con porcentaje de acierto. Su nivel afecta talento y precisión; un encargo individual cuesta $75.",
       },
       strategist: {
         name: "Estratega",
         base: 220,
         rate: 2.5,
         description:
-          "Coordina el servicio de boxes y reduce su duración junto al mecánico disponible.",
+          "Toma decisiones de ritmo y boxes automáticamente; reduce estrés del piloto. Puedes darle órdenes o tomar el control manual.",
       },
     },
     personalities: {
@@ -192,6 +192,7 @@
         (e) =>
           e.role === role &&
           !this.busy(s, e.id) &&
+          (!G.Professionals || G.Professionals.canAssign(s, e, base)) &&
           e.contract.end >= s.day + base,
       );
       const quality = employee ? this.strength(s, id, role) : 0;
@@ -410,7 +411,7 @@
       );
       G.assert(
         !this.busy(s, eid),
-        "Termina primero el trabajo de taller asignado a este profesional.",
+        "Termina primero el trabajo o entrenamiento asignado a este profesional.",
       );
       G.Economy.spendCompany(
         s,
@@ -506,6 +507,10 @@
       G.assert(
         !s.race && c?.status === "active" && e?.contract && d,
         "Necesitas un ojeador contratado y un piloto válido.",
+      );
+      G.assert(
+        !G.Professionals?.resting(s, eid),
+        "El ojeador está descansando.",
       );
       G.assert(
         !s.staffing.assignments.some(
