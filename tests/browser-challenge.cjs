@@ -29,6 +29,7 @@ const fs = require("node:fs");
     await p.mouse.move(box.x + 130, box.y + 100, { steps: 8 });
     await p.mouse.up();
     await p.getByRole("button", { name: /Fundar compañía/ }).click();
+    await p.locator('[data-action="tutorial-skip"]').click();
     assert.equal(
       await p.evaluate(() => RCS.player(RCS.App.state).balance),
       4200,

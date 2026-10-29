@@ -27,6 +27,7 @@
     logoImage: null,
     saveError: false,
     boot() {
+      G.Tutorial.prepare();
       U.render(null);
       document.addEventListener("click", (event) => {
         const el = event.target.closest("[data-action],[data-go]");
@@ -104,7 +105,7 @@
       window.addEventListener("beforeunload", () => this.persist());
       requestAnimationFrame((t) => this.frame(t));
     },
-    setState(s, slot) {
+    setState(s, slot, { created = false } = {}) {
       this.state = s;
       this.selectedCarId = null;
       this.auctionShownId = null;
@@ -134,6 +135,7 @@
             : "hq";
       this.close();
       this.render();
+      G.Tutorial.onState(this, created);
     },
     loadLogo() {
       this.logoImage = null;
@@ -150,8 +152,10 @@
       this.updateCamera();
       this.updatePause();
       window.scrollTo(0, 0);
+      G.Tutorial.paint();
     },
     go(view) {
+      if (G.Tutorial.active) return;
       this.close();
       if (!this.state) return;
       if (G.Auctions.active(this.state) && view !== "auctions") {
@@ -272,6 +276,7 @@
       }
     },
     action(name, data) {
+      if (G.Tutorial.action(this, name, data) || G.Tutorial.active) return;
       if (
         G.Auctions.active(this.state) &&
         !name.startsWith("auction-") &&
@@ -943,7 +948,7 @@
       const slots = G.Storage.list();
       U.modal(
         "Tu historia, guardada.",
-        `<p>Cinco partidas locales, cada una con una copia de recuperación. Exporta un archivo para conservar tu progreso fuera de este navegador.</p>${slots.map((x) => `<div class="slot-row"><div><span class="eyebrow gold">RANURA ${x.slot} ${x.slot === this.slot ? "· ACTUAL" : ""}</span><h3>${U.escape(x.name || (x.empty ? "Disponible" : "Guardado dañado"))}</h3><p>${x.empty ? "Una historia por escribir." : x.error ? U.escape(x.error) : U.date(x.day) + " · " + new Date(x.savedAt).toLocaleString("es-ES") + (x.recovered ? " · COPIA RECUPERADA" : "")}</p></div><div class="slot-actions">${!x.empty && !x.error ? U.button("Cargar", "load", "secondary", `data-slot="${x.slot}"`) : ""}${!x.empty ? U.button("Eliminar", "delete-slot", "text-button negative", `data-slot="${x.slot}"`) : ""}</div></div>`).join("")}<div class="save-utilities">${this.state ? U.button("Guardar ahora", "save", "primary") + U.button("Exportar JSON", "export", "secondary") : ""}${U.button("Importar JSON", "import", "secondary")}<input id="import-file" type="file" accept=".json,application/json">${U.button("Nueva compañía", "new", "secondary")}${this.state ? U.button("Menú principal", "menu", "text-button") : ""}</div><p class="about-note">Guardado automático tras cada decisión y cada 5 segundos de carrera. El borrado del navegador también borra las partidas locales. Abrir index.html y usar el servidor local pueden crear almacenes diferentes; usa exportar/importar para trasladarlas.</p>`,
+        `<p>Cinco partidas locales, cada una con una copia de recuperación. Exporta un archivo para conservar tu progreso fuera de este navegador.</p>${slots.map((x) => `<div class="slot-row"><div><span class="eyebrow gold">RANURA ${x.slot} ${x.slot === this.slot ? "· ACTUAL" : ""}</span><h3>${U.escape(x.name || (x.empty ? "Disponible" : "Guardado dañado"))}</h3><p>${x.empty ? "Una historia por escribir." : x.error ? U.escape(x.error) : U.date(x.day) + " · " + new Date(x.savedAt).toLocaleString("es-ES") + (x.recovered ? " · COPIA RECUPERADA" : "")}</p></div><div class="slot-actions">${!x.empty && !x.error ? U.button("Cargar", "load", "secondary", `data-slot="${x.slot}"`) : ""}${!x.empty ? U.button("Eliminar", "delete-slot", "text-button negative", `data-slot="${x.slot}"`) : ""}</div></div>`).join("")}<div class="save-utilities">${this.state ? U.button("Guardar ahora", "save", "primary") + U.button("Exportar JSON", "export", "secondary") : ""}${U.button("Importar JSON", "import", "secondary")}<input id="import-file" type="file" accept=".json,application/json">${this.state ? U.button("Cómo jugar", "tutorial-open", "secondary", G.Tutorial.busy(this.state) ? 'disabled title="Termina la actividad en directo antes de consultar la guía"' : "") : ""}${U.button("Nueva compañía", "new", "secondary")}${this.state ? U.button("Menú principal", "menu", "text-button") : ""}</div><p class="about-note">Guardado automático tras cada decisión y cada 5 segundos de carrera. El borrado del navegador también borra las partidas locales. Abrir index.html y usar el servidor local pueden crear almacenes diferentes; usa exportar/importar para trasladarlas.</p>`,
         true,
       );
       document
@@ -968,6 +973,7 @@
         });
     },
     submit(form) {
+      if (G.Tutorial.active) return;
       if (G.AuctionUI.submit(this, form)) return;
       const values = new FormData(form),
         s = this.state;
@@ -991,10 +997,11 @@
           );
           const state = G.createGame(String(values.get("companyName")), logo);
           G.Storage.save(this.pendingSlot, state);
-          this.setState(state, this.pendingSlot);
+          this.setState(state, this.pendingSlot, { created: true });
           U.toast(
             "Bienvenido a tu primer garaje. Empieza por la sala de pilotos.",
           );
+          G.Tutorial.offer(this);
           break;
         }
         case "identity-form": {

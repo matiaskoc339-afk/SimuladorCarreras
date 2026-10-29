@@ -30,6 +30,7 @@ const { chromium } = require("playwright"),
     await p.mouse.move(logo.x + 120, logo.y + 90, { steps: 8 });
     await p.mouse.up();
     await p.getByRole("button", { name: /Fundar compañía/ }).click();
+    await p.locator('[data-action="tutorial-skip"]').click();
     assert.equal(
       await p.evaluate(() => RCS.player(RCS.App.state).balance),
       4200,

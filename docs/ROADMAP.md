@@ -41,3 +41,6 @@ La 0.9.0 se dedica al taller visual solicitado: vistas lateral/superior, zonas d
 
 
 La 0.10.0 incorpora las subastas de piezas y coches: sala en vivo, postores con carteras reales, ofertas vinculantes, lotes exclusivos y rotatorios y consignación con un 80 % neto. Añade cuarenta familias exclusivas y doce plataformas reservadas a la casa, sin sustituir el mercado ordinario. El mercado negociado de coleccionistas, las importaciones y las demás ampliaciones comerciales siguen pendientes. [Reglas, evidencia y alcance](SUBASTAS_0_10.md).
+
+
+La 0.10.1 añade una guía de inicio opcional y de una sola aparición automática por perfil. Enseña el alcance jugable mediante once pasos y diecisiete pantallas, conserva el progreso y permite consulta manual. No altera progresión, dificultad ni las mecánicas pendientes. [Guía y comprobaciones](TUTORIAL_0_10_1.md).

@@ -39,6 +39,7 @@ const fs = require("node:fs");
     await page.getByRole("button", { name: "Exportar PNG ↗" }).click();
     assert.equal((await png).suggestedFilename(), "logotipo.png");
     await page.getByRole("button", { name: /Fundar compañía/ }).click();
+    await page.locator('[data-action="tutorial-skip"]').click();
     await page.waitForTimeout(350);
     await page.screenshot({ path: "test-results/hq.png", fullPage: true });
     assert.equal(await page.evaluate(() => RCS.App.state.companies.length), 8);

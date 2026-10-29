@@ -1,3 +1,11 @@
+# Validación 0.10.1
+
+**Dieciséis recorridos de navegador aprobados**: las quince regresiones anteriores y el nuevo recorrido del tutorial. Las seis rutas que fundan una empresa omiten la guía con su botón real antes de continuar. El motor y sus reglas no cambian; el registro 0.10 conserva las 335 pruebas anteriores. No se repite la temporada financiera para un cambio de interfaz.
+
+`browser-tutorial.cjs` verifica once escenarios: primera fundación real, fondo sin acciones y foco de teclado, once capítulos/diecisiete pantallas sin modificar ningún campo de la partida, finalización y consulta manual, segunda empresa sin repetición, omisión por botón/Escape, reanudación tras recarga, jugador con guardado previo, ausencia de intervención en una carrera y preferencia de sesión cuando falla la escritura local. Revisa las vistas en 1440×1000, 1024×900, 390×844 y una pantalla de 390×560. Se inspeccionaron capturas de la bienvenida y del taller en móvil; diálogo y controles caben sin desbordamiento horizontal.
+
+El tutorial se recuerda fuera de las ranuras y no altera ni regenera entidades, contratos, inventario, caja, día o RNG. En la prueba manual de una partida anterior tampoco activa el taller visual ni las subastas pendientes. [Detalles de uso y persistencia](TUTORIAL_0_10_1.md).
+
 # Validación 0.10.0
 
 Cierre verificado: **335/335 pruebas del motor**, los catorce recorridos históricos de navegador y el recorrido de subastas, sin errores de página ni desbordamiento en 1440/1024/390. Sintaxis de 96 archivos JS/CJS y 61 recursos locales comprobada. Se conserva la ejecución HTTP; `file://` sigue omitido por la política de Chromium del entorno.

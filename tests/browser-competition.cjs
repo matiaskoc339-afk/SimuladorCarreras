@@ -32,6 +32,7 @@ const { chromium } = require("playwright"),
     await p.mouse.move(box.x + 100, box.y + 100, { steps: 8 });
     await p.mouse.up();
     await p.getByRole("button", { name: /Fundar compañía/ }).click();
+    await p.locator('[data-action="tutorial-skip"]').click();
     await p.evaluate(() => RCS.App.go("team"));
     const id = await p.evaluate(
       () =>
