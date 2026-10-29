@@ -1,8 +1,8 @@
-/* Temporada 0.7: ingresos, contratos, reparaciones, puntos y matrículas reales.
+/* Temporada 0.8: ingresos, contratos, reparaciones, puntos y matrículas reales.
    No inyecta financiación ni estadísticas; omite las pruebas inaccesibles. */
 const { engine } = require("../tests/helpers.cjs");
 const assert = require("node:assert/strict");
-const { G } = engine({ competitions: true });
+const { G } = engine({ development: true });
 const seed = Number(process.argv[2] || 1470),
   s = G.createGame("Del asfalto al circuito", "", seed);
 const d = s.drivers
@@ -137,12 +137,100 @@ G.Storage.validate(s);
 assert.equal(G.Competition.score(s, "player", "street"), 0);
 assert.equal(s.competitions.streetPoints.player, points);
 assert.equal(s.competitions.licenses.player, license);
+// Después de sobrevivir al año: formación y ciencia pagadas con la misma caja.
+const member = (role) =>
+  s.employees
+    .filter(
+      (e) =>
+        e.role === role &&
+        e.status === "available" &&
+        G.Challenge.staffLevel(s, e) <= G.player(s).level,
+    )
+    .sort((a, b) => a.ask - b.ask)[0];
+const hireMember = (role) => {
+  const e = member(role);
+  assert.ok(e, `Candidato asequible: ${role}`);
+  assert.equal(
+    G.Staff.offer(s, e.id, {
+      salary: Math.ceil(e.ask * 1.15),
+      months: 1,
+      bonus: 0,
+    }).accepted,
+    true,
+  );
+  return e;
+};
+if (!d.companyId)
+  assert.equal(
+    G.Drivers.offer(s, d.id, Math.ceil(d.ask * 1.1), 3).accepted,
+    true,
+  );
+const advanceOne = () => {
+  const e = G.nextEvent(s);
+  if (e && e.day <= s.day) G.Race.skip(s, e.id);
+  else {
+    if (!s.job && !car.repair && s.day - s.lastJob >= 7) G.Economy.job(s);
+    G.Calendar.advance(s, 1);
+  }
+  G.Storage.validate(s);
+  assert.equal(s.status, "active");
+};
+if (!G.Workshop.ready(car)) {
+  if (car.tires < 35) G.Economy.tires(s, car.id);
+  if (car.condition < 60) G.Workshop.repair(s, car.id, "all");
+  while (car.repair) advanceOne();
+}
+const coach = hireMember("trainer"),
+  plan = G.Practice.quote(s, {
+    driverId: d.id,
+    coachId: coach.id,
+    carId: car.id,
+    laps: 5,
+    intensity: "easy",
+    focus: "control",
+  }),
+  program = G.Practice.start(s, {
+    driverId: d.id,
+    coachId: coach.id,
+    carId: car.id,
+    laps: 5,
+    intensity: "easy",
+    focus: "control",
+  });
+while (G.Practice.active(s)) advanceOne();
+assert.equal(program.status, "completed");
+assert.ok(program.report.changes.control > 0);
+const scientist = hireMember("researcher"),
+  project = G.Research.start(s, "learning", scientist.id),
+  startResearch = s.day;
+while (s.research.project) advanceOne();
+assert.equal(project.status, "completed");
+assert.equal(G.Research.effect(s, "training"), 0.05);
+assert.equal(G.player(s).status, "active");
+const development = {
+  program: {
+    days: program.days,
+    worked: program.daysWorked,
+    cost: program.cost,
+    gain: program.gain,
+    coachDaily: coach.contract?.salary,
+  },
+  research: {
+    days: s.day - startResearch,
+    cost: project.cost,
+    scientistDaily: scientist.contract?.salary,
+  },
+  balance: G.player(s).balance,
+  day: s.day,
+};
+console.log(JSON.stringify({ development }));
 require("node:fs").mkdirSync("test-results", { recursive: true });
 require("node:fs").writeFileSync(
-  "test-results/balance-070-" + seed + ".json",
+  "test-results/balance-080-" + seed + ".json",
   JSON.stringify(
     {
       seed,
+      development,
       dailyWage: d.contract?.salary,
       metrics,
       totals: s.totals,

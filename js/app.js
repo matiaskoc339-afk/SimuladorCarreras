@@ -166,6 +166,7 @@
           "facilities",
           "staff",
           "practice",
+          "research",
           "operations",
         ].includes(view)
       )
@@ -215,6 +216,7 @@
       this.render();
     },
     advance(count = 1) {
+      const program = G.Practice.active(this.state);
       const result = G.Calendar.advance(this.state, count);
       this.persist();
       if (result.blocked) {
@@ -223,12 +225,19 @@
         this.event(result.event.id);
       } else {
         this.render();
+        if (program?.calendarVersion && program.report)
+          U.modal(
+            "Informe del programa",
+            G.DevelopmentUI.report(this.state, program),
+            true,
+          );
         if (result.bankrupt)
           U.toast("Tu compañía ha agotado su margen de recuperación.", true);
       }
     },
     action(name, data) {
       if (
+        G.DevelopmentUI.action(this, name, data) ||
         G.CompetitionUI.action(this, name, data) ||
         G.ChallengeUI.action(this, name, data) ||
         G.OperationsUI.action(this, name, data) ||
@@ -916,6 +925,7 @@
       const values = new FormData(form),
         s = this.state;
       if (
+        G.DevelopmentUI.submit(this, form, values) ||
         G.OperationsUI.submit(this, form, values) ||
         G.ProfessionalUI.submit(this, form, values) ||
         G.StaffUI.submit(this, form, values) ||

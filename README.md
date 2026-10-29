@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.7.0
+# Racing Company Simulator · 0.8.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,14 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.8.0 · investigación y campus
+
+- **Investigadores contratables**, con niveles, sueldos diarios altos, estrés, descansos y relaciones laborales existentes. Su contrato abre **Investigación**: un árbol de nueve mejoras permanentes en recuperación, aprendizaje y operación técnica. Mejor nivel rebaja un poco materiales y días; los nodos finales siguen siendo caros y largos. La cotización separa materiales y nómina.
+- **Entrenamiento por programas de varios días**: reserva piloto, entrenador y coche, consulta plazo/riesgos/coste y sigue gestionando la empresa. Una combinación menos preparada necesita más días. La vista del piloto sigue animada; solo avanzar jornadas concede progreso y desgaste. Al terminar o interrumpir aparece un informe de mejoras, aprendizaje, pérdidas de habilidad si las hubo, fatiga, estrés e incidentes.
+- **32 pistas y 64 modelos**. Más curvas técnicas y trazados abiertos, cuatro dificultades y sedes exclusivas de calle, regional y nacional. El calendario de veinte pruebas rota entre temporadas. El atlas filtra por dificultad y categoría; las nuevas carrocerías también se ven en carrera.
+
+Para actualizar una empresa 0.7, abre Investigación y activa la nueva gestión cuando no haya carrera/práctica anterior en marcha. Conservas el calendario y el patrimonio; la rotación nueva se aplicará en la siguiente temporada. Una partida nueva incorpora todo desde el comienzo. [Reglas, costes y límites](docs/INVESTIGACION_CAMPUS_0_8.md).
 
 ## Novedades de la 0.7.0 · del asfalto a los circuitos
 
@@ -232,3 +240,5 @@ La 0.6.3 añade `tests/operations.test.cjs` y `tests/browser-operations.cjs`: po
 La 0.6.4 añade `tests/challenge.test.cjs` para las reglas actuales y `tests/browser-challenge.cjs` para la nueva contratación/carrera en tres tamaños. Las pruebas previas fijan explícitamente las reglas históricas. `npm run test:balance` comprueba una temporada de supervivencia con ingresos y costes reales.
 
 La 0.7.0 suma `tests/competition.test.cjs` y `tests/browser-competition.cjs`. `npm run test:balance` usa las ligas actuales; `npm run test:balance:v64` conserva la ruta histórica. Los modelos visuales son una interpretación 2D y las carreras no reproducen un simulador físico profesional.
+
+La 0.8.0 añade `tests/development.test.cjs`, `tests/browser-development.cjs` y la ruta financiera actual. `npm run test:balance:v70` y `npm run test:balance:v64` conservan las rutas históricas.

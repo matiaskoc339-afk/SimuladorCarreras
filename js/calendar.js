@@ -6,7 +6,7 @@
       G.ensurePlayable(s);
       G.assert(!s.race, "Termina la carrera antes de avanzar el calendario.");
       G.assert(
-        !G.Practice.active(s),
+        !G.Practice.active(s) || !!G.Practice.active(s)?.calendarVersion,
         "Termina el entrenamiento en pista antes de avanzar el calendario.",
       );
       G.assert(
@@ -24,6 +24,8 @@
         G.RaceWeekend.daily(s);
         G.Contracts.daily(s);
         G.Drivers.daily(s);
+        G.Research?.daily(s);
+        G.Camps?.daily(s);
         G.Operations.daily(s);
         G.Challenge.daily(s);
         G.AI.daily(s);
@@ -47,7 +49,9 @@
     },
     nextSeason(s) {
       G.assert(
-        s.season.phase === "complete" && !s.race && !G.Practice.active(s),
+        s.season.phase === "complete" &&
+          !s.race &&
+          (!G.Practice.active(s) || !!G.Practice.active(s)?.calendarVersion),
         "Completa todas las rondas antes de abrir otra temporada.",
       );
       G.ensurePlayable(s);

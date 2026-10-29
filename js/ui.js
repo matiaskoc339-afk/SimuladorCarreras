@@ -33,6 +33,7 @@
         garage: "M3 20V8L12 3L21 8V20M6 20V11H18V20M6 15H18M6 18H18",
         tool: "M14 5L19 2L22 5L19 10L15 10L7 21L3 17L14 8Z",
         team: "M8 12A4 4 0 1 0 8 4A4 4 0 1 0 8 12M2 21V18Q2 14 8 14Q14 14 14 18V21M17 5Q22 5 22 9Q22 13 17 13M18 16Q23 16 23 20",
+        research: "M9 3H15M10 3V9L4 19Q3 22 7 22H17Q21 22 20 19L14 9V3M7 15H17",
         market: "M3 4H5L8 16H19L22 7H6M10 20H10.1M18 20H18.1",
         companies:
           "M3 21V7H11V21M11 21V3H21V21M6 11H8M6 15H8M14 7H18M14 11H18M14 15H18M1 21H23",
@@ -100,6 +101,7 @@
             ["staff", "team", "Personal"],
             ["operations", "tool", "Operaciones y salud"],
             ["practice", "flag", "Entrenamiento en pista"],
+            ["research", "research", "Investigación"],
           ],
         ],
         [

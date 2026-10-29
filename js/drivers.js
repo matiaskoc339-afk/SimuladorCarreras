@@ -230,12 +230,18 @@
       for (const d of s.drivers) {
         d.fatigue = G.clamp(
           d.fatigue -
-            (d.training && !G.Operations.controlsTraining(s, d) ? 2 : 8),
+            (G.Practice.active(s)?.calendarVersion &&
+            G.Practice.active(s).driverId === d.id
+              ? 3
+              : d.training && !G.Operations.controlsTraining(s, d)
+                ? 2
+                : 8 * (1 + (G.Research?.effect(s, "rest", d.companyId) || 0))),
           0,
           100,
         );
         if (
           d.companyId &&
+          G.Practice.active(s)?.driverId !== d.id &&
           d.training &&
           !G.Operations.controlsTraining(s, d) &&
           s.companies.find((c) => c.id === d.companyId)?.status === "active"

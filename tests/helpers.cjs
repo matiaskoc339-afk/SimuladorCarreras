@@ -1,7 +1,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-function engine({ current = false, competitions = false } = {}) {
+function engine({
+  current = false,
+  competitions = false,
+  development = false,
+} = {}) {
   const store = new Map();
   const context = vm.createContext({
     console,
@@ -53,13 +57,21 @@ function engine({ current = false, competitions = false } = {}) {
     "driving",
     "calendar",
     "storage",
+    "content-expansion",
+    "research",
+    "camps",
   ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "../js/" + f + ".js"), "utf8"),
       context,
       { filename: f + ".js" },
     );
-  if (!competitions) {
+  if (!development) {
+    context.RCS.Data.models.length = 40;
+    context.RCS.Data.tracks.length = 22;
+    if (competitions) context.RCS.createGame = context.RCS.createV70Game;
+  }
+  if (!competitions && !development) {
     context.RCS.Data.models.length = 24;
     context.RCS.createGame = current
       ? context.RCS.createV64Game

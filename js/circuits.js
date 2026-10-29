@@ -429,7 +429,7 @@
     };
     return pts;
   };
-  for (const [
+  const register = ([
     id,
     name,
     region,
@@ -438,7 +438,7 @@
     radius,
     inspiration,
     vertices,
-  ] of definitions) {
+  ]) => {
     const def = {
       id,
       name,
@@ -468,7 +468,9 @@
     const points = compile(def);
     G.Data.tracks.push(def);
     cache.set(G.Data.tracks.length - 1, points);
-  }
+    return G.Data.tracks.length - 1;
+  };
+  for (const definition of definitions) register(definition);
   const track = G.Race.track;
   G.Race.track = function (index) {
     return cache.get(index) || track.call(this, index);
@@ -492,6 +494,7 @@
     );
   };
   G.Circuits = {
+    register,
     indices: () =>
       G.Data.tracks
         .map((t, i) => (t.modern ? i : null))

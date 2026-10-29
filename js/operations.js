@@ -222,7 +222,8 @@
     configure(s, settings) {
       G.ensurePlayable(s);
       G.assert(
-        !s.race && !G.Practice.active(s),
+        !s.race &&
+          (!G.Practice.active(s) || G.Practice.active(s).calendarVersion === 1),
         "Termina la carrera o práctica antes de cambiar las políticas.",
       );
       this.validateSettings(s, settings);
@@ -266,7 +267,10 @@
       const x = s.operations;
       if (!x.settings.enabled) return "Delegación desactivada.";
       if (s.status !== "active") return "La compañía no está activa.";
-      if (s.race || G.Practice.active(s))
+      if (
+        s.race ||
+        (G.Practice.active(s) && !G.Practice.active(s).calendarVersion)
+      )
         return "Termina la actividad en pista antes de ejecutar operaciones.";
       if (G.nextEvent(s)?.day <= s.day)
         return "Jornada de carrera: las operaciones esperan a que termine la prueba.";
@@ -647,7 +651,8 @@
       G.ensurePlayable(s);
       const x = s.operations;
       G.assert(
-        !s.race && !G.Practice.active(s),
+        !s.race &&
+          (!G.Practice.active(s) || G.Practice.active(s).calendarVersion === 1),
         "Termina la actividad en pista.",
       );
       G.assert(x.lastDaily !== s.day, "Las operaciones ya se evaluaron hoy.");
@@ -801,7 +806,12 @@
         doctor = this.member(s, "doctor"),
         care = d && P.care(s, id);
       G.assert(
-        !s.race && !G.Practice.active(s) && d && care && !care.retired,
+        !s.race &&
+          (!G.Practice.active(s) ||
+            G.Practice.active(s).calendarVersion === 1) &&
+          d &&
+          care &&
+          !care.retired,
         "Atención médica no disponible.",
       );
       G.assert(

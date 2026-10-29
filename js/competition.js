@@ -86,6 +86,12 @@
       );
     },
     technical(s, e, car, d) {
+      const camp = G.Practice.active(s);
+      if (
+        camp?.calendarVersion &&
+        (camp.driverId === d.id || camp.carId === car.id)
+      )
+        return "Termina o interrumpe el programa de pista antes de inscribir a ese piloto o coche.";
       if (d.contract.end <= e.day)
         return "El contrato del piloto debe cubrir la jornada de carrera. Renueva antes de inscribirte.";
       if (!G.Professionals.fit(s, d.id))
@@ -618,7 +624,11 @@
           );
           if (G.random(r) < chance) {
             const care = G.Professionals.care(s, d.id);
-            care.injuryUntil = s.day + G.integer(r, 4, 18);
+            care.injuryUntil =
+              s.day +
+              (G.Research
+                ? G.Research.recoveryDays(s, G.integer(r, 4, 18), a.companyId)
+                : G.integer(r, 4, 18));
             G.news(
               s,
               "Competición",

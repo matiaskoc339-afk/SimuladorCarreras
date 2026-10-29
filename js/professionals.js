@@ -632,7 +632,12 @@
         c.stress = Math.max(
           0,
           c.stress -
-            (d.training && !G.Operations?.controlsTraining(s, d) ? 3 : 9),
+            (G.Practice.active(s)?.calendarVersion &&
+            G.Practice.active(s).driverId === d.id
+              ? 3
+              : d.training && !G.Operations?.controlsTraining(s, d)
+                ? 3
+                : 9),
         );
         if (
           !d.companyId &&

@@ -67,7 +67,7 @@
       };
       // Secuencia y RNG propios: importar no altera la carrera ni los IDs anteriores.
       for (const role of Object.keys(this.roles).filter(
-        (role) => !["manager", "doctor"].includes(role),
+        (role) => !["manager", "doctor", "researcher"].includes(role),
       ))
         for (let i = 0; i < 5; i++) s.employees.push(this.generate(s, role));
       return s;
@@ -721,7 +721,7 @@
       if (s.day - x.lastRecruit >= 60) {
         x.lastRecruit = s.day;
         for (const role of Object.keys(this.roles).filter(
-          (role) => !["manager", "doctor"].includes(role),
+          (role) => !["manager", "doctor", "researcher"].includes(role),
         ))
           if (
             s.employees.filter(

@@ -200,6 +200,7 @@
               "facilities",
               "staff",
               "practice",
+              "research",
               "operations",
             ].includes(n.target),
           "Noticia inválida.",
@@ -432,6 +433,7 @@
       G.Rubber.validate(s);
       G.Racecraft.validate(s);
       G.Competition?.validate(s);
+      G.Research?.validate(s);
       G.Performance?.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");

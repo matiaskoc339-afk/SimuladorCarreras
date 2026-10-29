@@ -1,3 +1,7 @@
+# Validación 0.8.0
+
+Cierre verificado: **300/300 pruebas del motor**, doce recorridos históricos de navegador más el recorrido 0.8.0 en tres tamaños, y ruta de temporada con programa/ciencia pagados. La actualización añade 22 pruebas de investigación/campus/contenido, recorrido de navegador actual en tres tamaños y una temporada con formación/ciencia pagadas desde la misma caja. Consulta [evidencia, reglas y límites](INVESTIGACION_CAMPUS_0_8.md) y [el registro financiero](BALANCE_0_8_1470.json). Los registros siguientes documentan versiones anteriores.
+
 # Validación 0.7.0
 
 Resultado de cierre: **278/278 pruebas del motor**, once recorridos históricos de navegador y el nuevo recorrido 0.7.0, más temporada completa de veinte pruebas y apertura de 2027. La revisión actual añade 28 pruebas de ligas/pistas/piezas/diseños, recorrido de navegador actual en tres tamaños y una temporada de veinte pruebas sin ayudas. Consulta [reglas, evidencia y límites](COMPETICIONES_0_7.md). [Registro de la temporada reproducible](BALANCE_0_7_1470.json). Los apartados siguientes conservan el registro histórico de comprobaciones.

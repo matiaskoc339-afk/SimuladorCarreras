@@ -75,6 +75,13 @@
       }
     },
     action(A, name, data) {
+      if (name === "track-filter") {
+        A[
+          data.field === "difficulty" ? "circuitDifficulty" : "circuitCategory"
+        ] = data.value;
+        A.render();
+        return true;
+      }
       if (name === "competition-tab") {
         A.competitionTab = data.tab;
         A.render();
@@ -102,7 +109,7 @@
       if (name === "competition-upgrade") {
         A.confirm(
           "Activar las nuevas ligas",
-          "Se abrirá la siguiente temporada con los dieciséis trazados nuevos y las tres ligas. Conservas dinero, coches, contratos y el archivo anterior. Necesitas la temporada actual completada.",
+          "Se abrirá la siguiente temporada con los nuevos trazados y las tres ligas. Conservas dinero, coches, contratos y el archivo anterior. Necesitas la temporada actual completada.",
           () => {
             G.Calendar.nextSeason(A.state);
             C.initialize(A.state);
@@ -129,10 +136,37 @@
     const tab = G.App.competitionTab || "street";
     let content = "";
     if (tab === "tracks")
-      content = `<div class="circuit-atlas">${G.Circuits.indices()
+      content = `<div class="circuit-filters" aria-label="Filtros de trazados"><div>${[
+        ["all", "Todas las categorías"],
+        ["street", "Callejeras"],
+        ["pro", "Copa regional"],
+        ["national", "Copa nacional"],
+      ]
+        .map(([value, label]) =>
+          U.button(
+            label,
+            "track-filter",
+            (G.App.circuitCategory || "all") === value
+              ? "primary"
+              : "secondary",
+            `data-field="category" data-value="${value}"`,
+          ),
+        )
+        .join(
+          "",
+        )}</div><div>${["Todas", "Fácil", "Intermedia", "Difícil", "Experta"].map((value) => U.button(value, "track-filter", (G.App.circuitDifficulty || "Todas") === value ? "primary" : "secondary", `data-field="difficulty" data-value="${value}"`)).join("")}</div></div><div class="circuit-atlas">${G.Circuits.indices()
+        .filter(
+          (i) =>
+            (!G.App.circuitCategory ||
+              G.App.circuitCategory === "all" ||
+              G.Data.tracks[i].cups?.includes(G.App.circuitCategory)) &&
+            (!G.App.circuitDifficulty ||
+              G.App.circuitDifficulty === "Todas" ||
+              G.Data.tracks[i].difficulty === G.App.circuitDifficulty),
+        )
         .map((i) => {
           const t = G.Data.tracks[i];
-          return `<article class="panel circuit-card">${map(i)}<div><span class="eyebrow">${t.kind === "street" ? "CALLEJERO" : "PROFESIONAL"} · ${(t.length / 1000).toFixed(2)} KM</span><h3>${U.escape(t.name)}</h3><p>${U.escape(t.inspiration)}</p>${U.button("Ver trazado y boxes", "track-view", "secondary", `data-track="${i}"`)}</div></article>`;
+          return `<article class="panel circuit-card">${map(i)}<div><span class="eyebrow">${t.kind === "street" ? "CALLEJERO" : "PROFESIONAL"} · ${(t.length / 1000).toFixed(2)} KM</span><h3>${U.escape(t.name)}</h3><p>${U.escape(t.inspiration)}</p><p class="fine-print">${t.difficulty || "Intermedia"} · ${t.vertices.length} curvas · ${(t.cups || [t.kind === "street" ? "street" : "pro"]).map((key) => C.rules[key].name).join(" / ")}</p>${U.button("Ver trazado y boxes", "track-view", "secondary", `data-track="${i}"`)}</div></article>`;
         })
         .join("")}</div>`;
     else {
@@ -168,7 +202,7 @@
         ["street", "Liga callejera"],
         ["pro", "Copa regional"],
         ["national", "Copa nacional"],
-        ["tracks", "Los 16 trazados"],
+        ["tracks", `Los ${G.Circuits.indices().length} trazados`],
       ]
         .map(([id, label]) =>
           U.button(

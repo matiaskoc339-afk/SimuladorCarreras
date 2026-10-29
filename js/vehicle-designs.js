@@ -409,7 +409,18 @@
       key = old.index;
     let p = cache.get(key);
     if (!p) {
-      const style = styles[key] || "coupe",
+      const style =
+          m.visualStyle ||
+          styles[key] ||
+          {
+            compact: "city",
+            hatch: "hatch",
+            sedan: "sedan",
+            wagon: "wagon",
+            roadster: "open",
+            targa: "mid",
+          }[m.shape] ||
+          "coupe",
         f = families[style],
         h = A.hash(m.brand + ":" + m.model),
         dx = (((h >>> 6) % 9) - 4) * 0.002,
