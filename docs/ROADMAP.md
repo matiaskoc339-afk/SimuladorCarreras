@@ -38,3 +38,6 @@ La 0.8.0 incorpora investigación de protocolos con científico y entrenamiento 
 
 
 La 0.9.0 se dedica al taller visual solicitado: vistas lateral/superior, zonas de montaje, comparación de prestaciones, carrocerías y estructura compatible con motores/frenos, 29 referencias físicas y 16 alojamientos. Es preparación de conjuntos sobre la plataforma del modelo; el editor de libreas, desarrollo de piezas propias y personalización geométrica libre siguen pendientes. El equilibrio final y la evolución histórica no se consideran completados por esta numeración. [Entrega y límites](TALLER_VISUAL_0_9.md).
+
+
+La 0.10.0 incorpora las subastas de piezas y coches: sala en vivo, postores con carteras reales, ofertas vinculantes, lotes exclusivos y rotatorios y consignación con un 80 % neto. Añade cuarenta familias exclusivas y doce plataformas reservadas a la casa, sin sustituir el mercado ordinario. El mercado negociado de coleccionistas, las importaciones y las demás ampliaciones comerciales siguen pendientes. [Reglas, evidencia y alcance](SUBASTAS_0_10.md).

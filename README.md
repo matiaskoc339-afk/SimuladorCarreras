@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.9.0
+# Racing Company Simulator · 0.10.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,16 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.10.0 · casa de subastas
+
+- **Ver subastas / Subastar mis objetos**: sala con presentador, paletas, ofertas y cuenta atrás de diez segundos que reinicia cada puja. Puedes observar, aceptar el importe anunciado o retirarte. Las ofertas son vinculantes y se liquidan una sola vez al adjudicar.
+- **40 familias exclusivas y 12 plataformas de colección** adicionales a los 64 modelos anteriores: piezas de autor, carrocerías de archivo, modelos modernos y clásicos y coches preparados. Ediciones individuales con fabricante, estado, parámetros y certificado propios; ocho lotes rotan cada siete días.
+- **Postores con caja e intereses propios**, incluidos rivales reales. Buscan margen, restauran o coleccionan; pueden retirarse, pujar tarde y pagar más que la estimación. Sus compras transfieren dinero y propiedad reales.
+- **Vende tus piezas o coches**: fija la salida, observa la disputa y recibe el **80 % neto**. Sin comisión si no se vende. Se bloquean los objetos consignados y se conservan piezas, kilometraje y desgaste.
+- **Puja guardable**: el reloj y los participantes continúan al cargar; la empresa espera durante la sala. Las compras van al almacén o garaje y siguen conectadas con el taller y las carreras.
+
+Abre **Subastas** en tu empresa 0.9 sin reiniciar. El comienzo conserva **4200 US$** y los exclusivos de la casa tienen salidas desde **6500 US$** en piezas y **50 000 US$** en coches. [Uso, reglas, variedad y contabilidad](docs/SUBASTAS_0_10.md).
 
 ## Novedades de la 0.9.0 · taller visual
 
@@ -253,3 +263,5 @@ La 0.7.0 suma `tests/competition.test.cjs` y `tests/browser-competition.cjs`. `n
 La 0.8.0 añade `tests/development.test.cjs`, `tests/browser-development.cjs` y la ruta financiera actual. `npm run test:balance:v70` y `npm run test:balance:v64` conservan las rutas históricas.
 
 La 0.9.0 añade el taller visual y su recorrido de pruebas. `npm run test:balance:v80` conserva la temporada histórica 0.8; la ruta principal usa el constructor actual.
+
+La 0.10.0 incorpora la casa de subastas y sus pruebas de motor/navegador. La ruta financiera principal usa el constructor actual; `test:balance:v90` conserva la temporada anterior.

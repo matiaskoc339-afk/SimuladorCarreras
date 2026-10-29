@@ -578,7 +578,9 @@
           "Inventario de piezas inválido.",
         );
         G.assert(
-          p.companyId !== null || (p.carId === null && p.reservedFor === null),
+          p.companyId !== null ||
+            (p.carId === null && p.reservedFor === null) ||
+            (G.Auctions?.externalOwner(s, p.auctionOwnerId) && !p.reservedFor),
           "El proveedor contiene una pieza instalada o reservada.",
         );
         if (p.reservedFor)

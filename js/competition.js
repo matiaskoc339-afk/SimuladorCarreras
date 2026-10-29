@@ -355,6 +355,7 @@
         s.cars.push(car);
       }
       for (let i = 24; i < G.Data.models.length; i++) {
+        if (G.Data.models[i].auctionOnly) continue;
         const car = G.makeCar(
           s,
           null,

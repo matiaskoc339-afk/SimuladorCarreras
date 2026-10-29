@@ -63,6 +63,7 @@
           : []),
         ...(s.operations ? [...s.operations.log, ...s.operations.care] : []),
         ...s.cars,
+        ...(s.auctions ? [...s.auctions.patrons, ...s.auctions.lots] : []),
         ...s.season.events,
         ...(s.expansion?.sites
           ? Object.values(s.expansion.sites)
@@ -202,6 +203,7 @@
               "practice",
               "research",
               "operations",
+              "auctions",
             ].includes(n.target),
           "Noticia inválida.",
         );
@@ -435,6 +437,7 @@
       G.Competition?.validate(s);
       G.Research?.validate(s);
       G.Coachwork?.validate(s);
+      G.Auctions?.validate(s);
       G.Performance?.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");

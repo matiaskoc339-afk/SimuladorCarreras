@@ -27,6 +27,7 @@
         G.Research?.daily(s);
         G.Camps?.daily(s);
         G.Operations.daily(s);
+        G.Auctions?.daily(s);
         G.Challenge.daily(s);
         G.AI.daily(s);
         G.Contracts.aiDaily(s);

@@ -1,3 +1,15 @@
+# Validación 0.10.0
+
+Cierre verificado: **335/335 pruebas del motor**, los catorce recorridos históricos de navegador y el recorrido de subastas, sin errores de página ni desbordamiento en 1440/1024/390. Sintaxis de 96 archivos JS/CJS y 61 recursos locales comprobada. Se conserva la ejecución HTTP; `file://` sigue omitido por la política de Chromium del entorno.
+
+Las veinte pruebas nuevas verifican precio de acceso superior a la caja inicial, lotes exclusivos fuera del catálogo, activación idempotente, reloj y reinicio, ofertas vinculantes, precio obsoleto y puja contra uno mismo, reserva de fondos/plazas, cobro y entrega únicos, piezas/coches preparados reales, comisión del 20 %, retirada y falta de comprador, propiedad externa fuera del stock, presupuesto rival y montaje con sus bahías, reanudación exacta, quince rotaciones con diversidad, gangas y sobreprecios en doce semillas, corrupción y continuidad de Copa Club. Una fixture auténtica 0.9 con carrocería ancha termina con sus resultados y estado completo exactos.
+
+El recorrido `browser-auctions.cjs` funda una empresa y observa con sus **4200 US$**. Después usa caja controlada para comprar y verificar reloj real, guardar/cargar con una oferta pendiente, adjudicación, entrega, montaje, consignación desde formulario, venta por IA con 80 % neto, retirada sin abrir, filtros y tres anchuras. Se inspeccionaron visualmente portada, sala activa, controles móviles, lotes e historial. El recorrido de taller también comprueba integración con el calendario de subastas antes de su salto de fecha controlado.
+
+La ruta `npm run test:balance` usa el constructor 0.10 y simula las veinte fechas, subastas de fondo, nóminas, reparaciones, licencia, formación e investigación. Abre 2027 con **9375 US$**, sin financiar artificialmente la empresa. La ruta prudente no compra objetos de lujo durante ese primer año. [Registro financiero](BALANCE_0_10_1470.json). Las compras y ventas caras se verifican por separado: esta semilla no demuestra equilibrio exhaustivo de todas las estrategias.
+
+`test:balance:v90` conserva la ruta anterior. Las suites históricas fijan sus constructores y catálogo; la suite nueva usa `engine({auctions:true})`. [Reglas y alcance](SUBASTAS_0_10.md).
+
 # Validación 0.9.0
 
 Cierre verificado: **315/315 pruebas del motor**, los trece recorridos históricos de navegador y el nuevo recorrido de taller visual, sin errores de página ni desbordamiento en 1440/1024/390. La temporada actual de veinte fechas abre 2027 con licencia profesional y **9375 US$** tras pagar entrenador, programa, investigador y proyecto desde la caja real. [Registro financiero](BALANCE_0_9_1470.json). Es una ruta reproducible, no una prueba exhaustiva de equilibrio.

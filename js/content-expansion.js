@@ -873,7 +873,10 @@
       if (s.research?.version !== 1) return;
       // Nuevos coches disponibles también al actualizar una empresa, sin duplicar modelos del mercado.
       for (let i = 40; i < G.Data.models.length; i++)
-        if (!s.cars.some((c) => c.modelIndex === i)) {
+        if (
+          !G.Data.models[i].auctionOnly &&
+          !s.cars.some((c) => c.modelIndex === i)
+        ) {
           const car = G.makeCar(
             s,
             null,

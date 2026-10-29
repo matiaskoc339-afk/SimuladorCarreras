@@ -133,7 +133,9 @@
       }
       for (const car of s.cars)
         G.assert(
-          car.companyId !== null || cars.has(car.id),
+          car.companyId !== null ||
+            cars.has(car.id) ||
+            G.Auctions?.externalOwner(s, car.auctionOwnerId),
           "Unidad sin propietario ni anuncio.",
         );
       for (const d of s.drivers)

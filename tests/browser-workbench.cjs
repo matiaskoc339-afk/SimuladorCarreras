@@ -305,6 +305,7 @@ const { chromium } = require("playwright"),
       G.Drivers.offer(s, d.id, d.ask, 12);
       d.contract.end = e.day + 365;
       s.day = e.day;
+      G.Auctions?.daily(s);
       G.Race.register(s, e.id, d.id, car.id);
       G.Race.start(s, e.id);
       G.App.paused = true;

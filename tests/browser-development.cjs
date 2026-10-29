@@ -33,7 +33,12 @@ const { chromium } = require("playwright"),
       await p.evaluate(() => RCS.player(RCS.App.state).balance),
       4200,
     );
-    assert.equal(await p.evaluate(() => RCS.Data.models.length), 64);
+    assert.equal(
+      await p.evaluate(
+        () => RCS.Data.models.filter((m) => !m.auctionOnly).length,
+      ),
+      64,
+    );
     await p.evaluate(() => RCS.App.go("research"));
     assert.match(
       await p.locator(".research-locked").innerText(),

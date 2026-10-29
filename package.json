@@ -1,18 +1,20 @@
 {
   "name": "racing-company-simulator",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "Simulador local de gestión automovilística, sin dependencias de ejecución.",
   "scripts": {
     "start": "node scripts/server.cjs",
     "test": "node --test tests/*.test.cjs",
-    "test:browser": "node tests/browser-smoke.cjs && node tests/browser-business.cjs && node tests/browser-workshop.cjs && node tests/browser-presentation.cjs && node tests/browser-contracts.cjs && node tests/browser-race-weekend.cjs && node tests/browser-facilities.cjs && node tests/browser-staff.cjs && node tests/browser-professionals.cjs && node tests/browser-operations.cjs && node tests/browser-challenge.cjs && node tests/browser-competition.cjs && node tests/browser-development.cjs && node tests/browser-workbench.cjs",
+    "test:browser": "node tests/browser-smoke.cjs && node tests/browser-business.cjs && node tests/browser-workshop.cjs && node tests/browser-presentation.cjs && node tests/browser-contracts.cjs && node tests/browser-race-weekend.cjs && node tests/browser-facilities.cjs && node tests/browser-staff.cjs && node tests/browser-professionals.cjs && node tests/browser-operations.cjs && node tests/browser-challenge.cjs && node tests/browser-competition.cjs && node tests/browser-development.cjs && node tests/browser-workbench.cjs && node tests/browser-auctions.cjs",
     "test:balance": "node scripts/check-balance.cjs",
     "test:balance:v64": "node scripts/check-balance-v64.cjs",
     "test:leagues": "node --test tests/competition.test.cjs",
     "test:balance:v70": "node scripts/check-balance-v70.cjs",
     "test:development": "node --test tests/development.test.cjs",
     "test:workbench": "node --test tests/coachwork.test.cjs",
-    "test:balance:v80": "node scripts/check-balance-v80.cjs"
+    "test:balance:v80": "node scripts/check-balance-v80.cjs",
+    "test:auctions": "node --test tests/auctions.test.cjs",
+    "test:balance:v90": "node scripts/check-balance-v90.cjs"
   }
 }

@@ -107,6 +107,11 @@
     setState(s, slot) {
       this.state = s;
       this.selectedCarId = null;
+      this.auctionShownId = null;
+      if (G.Auctions.active(s)) this.auctionTab = "room";
+      G.AuctionUI.accumulator = 0;
+      G.AuctionUI.lastSignature = "";
+      G.AuctionUI.savedSecond = null;
       this.slot = slot;
       this.speed = 1;
       this.paused = false;
@@ -120,7 +125,13 @@
       this.practicePaused = !!G.Practice.active(s);
       this.practiceSpeed = 10;
       G.ProfessionalUI.practiceAccumulator = 0;
-      this.view = s.race ? "race" : G.Practice.active(s) ? "practice" : "hq";
+      this.view = s.race
+        ? "race"
+        : G.Auctions.active(s)
+          ? "auctions"
+          : G.Practice.active(s)
+            ? "practice"
+            : "hq";
       this.close();
       this.render();
     },
@@ -143,6 +154,14 @@
     go(view) {
       this.close();
       if (!this.state) return;
+      if (G.Auctions.active(this.state) && view !== "auctions") {
+        this.view = "auctions";
+        this.render();
+        U.toast(
+          "La sala está en vivo. Puedes retirarte para ver la resolución.",
+        );
+        return;
+      }
       if (this.state.race) {
         this.view = "race";
         this.render();
@@ -162,6 +181,7 @@
           "market",
           "companies",
           "workshop",
+          "auctions",
           "contracts",
           "facilities",
           "staff",
@@ -177,6 +197,14 @@
         !G.Coachwork.enabled(this.state)
       ) {
         G.Coachwork.initialize(this.state);
+        this.persist();
+      }
+      if (
+        view === "auctions" &&
+        G.Coachwork.enabled(this.state) &&
+        !G.Auctions.enabled(this.state)
+      ) {
+        G.Auctions.initialize(this.state);
         this.persist();
       }
       this.view = view;
@@ -245,6 +273,15 @@
     },
     action(name, data) {
       if (
+        G.Auctions.active(this.state) &&
+        !name.startsWith("auction-") &&
+        !["save", "saves", "close"].includes(name)
+      ) {
+        U.toast("Termina la subasta o retírate de la sala antes de continuar.");
+        return;
+      }
+      if (
+        G.AuctionUI.action(this, name, data) ||
         G.WorkbenchUI.action(this, name, data) ||
         G.DevelopmentUI.action(this, name, data) ||
         G.CompetitionUI.action(this, name, data) ||
@@ -931,6 +968,7 @@
         });
     },
     submit(form) {
+      if (G.AuctionUI.submit(this, form)) return;
       const values = new FormData(form),
         s = this.state;
       if (
@@ -1066,6 +1104,7 @@
         : 0;
       this.lastFrame = time;
       const s = this.state;
+      G.AuctionUI.frame(this, elapsed);
       if (s?.race && this.view === "race") {
         if (!this.paused) {
           this.accumulator += elapsed * this.speed;
