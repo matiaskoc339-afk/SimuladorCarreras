@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.6.4
+# Racing Company Simulator · 0.7.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,19 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.7.0 · del asfalto a los circuitos
+
+- **16 trazados originales**, seis urbanos y diez profesionales, inspirados en el carácter de circuitos reales. Puerto, calles estrechas, avenidas nocturnas, costa, desierto, estadio y bosque. Todos aparecen en el calendario de 20 pruebas.
+- **40 modelos** disponibles en el mercado: siluetas, proporciones métricas, habitáculos, faros, techos y detalles distintos. Se usan en garaje, mercado y retransmisión; las doce familias de piezas conservan sus ilustraciones específicas.
+- **Liga Callejera, Copa Regional Profesional y Copa Nacional**, con puntos separados, clasificación para sus finales y requisitos de acceso progresivos. Tasas ordinarias: $220, $2.100 y $7.200; las finales cuestan más. No hay prima automática por completar el calendario.
+- **Piezas activas durante la carrera:** potencia, masa, tracción, frenada, temperatura, refrigeración, apoyo aerodinámico y desgaste se conectan con las unidades compradas e instaladas. El daño y la pérdida de estado reducen su eficacia.
+- **Boxes simultáneos**, con carril de paso y puesto propio por equipo; el servicio de un rival no bloquea el trabajo de los demás. Velocidad y errores del personal siguen influyendo, con minijuego manual cuando corresponde.
+- **IA revisada:** anticipación de curvas, elección y compromiso de un lado al adelantar, lectura del tráfico, ahorro de gomas y paradas según combustible, desgaste y coste temporal. Los contactos evitables se sancionan en pruebas profesionales; en la calle se admiten, con muros próximos y daños que debes pagar.
+
+El inicio conserva $4.200, pilotos de valoración 10–25 y sueldos diarios. Para conseguir la licencia profesional necesitas **24 puntos callejeros acumulados y $900**; después se comprueba coche y piloto. La nacional exige también 12 puntos regionales acumulados. Cada final requiere sus propios puntos de la temporada. El desgaste continuo de gomas se reduce al 45 % del coeficiente 0.6.4: marca, compuesto, ritmo y errores siguen cambiando su duración.
+
+Las partidas antiguas conservan el calendario y las reglas con que se guardaron. Una empresa 0.6.4 puede activar las nuevas ligas desde Competiciones al completar su temporada; también puedes empezar una partida nueva. Consulta [reglas, pruebas y límites de esta versión](docs/COMPETICIONES_0_7.md).
 
 ## Novedades de la 0.6.4 · dificultad, variedad y conducción
 
@@ -29,10 +42,10 @@ Los cambios visuales se aplican también a partidas anteriores. **Los contratos 
 1. Funda una compañía y dibuja su logotipo. Hay pincel, borrador, colores, grosor, deshacer/rehacer, transparencia, vista previa y exportación PNG.
 2. Abre **Pilotos** desde la navegación o desde su edificio en la sede. Estudia los currículums y negocia salario, duración y prima. Las ofertas insuficientes reciben una contraoferta; insistir puede pausar la negociación.
 3. Selecciona **Garaje** para consultar tu utilitario usado, su estado y su historial. Las reparaciones cuestan dinero y duran inicialmente dos días; equipamiento y personal pueden reducir el plazo. El diagnóstico profesional se solicita aparte y requiere un mecánico. El precio de renovar los neumáticos de calle depende del coche y del apoyo disponible. Desde allí puedes abrir el taller de modificaciones.
-4. En **Competiciones**, inscribe a tu piloto y coche. La inscripción y el transporte cuestan $370; las gomas de competición se pagan aparte. Puedes hacerlo hasta la jornada de carrera.
+4. En **Competiciones**, inscribe a tu piloto y coche. Empieza en la Liga Callejera: tasas desde $220 y gomas aparte. La inscripción abre 14 días antes de cada prueba. Consulta los requisitos de las copas profesionales y sus finales antes de comprometer presupuesto.
 5. Avanza día a día o hasta la próxima prueba. Cada día se procesan las mismas obligaciones. El calendario se detiene en las carreras: solo una renuncia confirmada permite no participar.
 6. Sigue la carrera en una retransmisión 2D con cronometraje, radio y telemetría. Usa **Atacar / Equilibrado / Conservar**, selecciona un piloto en la clasificación para seguirlo, cambia entre TV / seguimiento / circuito, ajusta el zoom y la velocidad ×1 / ×2 / ×4, o pausa con el botón o la barra espaciadora. Los resultados no están predeterminados.
-7. Completa las seis pruebas. Los premios, puntos de pilotos/equipos, kilometraje, fatiga, desgaste y reputación se registran al cruzar la meta. Al terminar recibirás una prima de clasificación y la temporada quedará archivada.
+7. Gestiona las 20 pruebas de las tres ligas: participa o renuncia a cada fecha. Premios, puntos, kilometraje, fatiga, desgaste y reputación se registran al finalizar. Cada final tiene acceso por puntos; el año termina archivando las competiciones.
 8. Puedes abrir la siguiente temporada. Se conserva el mundo y se contabiliza el descanso hasta el siguiente 5 de enero. Revisa los contratos que vencen.
 
 **Finanzas** contiene el libro de movimientos, previsión mensual, edición de identidad y encargos de taller. Cada encargo produce $420 netos en partidas nuevas ($360 en las anteriores) en un plazo inicial de tres días, con un máximo de uno cada siete días. Comparte las bahías y profesionales disponibles con las revisiones.
@@ -42,9 +55,9 @@ Los cambios visuales se aplican también a partidas anteriores. **Los contratos 
 - Menú, creación de compañía, identidad y sede 2D interactiva.
 - Calendario desde enero de 2026 y temporadas sucesivas.
 - Salarios pagados cada día en partidas nuevas (los contratos antiguos mantienen devengo diario y liquidación el día 1); primas, alquiler, gastos logísticos, servicios, reparaciones, premios y descubierto con 14 días de recuperación. La bancarrota termina la partida.
-- Un coche inicial y siete equipos rivales con recursos finitos, flotas y plantillas persistentes. La IA de la 0.2 evalúa compras/ventas, fichajes/traspasos, revisiones, neumáticos, formación, encargos y reducción de gastos según personalidad, necesidad y reserva salarial.
+- Un coche inicial, siete compañías rivales y siete equipos callejeros independientes, con recursos finitos, flotas y plantillas persistentes. La IA de la 0.2 evalúa compras/ventas, fichajes/traspasos, revisiones, neumáticos, formación, encargos y reducción de gastos según personalidad, necesidad y reserva salarial.
 - Pilotos con 12 atributos, rasgos, potencial oculto, contratos, descanso, formación básica y experiencia de carreras.
-- Copa Club con seis circuitos/rondas, clasificación de equipos y pilotos, resultados e historial de temporadas.
+- Tres ligas con veinte pruebas, dieciséis trazados, requisitos técnicos y económicos, clasificación propia y finales. Los seis circuitos de Copa Club se conservan para partidas antiguas.
 - Simulación visual de paso fijo: aceleración según potencia/peso, frenada anticipada, habilidades, rebufo, búsqueda de huecos para adelantar, defensa, ritmo y desgaste. Los contactos dañan sistemas reales; los derrapes y trompos dependen del piloto y del agarre. Los accidentes pueden causar abandono y amarillas locales. Tres cámaras, minimapa y zoom.
 - Periódico de hechos reales del estado de juego, con enlaces a sus entidades y un archivo limitado.
 - Cinco partidas, guardado automático/manual, exportación/importación JSON, validación de formato/versión/entidades, checksum y copia anterior por ranura. Una carrera en curso se guarda con sus participantes y RNG, sin pagar recompensas de nuevo al cargar.
@@ -217,3 +230,5 @@ La 0.6.2 suma `tests/professionals.test.cjs` y `tests/browser-professionals.cjs`
 La 0.6.3 añade `tests/operations.test.cjs` y `tests/browser-operations.cjs`: políticas, presupuestos, acciones reales, pausa, formación sin cobros dobles, atención médica y migración auténtica 0.6.2. El [registro de pruebas](docs/PRUEBAS.md) documenta la cobertura y sus límites.
 
 La 0.6.4 añade `tests/challenge.test.cjs` para las reglas actuales y `tests/browser-challenge.cjs` para la nueva contratación/carrera en tres tamaños. Las pruebas previas fijan explícitamente las reglas históricas. `npm run test:balance` comprueba una temporada de supervivencia con ingresos y costes reales.
+
+La 0.7.0 suma `tests/competition.test.cjs` y `tests/browser-competition.cjs`. `npm run test:balance` usa las ligas actuales; `npm run test:balance:v64` conserva la ruta histórica. Los modelos visuales son una interpretación 2D y las carreras no reproducen un simulador físico profesional.

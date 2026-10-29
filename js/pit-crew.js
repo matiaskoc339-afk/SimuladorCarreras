@@ -167,13 +167,15 @@
             0.02,
             0.8,
           );
+        const need = r.competitionVersion ? G.Driving.pitNeed(s, r, a) : null;
         const required = (total - a.progress) * 0.00014 * (a.hp / 197),
-          fuelLow = a.fuel < required + 0.15,
+          fuelLow = need ? need.fuel : a.fuel < required + 0.15,
           wet = r.weather.wetness,
           compound = W.bestCompound(r),
-          badCompound =
-            (wet > 0.3 && !G.Rubber.wet(a.compound)) ||
-            (wet < 0.08 && G.Rubber.wet(a.compound));
+          badCompound = need
+            ? need.weather
+            : (wet > 0.3 && !G.Rubber.wet(a.compound)) ||
+              (wet < 0.08 && G.Rubber.wet(a.compound));
         let mode = fuelLow
           ? "fuel"
           : a.tires < 35 || a.condition < 50 || wet > 0.7
@@ -207,12 +209,19 @@
             a.progress,
           );
         }
-        if (!error && (fuelLow || a.tires < 20 || a.puncture || badCompound)) {
+        if (
+          !error &&
+          (need
+            ? need.fuel || need.tires || need.weather
+            : fuelLow || a.tires < 20 || a.puncture || badCompound)
+        ) {
           try {
             P.automating = true;
             W.requestPit(s, a.companyId, {
               compound:
-                badCompound || a.tires < 20 || a.puncture ? compound : "keep",
+                badCompound || (need ? need.tires : a.tires < 20) || a.puncture
+                  ? compound
+                  : "keep",
               fuel: fuelLow ? 2 : 0,
               repair: false,
             });

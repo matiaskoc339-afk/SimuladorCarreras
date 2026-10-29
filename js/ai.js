@@ -114,6 +114,7 @@
       candidates.push(...G.Facilities.aiCandidates(s, c, money));
       candidates.push(...G.Staff.aiCandidates(s, c, money));
       candidates.push(...G.Challenge.aiCandidates(s, c));
+      candidates.push(...(G.Competition?.maintenance(s, c) || []));
       for (const car of cars) {
         if (G.Market.listed(s, car.id)) continue;
         if (
@@ -180,7 +181,13 @@
         for (const l of s.market) {
           if (l.sellerId === c.id || l.price > money) continue;
           const car = s.cars.find((car) => car.id === l.carId);
-          if (car.hp > 210 || car.condition < 45 || car.tires < 20) continue;
+          if (
+            car.hp >
+              (G.Competition?.enabled(s) ? (c.privateer ? 350 : 280) : 210) ||
+            car.condition < 45 ||
+            car.tires < 20
+          )
+            continue;
           const current = rankedCars[0],
             gain = current
               ? G.Companies.carRating(car) - G.Companies.carRating(current)

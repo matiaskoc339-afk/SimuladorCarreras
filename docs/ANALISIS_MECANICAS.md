@@ -1,8 +1,8 @@
-# Estado del prompt maestro en la versión 0.6.4
+# Estado del prompt maestro en la versión 0.7.0
 
 Esta revisión sustituye la lista de pendientes de la 0.5. Se conserva el [análisis histórico completo](ANALISIS_MECANICAS_0_5.md), el [prompt original](PROMPT_MAESTRO.md) y las [reglas añadidas sobre especialistas](REGLAS_ESPECIALISTAS.md). La entrega 0.6.3 incorpora gerencia con políticas reales y atención médica; no convierte los otros sistemas pendientes en funciones implementadas.
 
-La 0.6.4 añade variedad de 24 modelos/retratos, generación inicial modesta con progresión, salarios diarios, contratación con presupuesto visible, marcas/desgaste de neumáticos y decisiones de conducción anticipadas. [Reglas y límites](EQUILIBRIO_0_6_4.md). Las filas siguientes conservan la distinción entre sistemas completos en su alcance actual y requisitos aún pendientes.
+La 0.7.0 añade tres ligas, finales por puntos, 16 trazados, 40 modelos, piezas activas en carrera y boxes simultáneos. [Reglas y límites actuales](COMPETICIONES_0_7.md). La 0.6.4 había añadido variedad de 24 modelos/retratos, generación inicial modesta con progresión, salarios diarios, contratación con presupuesto visible, marcas/desgaste de neumáticos y decisiones de conducción anticipadas. [Reglas y límites](EQUILIBRIO_0_6_4.md). Las filas siguientes conservan la distinción entre sistemas completos en su alcance actual y requisitos aún pendientes.
 
 ## Las trece áreas del análisis anterior
 
@@ -28,7 +28,7 @@ La progresión, las instalaciones y las relaciones laborales ya no deben figurar
 
 “Funcional” describe un ciclo jugable concreto; no significa catálogo o balance definitivos. “Parcial” identifica requisitos aún abiertos. “Transversal” es una condición de desarrollo.
 
-| Nº  | Apartado                          | Estado 0.6.4                                                                                                                                                 |
+| Nº  | Apartado                          | Estado 0.7.0                                                                                                                                                 |
 | --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1   | Concepto general                  | Parcial: empresa jugable y progresión; falta crecimiento hasta categorías internacionales y generaciones.                                                    |
 | 2   | Tecnología y arquitectura         | Funcional en el alcance actual: HTML/CSS/JS local, sin dependencias de ejecución ni recursos remotos.                                                        |
@@ -39,7 +39,7 @@ La progresión, las instalaciones y las relaciones laborales ya no deben figurar
 | 7   | Pilotos                           | Parcial: atributos, contratos, fatiga, estrés, potencial, formación, lesiones y recuperación; falta evolución generacional y mayor profundidad individual.   |
 | 8   | Negociación y contratos           | Parcial: ofertas, contraofertas, cláusulas, promesas, renovación y rescisión; representantes y demandas más amplias pendientes.                              |
 | 9   | Empleados y delegación            | Parcial: siete roles, trabajo, niveles, relaciones y políticas reales. Faltan otras profesiones del catálogo.                                                |
-| 10  | Vehículos                         | Parcial: 24 modelos y variantes visuales con unidades persistentes; faltan categorías superiores y evolución histórica.                                      |
+| 10  | Vehículos                         | Parcial: 40 modelos y variantes visuales con unidades persistentes; faltan categorías superiores y evolución histórica.                                      |
 | 11  | Taller                            | Parcial: 14 mejoras, inventario, requisitos, montaje, desgaste y reparación; faltan reglajes y despiece avanzado.                                            |
 | 12  | Personalización visual            | Parcial: logotipo/color; editor de libreas completo pendiente.                                                                                               |
 | 13  | Daños y mantenimiento             | Funcional en siete componentes, desgaste y servicios con plazo, diagnóstico y mantenimiento delegado; historial avanzado y averías por repuestos pendientes. |
@@ -48,7 +48,7 @@ La progresión, las instalaciones y las relaciones laborales ya no deben figurar
 | 16  | Carreras                          | Funcional en simulación 2D con tráfico, adelantamientos, colisiones y boxes; otros formatos y parrillas grandes jugables pendientes.                         |
 | 17  | Órdenes                           | Parcial: ritmo, combustible, defensa, boxes, estratega automático y prioridad manual; obediencia contextual y equipos multicoche pendientes.                 |
 | 18  | Clima y accidentes                | Funcional en lluvia, secado, temperatura, daños, abandonos y procedimientos actuales; mayor variedad meteorológica/reglamentaria pendiente.                  |
-| 19  | Competiciones                     | Parcial: Copa Club; regionales/nacionales/internacionales, GT, resistencia y eventos especiales pendientes.                                                  |
+| 19  | Competiciones                     | Parcial: ligas callejera, regional y nacional, temporadas, licencia y finales por puntos. Internacionales, GT, resistencia y eventos especiales pendientes.                                                  |
 | 20  | Campeonatos y temporadas          | Parcial: seis rondas, puntos, campeones, continuidad y archivo; reglamentos cambiantes y creación/desaparición de categorías pendientes.                     |
 | 21  | Patrocinadores/fabricantes        | Parcial: presupuesto, condiciones, cuotas, piloto/coche impuesto y consecuencias; más programas y relaciones continuadas pendientes.                         |
 | 22  | Economía                          | Parcial: caja, gastos, nóminas, deuda, premios, previsión, presupuestos y libro de movimientos; impuestos e informes contables completos pendientes.         |

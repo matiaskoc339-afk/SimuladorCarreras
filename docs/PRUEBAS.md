@@ -1,3 +1,7 @@
+# Validación 0.7.0
+
+Resultado de cierre: **278/278 pruebas del motor**, once recorridos históricos de navegador y el nuevo recorrido 0.7.0, más temporada completa de veinte pruebas y apertura de 2027. La revisión actual añade 28 pruebas de ligas/pistas/piezas/diseños, recorrido de navegador actual en tres tamaños y una temporada de veinte pruebas sin ayudas. Consulta [reglas, evidencia y límites](COMPETICIONES_0_7.md). [Registro de la temporada reproducible](BALANCE_0_7_1470.json). Los apartados siguientes conservan el registro histórico de comprobaciones.
+
 # Validación de la versión 0.6.4 · variedad, dificultad y conducción
 
 `npm test`: **250 escenarios aprobados**, sin fallos ni omisiones: 230 regresiones anteriores y 20 casos de las reglas actuales. `npm run test:browser`: **once recorridos**; los diez anteriores y `browser-challenge.cjs`. `npm run test:balance`: temporada completa reproducible, sin inyectar financiación ni resultados. Juego y pruebas de motor sin dependencias de ejecución. La apertura `file://` sigue omitida por la política de Chromium del entorno; HTTP verificado.

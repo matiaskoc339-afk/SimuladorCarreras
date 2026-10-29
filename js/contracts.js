@@ -1188,7 +1188,7 @@
             Number.isInteger(c.start) &&
             unique(c.eventIds) &&
             c.eventIds.length > 0 &&
-            c.eventIds.length <= 6 &&
+            c.eventIds.length <= (s.competitions ? 11 : 6) &&
             unique(c.checkedIds) &&
             unique(c.fulfilledIds) &&
             c.checkedIds.every((id) => c.eventIds.includes(id)) &&

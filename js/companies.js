@@ -42,7 +42,12 @@
             (c) =>
               !c.repair &&
               !G.Market.listed(s, c.id) &&
-              c.hp <= 210 &&
+              c.hp <=
+                (G.Competition?.enabled(s)
+                  ? s.companies.find((x) => x.id === id).privateer
+                    ? 350
+                    : 280
+                  : 210) &&
               G.Workshop.ready(c),
           )
           .sort(

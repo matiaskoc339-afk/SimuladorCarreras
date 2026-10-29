@@ -119,10 +119,18 @@
       t.eventId = eventId;
       return t;
     },
-    entryQuote(s, cid, compound = "road", fuel = 3) {
+    entryQuote(s, cid, compound = "road", fuel = 3, eventId = null) {
       G.assert([1, 3].includes(fuel), "Carga inicial inválida.");
       const q = this.tyreQuote(s, cid, compound);
-      return { ...q, compound, fuel, total: 370 + q.cost };
+      const e = s.season.events.find((e) => e.id === eventId) || G.nextEvent(s),
+        fee = G.Competition?.enabled(s) ? G.Competition.fee(e) : 370;
+      return {
+        ...q,
+        compound,
+        fuel,
+        total: fee + q.cost,
+        ...(G.Competition?.enabled(s) ? { fee } : {}),
+      };
     },
     releaseEntry(s, e) {
       const t = s.raceSupplies.sets.find((t) => t.id === e.entry?.tyreSetId);
@@ -385,7 +393,12 @@
         }
       }
       const blocked = r.entrants.filter(
-        (a) => a.dnf && Math.abs(a.lateral) < r.trackWidth / 2 + 0.3,
+        (a) =>
+          a.dnf &&
+          Math.abs(a.lateral) <
+            (r.competitionVersion && r.cup === "street"
+              ? r.trackWidth / 2 - a.width - 1
+              : r.trackWidth / 2 + 0.3),
       ).length;
       if (
         !r.safety.active &&
@@ -409,29 +422,47 @@
       if (r.step % 20 === 0)
         for (const a of r.entrants.filter(
           (a) =>
-            live(a) && a.companyId !== s.playerId && a.pit.phase === "none",
+            live(a) &&
+            a.companyId !== s.playerId &&
+            a.pit.phase === "none" &&
+            (!r.competitionVersion || !a.professional?.auto),
         )) {
           const remaining =
             G.Data.tracks[r.track].length * G.Data.tracks[r.track].laps -
             a.progress;
+          const need = r.competitionVersion ? G.Driving.pitNeed(s, r, a) : null;
           if (
-            (a.puncture ||
-              a.fuel < 0.4 ||
-              a.tires < (r.dynamicsVersion ? G.Rubber.threshold(a) : 18) ||
-              (this.grip(r, a) < 0.82 && w.wetness > 0.25)) &&
+            (need
+              ? need.fuel || need.tires || need.weather
+              : a.puncture ||
+                a.fuel < 0.4 ||
+                a.tires < (r.dynamicsVersion ? G.Rubber.threshold(a) : 18) ||
+                (this.grip(r, a) < 0.82 && w.wetness > 0.25)) &&
             remaining > 160
           ) {
             try {
               this.requestPit(s, a.companyId, {
-                compound:
-                  a.puncture ||
-                  a.tires < (r.dynamicsVersion ? G.Rubber.threshold(a) : 18) ||
-                  this.grip(r, a) < 0.82
+                compound: need
+                  ? need.tires || need.weather
+                    ? need.compound
+                    : "keep"
+                  : a.puncture ||
+                      a.tires <
+                        (r.dynamicsVersion ? G.Rubber.threshold(a) : 18) ||
+                      this.grip(r, a) < 0.82
                     ? this.bestCompound(r)
                     : "keep",
                 repair:
                   a.components.suspension < 45 || a.components.cooling < 45,
-                fuel: a.fuel < 0.5 ? 2 : 0,
+                fuel: need
+                  ? need.fuel
+                    ? remaining * 0.00014 * (a.hp / 180) + 0.2 - a.fuel > 2
+                      ? 4
+                      : 2
+                    : 0
+                  : a.fuel < 0.5
+                    ? 2
+                    : 0,
               });
             } catch {}
           }
@@ -779,7 +810,10 @@
           b !== a &&
           (live(b) || (b.dnf && Math.abs(b.lateral - a.lateral) < 2.1)) &&
           b.pit &&
-          ["entry", "box", "exit"].includes(b.pit.phase) &&
+          (r.competitionVersion
+            ? ["entry", "exit"].includes(b.pit.phase) &&
+              Math.abs(b.lateral - a.lateral) < 2.2
+            : ["entry", "box", "exit"].includes(b.pit.phase)) &&
           b.progress > a.progress &&
           b.progress - a.progress < 10
         )
@@ -809,6 +843,9 @@
       a.progress += moved;
       if (moved < 0.00001) a.speed = 0;
       a.lateral = this.pitLateral(r.track, a.progress);
+      if (r.competitionVersion)
+        a.lateral +=
+          layout.side * 5 * Math.max(0, 1 - Math.abs(a.progress - p.box) / 18);
       a.headingSlip = 0;
       a.braking = a.speed > max + 0.1;
       a.offTrack = false;
@@ -933,7 +970,7 @@
     },
     finish(s, r) {
       this.record(r, true);
-      s.raceSupplies.lastReplay = G.clone(r.replay);
+      if (r.entrants.length) s.raceSupplies.lastReplay = G.clone(r.replay);
       for (const a of r.entrants) {
         if (a.tyreSetId) {
           const t = s.raceSupplies.sets.find((t) => t.id === a.tyreSetId);
@@ -972,7 +1009,10 @@
         ...(rec.dynamicsVersion ? { dynamicsVersion: 1 } : {}),
         time: t,
         step: Math.floor(t * 20),
-        trackWidth: 12.4,
+        trackWidth: rec.trackWidth || 12.4,
+        ...(rec.competitionVersion
+          ? { competitionVersion: 1, cup: rec.cup }
+          : {}),
         cautions: b.cautions
           .map((c) => ({ progress: c[0], until: c[1] }))
           .filter((c) => c.until > t),
@@ -1292,6 +1332,7 @@
       s.playerId,
       options.compound || "road",
       options.fuel || 3,
+      eventId,
     );
     G.assert(
       G.player(s).balance >= q.total,

@@ -275,7 +275,7 @@
         s.season &&
           Number.isInteger(s.season.year) &&
           Array.isArray(s.season.events) &&
-          s.season.events.length === 6 &&
+          s.season.events.length === (s.competitions ? 20 : 6) &&
           ["active", "complete"].includes(s.season.phase),
         "Campeonato inválido.",
       );
@@ -431,6 +431,8 @@
       G.Challenge.validate(s);
       G.Rubber.validate(s);
       G.Racecraft.validate(s);
+      G.Competition?.validate(s);
+      G.Performance?.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");
       if (s.version >= 2) G.World.validate(s);

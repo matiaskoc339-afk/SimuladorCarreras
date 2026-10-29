@@ -17,7 +17,7 @@ const fs = require("node:fs");
     p.on("pageerror", (e) => errors.push(e.message));
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     await p.evaluate(() => {
-      const create = RCS.createGame;
+      const create = RCS.createV64Game;
       RCS.createGame = (name, logo) => create(name, logo, 1364);
     });
     await p.getByRole("button", { name: /Fundar mi compañía/ }).click();

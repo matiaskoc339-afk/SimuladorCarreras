@@ -523,6 +523,7 @@
         day: e.day,
         track: e.track,
         trackName: G.Data.tracks[e.track].name,
+        ...(s.competitions ? { cup: e.cup, final: e.final } : {}),
         status: e.status,
         results: e.results.map((row) => {
           const d = drivers.get(row.driverId) || {
@@ -557,6 +558,7 @@
             a.driverId.localeCompare(b.driverId),
         ),
         events,
+        ...(s.competitions ? { competitionVersion: 1 } : {}),
       });
     },
     validate(s) {
@@ -645,7 +647,7 @@
             Array.isArray(h.teams) &&
             Array.isArray(h.drivers) &&
             Array.isArray(h.events) &&
-            h.events.length === 6,
+            h.events.length === (h.competitionVersion ? 20 : 6),
           "Temporada archivada inválida.",
         );
         years.add(h.year);
@@ -663,13 +665,18 @@
           );
           teams.add(t.companyId);
         }
-        const eventIds = new Set();
+        const eventIds = new Set(),
+          rounds = {};
         for (const [i, e] of h.events.entries()) {
           G.assert(
             typeof e.id === "string" &&
               /^event-[0-9]+$/.test(e.id) &&
               !eventIds.has(e.id) &&
-              e.round === i + 1 &&
+              (h.competitionVersion
+                ? G.Competition.rules[e.cup] &&
+                  typeof e.final === "boolean" &&
+                  e.round === (rounds[e.cup] = (rounds[e.cup] || 0) + 1)
+                : e.round === i + 1) &&
               integer(e.day, 0, h.completedDay) &&
               integer(e.track, 0, G.Data.tracks.length - 1) &&
               typeof e.trackName === "string" &&

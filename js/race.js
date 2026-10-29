@@ -78,6 +78,11 @@
         "La inscripción no está disponible.",
       );
       G.assert(e.day >= s.day, "La fecha de inscripción ya ha pasado.");
+      if (G.Competition?.enabled(s))
+        G.assert(
+          !G.Competition.registrationReason(s, e),
+          G.Competition.registrationReason(s, e),
+        );
       const d = s.drivers.find(
         (d) => d.id === driverId && d.companyId === s.playerId,
       );
@@ -85,6 +90,11 @@
         (c) => c.id === carId && c.companyId === s.playerId,
       );
       G.assert(d && c, "Elige un piloto contratado y un vehículo propio.");
+      if (G.Competition?.enabled(s))
+        G.assert(
+          !G.Competition.technical(s, e, c, d),
+          G.Competition.technical(s, e, c, d),
+        );
       G.assert(
         G.Professionals.fit(s, d.id),
         "El piloto está lesionado o retirado de la competición.",
@@ -95,16 +105,20 @@
         "El coche necesita mantenimiento antes de inscribirse.",
       );
       G.assert(
-        c.hp <= 210,
+        c.hp <= (G.Competition?.enabled(s) ? G.Competition.rule(e).maxHP : 210),
         "El reglamento limita la potencia a 210 CV de juego.",
       );
       G.Economy.spend(
         s,
-        370,
+        G.Competition?.enabled(s) ? G.Competition.fee(e) : 370,
         "Competición",
         `Inscripción y transporte · Ronda ${e.round}`,
       );
-      e.entry = { driverId, carId, paid: 370 };
+      e.entry = {
+        driverId,
+        carId,
+        paid: G.Competition?.enabled(s) ? G.Competition.fee(e) : 370,
+      };
       G.news(
         s,
         "Competición",
@@ -165,19 +179,27 @@
         cautions: [],
       };
       for (const c of s.companies.filter((c) => c.status === "active")) {
+        if (G.Competition?.enabled(s) && !G.Competition.enters(s, c, e))
+          continue;
         if (c.id === s.playerId && skip) continue;
         const d =
           c.id === s.playerId
             ? s.drivers.find(
                 (d) => d.id === e.entry.driverId && d.companyId === c.id,
               )
-            : G.Companies.lineup(s, c.id).driver;
+            : (G.Competition?.enabled(s)
+                ? G.Competition.lineup(s, c.id, e)
+                : G.Companies.lineup(s, c.id)
+              ).driver;
         const car =
           c.id === s.playerId
             ? s.cars.find(
                 (car) => car.id === e.entry.carId && car.companyId === c.id,
               )
-            : G.Companies.lineup(s, c.id).car;
+            : (G.Competition?.enabled(s)
+                ? G.Competition.lineup(s, c.id, e)
+                : G.Companies.lineup(s, c.id)
+              ).car;
         if (c.id === s.playerId)
           G.assert(
             d &&
@@ -196,12 +218,20 @@
           car.condition < 35
         )
           continue;
+        if (c.id === s.playerId && G.Competition?.enabled(s)) {
+          G.assert(!G.Competition.eligible(s, e), G.Competition.eligible(s, e));
+          G.assert(
+            !G.Competition.technical(s, e, car, d),
+            G.Competition.technical(s, e, car, d),
+          );
+        }
         if (c.id !== s.playerId) {
-          if (c.balance < 370) continue;
+          const fee = G.Competition?.enabled(s) ? G.Competition.fee(e) : 370;
+          if (c.balance < fee) continue;
           G.Economy.transact(
             s,
             c.id,
-            -370,
+            -fee,
             "Competición",
             `Inscripción · Ronda ${e.round}`,
           );
@@ -491,8 +521,18 @@
         position: i + 1,
         time: a.finishTime,
         dnf: a.dnf,
-        points: a.dnf ? 0 : G.Data.points[i] || 0,
-        prize: a.dnf ? 250 : G.Data.prizes[i] || 500,
+        points: a.dnf
+          ? 0
+          : (G.Competition?.enabled(s)
+              ? G.Competition.rule(e).points[i]
+              : G.Data.points[i]) || 0,
+        prize: G.Competition?.enabled(s)
+          ? a.dnf
+            ? 0
+            : (G.Competition.rule(e).prizes[i] || 100) * (e.final ? 2 : 1)
+          : a.dnf
+            ? 250
+            : G.Data.prizes[i] || 500,
         bestLap: a.bestLap,
         ...(r.weekendVersion
           ? {
@@ -572,6 +612,7 @@
         );
       }
       G.Contracts.raceFinished(s, e, r);
+      if (G.Competition?.enabled(s)) G.Competition.raceFinished(s, e, r);
       if (results.length) {
         const noWinner =
           r.racingVersion === 1 && results.every((row) => row.dnf);
@@ -589,38 +630,41 @@
         );
       }
       if (s.season.events.every((e) => e.status !== "scheduled")) {
-        s.season.phase = "complete";
-        const board = G.leaderboard(s),
-          p = board.findIndex((r) => r.company.id === s.playerId);
-        const bonus = Math.max(600, 2600 - p * 250);
-        if (s.status === "active")
-          G.Economy.transact(
-            s,
-            s.playerId,
+        if (G.Competition?.enabled(s)) G.Competition.completeSeason(s);
+        else {
+          s.season.phase = "complete";
+          const board = G.leaderboard(s),
+            p = board.findIndex((r) => r.company.id === s.playerId);
+          const bonus = Math.max(600, 2600 - p * 250);
+          if (s.status === "active")
+            G.Economy.transact(
+              s,
+              s.playerId,
+              bonus,
+              "Premios",
+              `Clasificación final · ${p + 1}º`,
+            );
+          s.history.unshift({
+            year: s.season.year,
+            champion: board[0]?.company.name,
+            playerPosition: p + 1,
+            playerPoints: board[p]?.points || 0,
             bonus,
-            "Premios",
-            `Clasificación final · ${p + 1}º`,
+            logo: s.logo,
+            standings: board.map((row) => ({
+              name: row.company.name,
+              points: row.points,
+            })),
+          });
+          G.Facilities.archiveSeason(s);
+          G.news(
+            s,
+            "Temporada",
+            `${board[0]?.company.name || "La Copa Club"} cierra la temporada ${s.season.year}.`,
+            `${G.player(s).name} termina en posición ${p + 1}, con ${board[p]?.points || 0} puntos y $${bonus} de prima final.`,
+            "history",
           );
-        s.history.unshift({
-          year: s.season.year,
-          champion: board[0]?.company.name,
-          playerPosition: p + 1,
-          playerPoints: board[p]?.points || 0,
-          bonus,
-          logo: s.logo,
-          standings: board.map((row) => ({
-            name: row.company.name,
-            points: row.points,
-          })),
-        });
-        G.Facilities.archiveSeason(s);
-        G.news(
-          s,
-          "Temporada",
-          `${board[0]?.company.name || "La Copa Club"} cierra la temporada ${s.season.year}.`,
-          `${G.player(s).name} termina en posición ${p + 1}, con ${board[p]?.points || 0} puntos y $${bonus} de prima final.`,
-          "history",
-        );
+        }
       }
       s.race = null;
       return results;
@@ -821,9 +865,17 @@
                   : -1
                 : Math.sign(lat);
             const correction = overlapY / 2 + 0.015;
+            const boundA =
+                r.competitionVersion && r.cup === "street"
+                  ? r.trackWidth / 2 - a.width / 2 - 0.12
+                  : 7.8,
+              boundB =
+                r.competitionVersion && r.cup === "street"
+                  ? r.trackWidth / 2 - b.width / 2 - 0.12
+                  : 7.8;
             const lateralClear =
-              Math.abs(a.lateral - lateralSide * correction) <= 7.8 &&
-              Math.abs(b.lateral + lateralSide * correction) <= 7.8;
+              Math.abs(a.lateral - lateralSide * correction) <= boundA &&
+              Math.abs(b.lateral + lateralSide * correction) <= boundB;
             if (overlapY < overlapX && lateralClear) {
               const sign =
                 lat === 0
@@ -833,8 +885,8 @@
                   : Math.sign(lat);
               a.lateral -= sign * (overlapY / 2 + 0.015);
               b.lateral += sign * (overlapY / 2 + 0.015);
-              a.lateral = G.clamp(a.lateral, -7.8, 7.8);
-              b.lateral = G.clamp(b.lateral, -7.8, 7.8);
+              a.lateral = G.clamp(a.lateral, -boundA, boundA);
+              b.lateral = G.clamp(b.lateral, -boundB, boundB);
             } else {
               if (gap >= 0) {
                 a.progress -= overlapX + 0.015;
@@ -855,6 +907,8 @@
               0.45,
               30,
             );
+            if (r.competitionVersion)
+              G.Driving.contact(r, a, b, impulse, gap, closing);
             this.damageCar(
               a,
               impulse,
@@ -992,10 +1046,11 @@
             !["none", "queued"].includes(retired.pit.phase)
           )
             continue;
-          const edge =
-            retired.lateral >= 0
-              ? r.trackWidth / 2 + 1.2
-              : -(r.trackWidth / 2 + 1.2);
+          const edgeDistance =
+            r.competitionVersion && r.cup === "street"
+              ? r.trackWidth / 2 - retired.width / 2 - 0.13
+              : r.trackWidth / 2 + 1.2;
+          const edge = retired.lateral >= 0 ? edgeDistance : -edgeDistance;
           retired.lateral += G.clamp(
             edge - retired.lateral,
             -dt * 0.8,
@@ -1012,6 +1067,8 @@
           .map((a) => ({ ...a, stats: a.stats, components: a.components }));
         for (const a of r.entrants) {
           if (!active(a)) continue;
+          if (r.competitionVersion && r.step % 10 === 0)
+            G.Performance.refresh(a);
           if (r.weekendVersion && G.RaceWeekend.drivePit(s, r, a, dt)) continue;
           const me = snapshots.find((x) => x.carId === a.carId);
           const ahead = snapshots
@@ -1053,12 +1110,15 @@
             a.paceFactor *
             (a.brain ? G.Racecraft.effect(a).pace : 1);
           const mech = (0.77 + a.condition * 0.0023) * G.Workshop.mechanical(a);
-          const grip = a.grip * (0.85 + a.components.suspension * 0.0015),
+          const grip =
+              (r.competitionVersion ? G.Performance.grip(a) : a.grip) *
+              (0.85 + a.components.suspension * 0.0015),
             brakePower =
               (4 + a.brakes / 25) *
               (0.75 + a.components.brakes * 0.0025) *
               (r.weekendVersion ? G.RaceWeekend.grip(r, a) : 1) *
-              (a.brain ? G.Racecraft.effect(a).braking : 1);
+              (a.brain ? G.Racecraft.effect(a).braking : 1) *
+              (r.competitionVersion ? G.Performance.brakeFactor(a) : 1);
           const point = pointAt(a.progress),
             curve = signedAngle(
               pointAt(a.progress + 20).angle,
@@ -1086,6 +1146,8 @@
             mech *
             mode *
             (0.94 + (a.morale ?? 75) * 0.0008);
+          if (r.competitionVersion)
+            target = Math.min(target, G.Driving.safeSpeed(r, a, brakePower));
           let lateralTarget = a.brain
             ? G.Racecraft.line(r, a)
             : Math.abs(curve) > 0.025

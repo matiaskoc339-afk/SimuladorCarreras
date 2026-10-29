@@ -59,6 +59,7 @@
             s.playerId,
             form.elements.compound.value,
             Number(form.elements.fuel.value),
+            e.id,
           );
           msg.textContent =
             (q.set
@@ -70,7 +71,7 @@
               : q.cost
                 ? "Juego nuevo: " + U.money(q.cost) + ". "
                 : "Gomas actuales del coche. ") +
-            "Inscripción y transporte: $370. Total hoy: " +
+            `Inscripción y transporte: $${q.fee ?? 370}. Total hoy: ` +
             U.money(q.total) +
             ".";
           if (G.Challenge.enabled(s)) {
@@ -82,7 +83,12 @@
               condition =
                 compound === "road" ? car.tires : q.set?.condition || 100;
             const laps = G.Rubber.estimate(
-              { stats: d.stats, tires: condition, tireWear: car.tireWear || 1 },
+              {
+                stats: d.stats,
+                tires: condition,
+                tireWear: G.Workshop.configuration(s, car).tireWear,
+                modern: G.Competition.enabled(s),
+              },
               compound,
               e.track,
             );

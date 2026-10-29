@@ -206,3 +206,12 @@ Las fixtures auténticas 0.6.2 se capturaron antes de editar el motor: una carre
 `art.js` dibuja retratos y variantes de coches/piezas de forma pura, sin consumir RNG de estado. El render consulta geometría de la misma pista para orientar carrocería y ruedas; la ubicación de tribunas/edificios valida huellas completas contra pista y boxes. `ui-challenge.js` presenta negociación con presupuesto vivo y conserva el formulario/las cláusulas usados por los motores de contrato. La telemetría dispone filas propias para apoyo profesional e intención, evitando colisiones entre velocímetro, identidad y diagnóstico.
 
 `challenge.test.cjs` utiliza explícitamente `engine({current:true})`; las suites anteriores usan el constructor histórico para conservar su contrato de regresión. `browser-challenge.cjs` funda una partida con el constructor actual y prueba salarios diarios, contratación, inscripción con marca, carrera/boxes, guardado y adaptación. `scripts/check-balance.cjs` ofrece la simulación anual reproducible adicional. No se infiere equilibrio a largo plazo a partir de la compatibilidad anterior.
+
+
+## Competiciones y diseños 0.7.0
+
+`circuits.js` compila dieciséis trazados métricos originales y adapta pista/boxes para los índices nuevos; los seis anteriores permanecen disponibles para guardados. `competition.js` construye el calendario de veinte eventos, valida ligas, acceso, puntos, tasas, técnicos, finales y trayectoria; separa el constructor 0.6.4 para pruebas históricas. Los eventos archivados guardan copa/final y validan la ronda dentro de cada copa.
+
+`performance.js` captura base/componentes/unidades instaladas, actualiza aportaciones con desgaste/daño, añade apoyo dependiente de velocidad y temperatura de frenada. `driving.js` almacena muestreo de geometría, anticipa frenada y compromisos de adelantamiento, estima necesidad/coste de boxes y aplica muros/sanciones. Su estado de decisiones y rendimiento se serializa y valida; la carrera antigua evita esas ramas.
+
+`vehicle-designs.js` añade dieciséis modelos al final y comparte perfiles geométricos entre SVG y Canvas, con caché visual independiente del RNG. `vehicle-renderer.js` dibuja el catálogo con sus dimensiones relativas. `venue-renderer.js` prepara escenas de calle/parque/costa/desierto/bosque y puestos individuales. `ui-competition.js` muestra ligas, atlas, requisitos, costes, progreso y efectos de piezas en vivo. Los juegos nuevos usan todo el catálogo; el constructor histórico conserva su stock original de 24 modelos.

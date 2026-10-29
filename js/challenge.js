@@ -47,7 +47,7 @@
           G.Workshop.recalculate(s, c);
         }
       }
-      for (let i = 4; i < G.Data.models.length; i++) {
+      for (let i = 4; i < Math.min(24, G.Data.models.length); i++) {
         const car = G.makeCar(
           s,
           null,
@@ -146,7 +146,10 @@
             G.Professionals.available(s, d) &&
             !G.Market.locked(s, d.id) &&
             c.level >= this.driverLevel(d) &&
-            d.ask < old.contract.salary * 0.7,
+            d.ask < old.contract.salary * 0.7 &&
+            (!G.Competition?.enabled(s) ||
+              c.privateer ||
+              G.Drivers.rating(d) >= 22),
         )
         .sort(
           (a, b) =>

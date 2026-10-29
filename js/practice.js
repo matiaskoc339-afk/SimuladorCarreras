@@ -161,7 +161,7 @@
         carId: q.car.id,
         day: s.day,
         completedDay: null,
-        track: 0,
+        track: s.competitions ? 10 : 0,
         laps: q.laps,
         completed: 0,
         intensity: q.intensity,
@@ -381,7 +381,7 @@
             ) &&
             Number.isFinite(j.gain) &&
             j.gain >= 0 &&
-            j.track === 0 &&
+            (j.track === 0 || (s.competitions && j.track === 10)) &&
             Number.isInteger(j.recoveryDays) &&
             j.recoveryDays >= 0 &&
             j.recoveryDays <= 21 &&

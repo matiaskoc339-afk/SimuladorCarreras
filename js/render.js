@@ -48,7 +48,7 @@
     }));
     const xs = points.map((p) => p.x),
       ys = points.map((p) => p.y),
-      margin = 100;
+      margin = G.Data.tracks[index].modern ? 130 : 100;
     const b = {
       x: Math.min(...xs) - margin,
       y: Math.min(...ys) - margin,
@@ -157,6 +157,7 @@
     c.restore();
   }
   function makeScene(index) {
+    if (G.Data.tracks[index].modern) return G.ModernScene.build(index);
     if (sceneCache.has(index)) {
       const a = sceneCache.get(index);
       sceneCache.delete(index);
@@ -645,32 +646,7 @@
     grad.addColorStop(0.74, shade(paint, -13));
     grad.addColorStop(1, shade(paint, -47));
     c.fillStyle = grad;
-    c.beginPath();
-    const nose =
-        design.shape === "compact"
-          ? 0.49
-          : design.shape === "sedan"
-            ? 0.53
-            : 0.55,
-      tail =
-        design.shape === "wagon"
-          ? 0.49
-          : design.shape === "roadster"
-            ? 0.34
-            : 0.42;
-    c.moveTo(length * 0.44, -width * (design.shape === "compact" ? 0.4 : 0.36));
-    c.quadraticCurveTo(length * nose, 0, length * 0.44, width * 0.36);
-    c.lineTo(length * 0.3, width * 0.48);
-    c.lineTo(-length * 0.35, width * 0.46);
-    c.quadraticCurveTo(-length * 0.53, width * tail, -length * 0.51, 0);
-    c.quadraticCurveTo(
-      -length * 0.53,
-      -width * tail,
-      -length * 0.35,
-      -width * 0.46,
-    );
-    c.lineTo(length * 0.3, -width * 0.48);
-    c.closePath();
+    G.Art.bodyCanvas(c, design, length, width);
     c.fill();
     c.strokeStyle = shade(paint, 52);
     c.lineWidth = 0.045;
@@ -685,14 +661,14 @@
     c.lineTo(length * frontRoof, -width * 0.4);
     c.closePath();
     c.fill();
-    c.fillStyle = a.shape === "roadster" ? "#1b2424" : shade(paint, -3);
+    c.fillStyle = design.open ? "#1b2424" : shade(paint, -3);
     c.fillRect(
       length * rearRoof,
       -width * 0.34,
       length * (frontRoof - rearRoof),
       width * 0.68,
     );
-    if (a.shape === "roadster") {
+    if (design.open) {
       c.fillStyle = "#836650";
       c.beginPath();
       c.ellipse(-length * 0.13, -width * 0.16, 0.32, 0.2, 0, 0, TAU);
@@ -1179,7 +1155,7 @@
         c.fillText(G.Data.tracks[index].name.toUpperCase(), 0, 0);
         c.font = "4px monospace";
         c.fillText(
-          `${(scene.length / 1000).toFixed(2)} KM · 12.4 M DE ANCHO`,
+          `${(scene.length / 1000).toFixed(2)} KM · ${G.Data.tracks[index].width || 12.4} M DE ANCHO`,
           0,
           11,
         );

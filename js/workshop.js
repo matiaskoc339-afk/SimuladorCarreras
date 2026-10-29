@@ -128,9 +128,16 @@
           );
       }
       const v = this.configuration(s, car, installed);
-      if (v.hp > 210.0001)
-        return "El reglamento de la Copa Club limita la potencia a 210 CV.";
-      if (v.weight < 850)
+      if (v.hp > (G.Competition?.enabled(s) ? 350.0001 : 210.0001))
+        return G.Competition?.enabled(s)
+          ? "El límite de preparación es 350 CV; cada competición aplica su propio reglamento al inscribirse."
+          : "El reglamento de la Copa Club limita la potencia a 210 CV.";
+      if (
+        v.weight <
+        (G.Competition?.enabled(s)
+          ? Math.max(650, car.base.weight * 0.78)
+          : 850)
+      )
         return "La configuración supera el aligerado técnicamente admisible.";
       return "";
     },
@@ -198,7 +205,10 @@
       return value;
     },
     available(s, car, companyId = s.playerId) {
-      G.assert(G.Practice.active(s)?.carId !== car?.id, "El coche está entrenando en pista.");
+      G.assert(
+        G.Practice.active(s)?.carId !== car?.id,
+        "El coche está entrenando en pista.",
+      );
       const c = s.companies.find((c) => c.id === companyId);
       G.assert(
         c?.status === "active" && car?.companyId === companyId,

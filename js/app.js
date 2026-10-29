@@ -229,6 +229,7 @@
     },
     action(name, data) {
       if (
+        G.CompetitionUI.action(this, name, data) ||
         G.ChallengeUI.action(this, name, data) ||
         G.OperationsUI.action(this, name, data) ||
         G.ProfessionalUI.action(this, name, data) ||
@@ -345,7 +346,7 @@
         case "job":
           this.mutate(() => G.Economy.job(s));
           U.toast(
-            "Encargo aceptado. Se cobrarán $360 netos el " +
+            `Encargo aceptado. Se cobrarán $${s.job.net} netos el ` +
               U.date(s.job.end, true) +
               ".",
           );
@@ -555,7 +556,7 @@
       this.pendingSlot = empty.slot;
       U.modal(
         "Toda leyenda necesita un nombre.",
-        `<p>Tu punto de partida: un garaje alquilado en Sevilla, un utilitario usado y $4,200. Empiezas con pilotos locales de valoración 10–25. Los salarios se pagan cada día: conserva caja para competir y mantener el coche.</p><form id="new-game-form"><label class="form-field"><span>Nombre de tu compañía</span><input name="companyName" id="company-name" placeholder="Ej. Aster Motorsport" minlength="2" maxlength="32" required autocomplete="off"></label>${this.logoFields()}<div class="modal-actions"><button class="secondary" data-action="close">Volver</button><button class="primary" type="submit">Fundar compañía ${U.icon("arrow")}</button></div></form>`,
+        `<p>Tu punto de partida: un garaje alquilado en Sevilla, un utilitario usado y $4,200. Empiezas con pilotos locales de valoración 10–25. Empieza en las carreras callejeras: la inscripción cuesta desde $220 y los daños se pagan. Necesitarás puntos, una licencia y un coche apto para las copas profesionales. Los salarios se pagan cada día: conserva caja para competir y mantener el coche.</p><form id="new-game-form"><label class="form-field"><span>Nombre de tu compañía</span><input name="companyName" id="company-name" placeholder="Ej. Aster Motorsport" minlength="2" maxlength="32" required autocomplete="off"></label>${this.logoFields()}<div class="modal-actions"><button class="secondary" data-action="close">Volver</button><button class="primary" type="submit">Fundar compañía ${U.icon("arrow")}</button></div></form>`,
         true,
       );
       this.attachLogo("");
@@ -758,6 +759,7 @@
       const s = this.state,
         e = s.season.events.find((e) => e.id === id);
       G.assert(e, "Carrera desconocida.");
+      if (G.Competition.enabled(s)) return G.CompetitionUI.event(this, id);
       if (e.status !== "scheduled") {
         this.results(id);
         return;
@@ -806,7 +808,7 @@
         Math.floor(n / 60) + ":" + (n % 60).toFixed(2).padStart(5, "0");
       U.modal(
         "Bandera a cuadros.",
-        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${this.raceRecap(e)}${s.season.phase === "complete" ? '<p class="fine-print">Temporada completada. La clasificación y la prima final ya están registradas en tu archivo histórico.</p>' : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
+        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${this.raceRecap(e)}${s.season.phase === "complete" ? `<p class="fine-print">Temporada completada. ${s.competitions ? "Las clasificaciones y campeones de las finales están registrados en tu archivo histórico." : "La clasificación y la prima final ya están registradas en tu archivo histórico."}</p>` : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
         true,
       );
       G.RaceUI.results(this, e);

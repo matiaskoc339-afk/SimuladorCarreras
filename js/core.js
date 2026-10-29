@@ -61,7 +61,7 @@
     year,
     name: "Copa Club de Turismos",
     phase: "active",
-    events: G.Data.tracks.map((track, i) => ({
+    events: G.Data.tracks.slice(0, 6).map((track, i) => ({
       id: G.uid(s, "event"),
       track: i,
       round: i + 1,

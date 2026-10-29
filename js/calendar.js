@@ -69,7 +69,7 @@
       G.news(
         s,
         "Temporada",
-        `Comienza la Copa Club ${s.season.year}.`,
+        `Comienza ${G.Competition?.enabled(s) ? "la temporada de las ligas" : "la Copa Club"} ${s.season.year}.`,
         "Se conservan los vehículos, contratos, finanzas y rivales. Los puntos se reinician para la nueva temporada.",
         "competition",
       );

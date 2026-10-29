@@ -9964,3 +9964,227 @@ input[type="range"] {
   border: 1px solid #39534e;
   padding: 12px;
 }
+/* Ligas, progresión y atlas de circuitos. */
+.career-path {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0 28px;
+}
+.career-path > div {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f7f8f1;
+  padding: 20px;
+  min-width: 0;
+}
+.career-path b {
+  display: block;
+  font-size: 17px;
+  margin-top: 12px;
+  color: #35533b;
+}
+.career-path p {
+  line-height: 1.65;
+  font-size: 12px;
+  color: var(--muted);
+}
+.career-path .ready {
+  border-color: #8fa88b;
+  background: #eaf0e4;
+}
+.competition-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+.league-next {
+  margin: 0 0 22px;
+}
+.league-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.competition-rule {
+  border: 1px solid #c4cebd;
+  border-left: 4px solid #51785d;
+  padding: 16px 18px;
+  background: #edf2e6;
+  color: #334739;
+  line-height: 1.7;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+.competition-rule.street {
+  border-color: #d6bc8c;
+  border-left-color: #bf863d;
+  background: #f6efdf;
+  color: #685337;
+}
+.race-page .competition-rule {
+  background: #203b35;
+  color: #dfebd9;
+  border-color: #4d6e5a;
+}
+.race-page .competition-rule.street {
+  background: #3e3325;
+  color: #eeddbd;
+  border-color: #8c7045;
+}
+.league-events {
+  display: grid;
+  gap: 14px;
+}
+.league-event {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 16px;
+  padding: 20px;
+  align-items: center;
+}
+.league-event h3 {
+  margin: 8px 0;
+  font-size: 18px;
+}
+.league-event p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.event-round {
+  color: #8c9d8a;
+  font-family: var(--mono);
+  font-size: 22px;
+}
+.final-event {
+  border-color: #b8a773;
+  background: #fbf9ef;
+}
+.final-event .event-round {
+  font-size: 10px;
+  color: #9c7935;
+}
+.league-standings > div {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 70px;
+  gap: 10px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  font-size: 12px;
+}
+.league-standings b {
+  overflow-wrap: anywhere;
+}
+.league-standings small {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  margin-top: 6px;
+}
+.league-standings .my-team {
+  color: #d15f3c;
+}
+.circuit-atlas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.circuit-card {
+  overflow: hidden;
+}
+.circuit-map {
+  width: 100%;
+  height: 190px;
+  display: block;
+  background: #e6ebdf;
+  padding: 18px;
+  box-sizing: border-box;
+}
+.circuit-card > div {
+  padding: 22px;
+}
+.circuit-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.event-facts {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 20px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.modal .circuit-map {
+  margin: 0 0 20px;
+  border-radius: 5px;
+}
+.live-car-parts {
+  grid-column: 1/-1;
+  min-width: 0;
+  padding: 12px;
+  background: #203832;
+  border: 1px solid #466757;
+  color: #deeadc;
+  font-size: 11px;
+}
+.live-car-parts > b {
+  display: block;
+  margin-bottom: 12px;
+}
+.live-car-parts > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.live-car-parts strong {
+  display: block;
+  margin-top: 6px;
+  color: #b4c6a7;
+}
+.live-car-parts small {
+  display: block;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+@media (max-width: 1050px) {
+  .career-path {
+    grid-template-columns: 1fr;
+  }
+  .league-layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .circuit-atlas {
+    grid-template-columns: 1fr;
+  }
+  .league-event {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 10px;
+    padding: 16px;
+  }
+  .league-event > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .event-round {
+    font-size: 18px;
+  }
+  .competition-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .circuit-map {
+    height: 155px;
+  }
+  .league-standings > div {
+    grid-template-columns: 18px minmax(0, 1fr) 66px;
+  }
+}
