@@ -35,3 +35,6 @@ La 0.6.4 revisa economía y conducción del alcance actual: inicio de $4.200, ge
 La numeración 0.7.0 se dedica a la revisión de carreras solicitada: ligas callejera, regional y nacional, verificación técnica, licencias y clasificación para finales, 16 trazados, 40 diseños, efecto dinámico de piezas e IA/boxes. Subastas, importaciones, coleccionistas, libreas, academia e investigación siguen pendientes.
 
 La 0.8.0 incorpora investigación de protocolos con científico y entrenamiento por días, además de 32 pistas/64 modelos. La evolución generacional prevista originalmente para la 0.8 continúa pendiente; esta numeración sigue las prioridades de desarrollo solicitadas. I+D de piezas/prototipos/patentes y academia juvenil siguen pendientes.
+
+
+La 0.9.0 se dedica al taller visual solicitado: vistas lateral/superior, zonas de montaje, comparación de prestaciones, carrocerías y estructura compatible con motores/frenos, 29 referencias físicas y 16 alojamientos. Es preparación de conjuntos sobre la plataforma del modelo; el editor de libreas, desarrollo de piezas propias y personalización geométrica libre siguen pendientes. El equilibrio final y la evolución histórica no se consideran completados por esta numeración. [Entrega y límites](TALLER_VISUAL_0_9.md).

@@ -24,6 +24,7 @@
     }
     return `<section class="panel padded professional-review spaced"><div class="section-title"><div><span class="eyebrow">DIAGNÓSTICO Y MANEJO</span><h2>Una revisión depende de quién la hace.</h2><p>El mecánico es obligatorio; un ingeniero disponible mejora la precisión del diagnóstico y del ajuste.</p></div>${U.button("Revisión profesional", "pro-review", "primary", `data-id="${car.id}" ${reason ? "disabled" : ""}`)}</div>${reason ? `<p class="fine-print">${U.escape(reason)}</p>` : ""}${report ? `<div class="professional-report-line"><span>Última revisión: ${U.date(report.day, true)} · acierto estimado <b>${report.accuracy} %</b></span>${U.button("Consultar diagnóstico", "pro-report", "secondary", `data-id="${report.id}"`)}</div>` : ""}${setup && setup.until >= s.day && setup.kmLimit >= car.km ? `<p class="fine-print">Ajuste de manejo aplicado · válido hasta ${U.date(setup.until, true)} o ${Math.round(setup.kmLimit)} km. Depende de las recomendaciones del informe.</p>` : ""}</section>`;
   }
+  G.ProfessionalReviewPanel=reviewPanel;
   for (const name of ["garage", "workshop"]) {
     const original = U[name];
     U[name] = function (s) {

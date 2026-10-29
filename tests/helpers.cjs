@@ -5,6 +5,7 @@ function engine({
   current = false,
   competitions = false,
   development = false,
+  workbench = false,
 } = {}) {
   const store = new Map();
   const context = vm.createContext({
@@ -60,18 +61,25 @@ function engine({
     "content-expansion",
     "research",
     "camps",
+    "coachwork",
   ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "../js/" + f + ".js"), "utf8"),
       context,
       { filename: f + ".js" },
     );
-  if (!development) {
+  if (!workbench) {
+    context.RCS.Parts.catalogue.length = 14;
+    for (const slot of context.RCS.Coachwork.extraSlots)
+      delete context.RCS.Parts.slots[slot];
+    if (development) context.RCS.createGame = context.RCS.createV80Game;
+  }
+  if (!development && !workbench) {
     context.RCS.Data.models.length = 40;
     context.RCS.Data.tracks.length = 22;
     if (competitions) context.RCS.createGame = context.RCS.createV70Game;
   }
-  if (!competitions && !development) {
+  if (!competitions && !development && !workbench) {
     context.RCS.Data.models.length = 24;
     context.RCS.createGame = current
       ? context.RCS.createV64Game

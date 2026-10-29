@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.8.0
+# Racing Company Simulator · 0.9.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,15 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.9.0 · taller visual
+
+- **Modifica sobre el coche**: vista lateral/superior con transición, ampliación, vista técnica y zonas seleccionables. El dibujo conserva las proporciones del modelo y refleja su preparación.
+- **Compara antes de montar**: vista previa del aspecto, estadísticas actuales y nuevas, diferencias favorables y desfavorables, requisitos y presupuesto con entrega. Puedes pulsar o arrastrar una pieza a su zona.
+- **29 referencias y 16 alojamientos**: carrocerías Touring/ensanchada/competición, motores por etapas, refuerzos de chasis, llantas, frenos grandes y refrigeración. La preparación exige combinaciones compatibles y también se ve en carrera; las carrocerías anchas cambian el ancho físico.
+- **Unidades reales**: catálogo, almacén, montaje/desmontaje pagado por días, devolución de piezas sustituidas con su desgaste y mantenimiento profesional conservado. El coche cambia al entregar el trabajo.
+
+Abre **Taller** en tu empresa 0.8 para usarlo sin reiniciar la partida. Los trabajos y entrenamientos pendientes se conservan. [Uso, costes, compatibilidad y límites](docs/TALLER_VISUAL_0_9.md).
 
 ## Novedades de la 0.8.0 · investigación y campus
 
@@ -242,3 +251,5 @@ La 0.6.4 añade `tests/challenge.test.cjs` para las reglas actuales y `tests/bro
 La 0.7.0 suma `tests/competition.test.cjs` y `tests/browser-competition.cjs`. `npm run test:balance` usa las ligas actuales; `npm run test:balance:v64` conserva la ruta histórica. Los modelos visuales son una interpretación 2D y las carreras no reproducen un simulador físico profesional.
 
 La 0.8.0 añade `tests/development.test.cjs`, `tests/browser-development.cjs` y la ruta financiera actual. `npm run test:balance:v70` y `npm run test:balance:v64` conservan las rutas históricas.
+
+La 0.9.0 añade el taller visual y su recorrido de pruebas. `npm run test:balance:v80` conserva la temporada histórica 0.8; la ruta principal usa el constructor actual.

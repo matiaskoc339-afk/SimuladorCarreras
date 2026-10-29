@@ -26,7 +26,7 @@
             start: s.day,
           };
       }
-      for (const def of G.Parts.catalogue)
+      for (const def of G.Parts.catalogue.filter((d) => !d.workbench))
         for (let i = 0; i < 4; i++)
           s.parts.push({
             id: G.uid(s, "part"),

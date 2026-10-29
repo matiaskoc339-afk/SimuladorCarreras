@@ -76,6 +76,10 @@
         )}${job ? `<p><b>Encargo de cliente</b> · entrega ${this.date(job.end, true)}</p>` : ""}<p>Los encargos y las revisiones comparten las bahías. Los trabajos conservan el plazo contratado aunque amplíes el taller.</p><button class="text-button" data-go="facilities">Ampliar el taller →</button></div>${this.badge(G.Facilities.bays(s) - G.Facilities.workload(s) + " / " + G.Facilities.bays(s) + " DISPONIBLES", G.Facilities.workload(s) >= G.Facilities.bays(s) ? "outline" : "green")}</section></div><section class="panel padded" data-workshop-panel="installed"><div class="section-title"><h2>Configuración instalada</h2><span class="eyebrow">${Object.keys(car.installed).length} PIEZAS DE MEJORA</span></div><div class="installed-grid">${Object.entries(
         G.Parts.slots,
       )
+        .filter(
+          ([slot]) =>
+            !G.Coachwork?.extraSlots.includes(slot) || G.Coachwork.enabled(s),
+        )
         .map(([slot, label]) => {
           const p = s.parts.find((p) => p.id === car.installed[slot]),
             d = G.Parts.definition(p?.definitionId);
@@ -84,6 +88,7 @@
         .join("")}</div></section>` +
       this.workshopInventory(s, car) +
       `<section data-workshop-panel="catalog"><div class="section-title"><div><span class="eyebrow">COMPRA · COMPARA · PROGRAMA EL MONTAJE</span><h2>Proveedor de repuestos</h2></div><span class="eyebrow">STOCK COMPARTIDO</span></div><p class="catalogue-help">Comprar guarda la pieza en tu almacén. Desde allí podrás programar el montaje y consultar su plazo.</p>${catalogueTools}<div class="parts-grid">${G.Parts.catalogue
+        .filter((d) => !d.workbench || G.Coachwork?.enabled(s))
         .map((d) => {
           const stock = W.stock(s, d.id),
             unit = stock[0],

@@ -171,6 +171,14 @@
         ].includes(view)
       )
         return;
+      if (
+        view === "workshop" &&
+        G.Research.enabled(this.state) &&
+        !G.Coachwork.enabled(this.state)
+      ) {
+        G.Coachwork.initialize(this.state);
+        this.persist();
+      }
       this.view = view;
       this.render();
     },
@@ -237,6 +245,7 @@
     },
     action(name, data) {
       if (
+        G.WorkbenchUI.action(this, name, data) ||
         G.DevelopmentUI.action(this, name, data) ||
         G.CompetitionUI.action(this, name, data) ||
         G.ChallengeUI.action(this, name, data) ||

@@ -1,8 +1,8 @@
-/* Temporada 0.8: ingresos, contratos, reparaciones, puntos y matrículas reales.
+/* Temporada 0.9: ingresos, contratos, reparaciones, puntos y matrículas reales.
    No inyecta financiación ni estadísticas; omite las pruebas inaccesibles. */
 const { engine } = require("../tests/helpers.cjs");
 const assert = require("node:assert/strict");
-const { G } = engine({ development: true });
+const { G } = engine({ workbench: true });
 const seed = Number(process.argv[2] || 1470),
   s = G.createGame("Del asfalto al circuito", "", seed);
 const d = s.drivers
@@ -226,7 +226,7 @@ const development = {
 console.log(JSON.stringify({ development }));
 require("node:fs").mkdirSync("test-results", { recursive: true });
 require("node:fs").writeFileSync(
-  "test-results/balance-080-" + seed + ".json",
+  "test-results/balance-090-" + seed + ".json",
   JSON.stringify(
     {
       seed,

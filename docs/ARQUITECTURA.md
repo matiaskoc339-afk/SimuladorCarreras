@@ -224,3 +224,12 @@ Las fixtures auténticas 0.6.2 se capturaron antes de editar el motor: una carre
 `camps.js` conserva la práctica antigua y crea programas con `calendarVersion: 1`, reservas de entidades, días/carga, RNG y un informe de deltas reales. El calendario permite gestionar jornadas con un programa activo; las acciones que usan sus entidades siguen bloqueadas. Una jornada procesa el tramo de vueltas, desgaste, fatiga/estrés e incidente. Ver la animación no llama al tick real ni modifica el estado: `ui-development.js` dibuja un snapshot efímero, muestra el plan/árbol y presenta el informe al finalizar. No hay avance recursivo ni jornada extra al entregar resultados.
 
 `content-expansion.js` añade 24 modelos y 16 trazados mediante el compilador métrico existente, conserva prefijos, dificultad/categorías y rota el calendario por año. Las partidas antiguas conservan su calendario hasta la siguiente temporada. Los escenarios históricos de pruebas fijan explícitamente constructor y prefijos 24/40 modelos y 16 trazados; el escenario de desarrollo usa 64/32.
+
+
+## Taller visual 0.9
+
+`coachwork.js` amplía el catálogo físico y añade compatibilidad de preparación y metadatos derivados de `car.installed`. La cotización valida compra y mano de obra antes de gastar; `Workshop` conserva las transacciones, reservas, devolución y entrega por calendario. La vista previa consulta una configuración alternativa sin modificar el estado. `createV80Game` permite fijar la regresión histórica; el constructor público activa el bloque `workbench.version=1` de manera idempotente.
+
+`coachwork-art.js` genera la vista lateral y usa el mismo render superior del garaje; extiende SVG/Canvas para carrocerías y conjuntos instalados. El ancho adicional entra en participantes y metadatos de repetición al arrancar una carrera nueva. `ui-workbench.js` sustituye el taller cuando está activado, y conserva el anterior para guardados históricos. Usa botones y arrastre con confirmación, filtros de DOM sin perder el foco y estadísticas comparadas. `css/workbench.css` limita el estilo a esa pantalla; en móvil coloca las estadísticas después del coche y antes de las tarjetas.
+
+El bloque nuevo se valida contra las piezas instaladas y la propiedad física. Guardados sin marcador no cambian de reglas al importar; abrir Taller en una empresa 0.8 lo activa sin tocar trabajos ni entrenamiento. Tres fixtures auténticas comprueban continuidad exacta de carrera, montaje y campus de la 0.8. [Reglas y alcance](TALLER_VISUAL_0_9.md).
