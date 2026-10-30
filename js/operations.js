@@ -627,7 +627,10 @@
             Math.min(
               d.potential,
               before +
-                0.015 * (d.age < 25 ? 1 : 0.5) * S.training(s, s.playerId),
+                0.015 *
+                  (G.TeamLife?.trainingRate(s) || 1) *
+                  (d.age < 25 ? 1 : 0.5) *
+                  S.training(s, s.playerId),
             ),
           );
           d.fatigue = G.clamp(d.fatigue + 10, 0, 100);

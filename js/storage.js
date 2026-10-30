@@ -445,6 +445,8 @@
       G.Commerce?.validate(s);
       G.Trophies?.validate(s);
       G.SeasonTour?.validate(s);
+      G.TeamLife?.validate(s);
+      G.RaceLife?.validate(s);
       G.Performance?.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");

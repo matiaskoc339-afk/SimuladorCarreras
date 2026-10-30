@@ -1,3 +1,13 @@
+# Validación 0.13.0
+
+**386 escenarios de motor y 20 recorridos de navegador aprobados.** La batería general pasó 385/385; después se añadió el caso de formación diaria/delegada y se verificó la suite de equipo completa (12/12). Tras compartir el cálculo de previsión y aprendizaje se repitieron además desarrollo, compatibilidad de taller y equipo (48/48); el caso de impago de encargos también se comprobó con la liquidación salarial real. Sintaxis de 122 archivos JS/CJS y 80 recursos locales verificados.
+
+Los escenarios nuevos cubren encargos sin dinero/RNG al consultar, pago diferido único, espera semanal/cancelación, reserva real de bahía, ingeniero ocupado/cobertura/impago, mejora de formación del 45 % sin duplicar cuotas ni nóminas, Control con el mismo coche en curva, radio pendiente/confirmación/malentendido/amarilla, decisiones variables por habilidades, guardado determinista y mantenimiento pagado de rivales antes de las copas. Se conservaron las fixtures históricas y sus comprobaciones.
+
+El recorrido nuevo de navegador usa botones y formularios reales para ofertas/entrega/recarga, CV y explicación de atributos, previsión/cierre de formación y muro de órdenes/boxes. Verifica el plan anterior durante una transmisión, respuesta tras reanudar, ataque aplazado por amarilla, persistencia de radio y parada solicitada desde el mismo panel. Se comprobaron 1440/1024/390, bandera dentro del canvas, ausencia de errores de página y de desbordamiento. La telemetría detallada permanece accesible desde su desplegable. Las once primeras regresiones pasaron; tras adaptar la consulta de piezas al desplegable nuevo, se completaron la copa y las ocho rutas restantes.
+
+La temporada de veinte eventos con la conducción nueva abre 2027, conserva la licencia y paga entrenador, programa e investigador con **7733 US$** restantes. Mantiene al menos tres participantes en las rondas regionales ordinarias y al menos cuatro en las callejeras. El programa termina sus seis días y gana 0,140527 puntos de Control. La ruta no utiliza los encargos de apoyo, no inyecta fondos ni atributos y no demuestra el equilibrio de todas las semillas o estilos. [Registro](BALANCE_0_13_1470.json) · [reglas y compatibilidad](EQUIPO_Y_MURO_0_13.md).
+
 # Validación 0.12.1
 
 **374/374 pruebas de motor y 19 recorridos de navegador aprobados.** Se verificaron sintaxis de 115 archivos JS/CJS, presencia de 75 recursos locales y `git diff --check`. La ruta financiera de veinte eventos abre 2027, paga programa e investigación y conserva **6562 US$**, igual que antes de la corrección, sin financiación ni estadísticas artificiales.

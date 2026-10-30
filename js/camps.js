@@ -12,6 +12,16 @@
     validate = T.validate;
   const C = (G.Camps = {
     enabled: (s) => R.enabled(s),
+    learning(laps, ability, intensity, bonus, rate = 1) {
+      return (
+        laps *
+        0.035 *
+        (0.55 + ability * 0.16) *
+        (intensity === "hard" ? 1.25 : intensity === "easy" ? 0.78 : 1) *
+        (1 + bonus) *
+        rate
+      );
+    },
     quote(s, options) {
       const q = quote.call(T, s, options);
       if (!this.enabled(s)) return q;
@@ -88,6 +98,20 @@
         severeRisk:
           (((1 - safe) * 0.01 * stress) / 100) * (1 - q.level * 0.04) * 100,
         learningBonus: R.effect(s, "training"),
+        learningRate: G.TeamLife?.trainingRate(s) || 1,
+        estimatedGain: Math.max(
+          0,
+          Math.min(
+            q.driver.potential - q.driver.stats[q.focus],
+            C.learning(
+              q.laps,
+              q.ability,
+              q.intensity,
+              R.effect(s, "training"),
+              G.TeamLife?.trainingRate(s) || 1,
+            ),
+          ),
+        ),
         coachWages: q.coach.contract.salary * days,
         pilotWages: q.driver.contract.salary * days,
       };
@@ -118,6 +142,7 @@
         learningBonus: q.learningBonus,
         report: null,
         stopReason: "",
+        ...(q.learningRate > 1 ? { trainingRate: q.learningRate } : {}),
       });
       q.driver.training = null;
       G.Operations.releaseTraining(s, q.driver.id);
@@ -275,12 +300,13 @@
         e = s.employees.find((e) => e.id === j.coachId),
         car = s.cars.find((c) => c.id === j.carId),
         care = P.care(s, d.id),
-        amount =
-          j.workLaps *
-          0.035 *
-          (0.55 + j.coachAbility * 0.16) *
-          (j.intensity === "hard" ? 1.25 : j.intensity === "easy" ? 0.78 : 1) *
-          (1 + j.learningBonus),
+        amount = C.learning(
+          j.workLaps,
+          j.coachAbility,
+          j.intensity,
+          j.learningBonus,
+          j.trainingRate || 1,
+        ),
         secondary = {
           control: "brakes",
           pace: "consistency",
@@ -438,6 +464,7 @@
             j.cost === 80 + j.laps * 4 + j.days * 10 &&
             num(j.gain, 0, 100) &&
             num(j.learningBonus, 0, 0.151) &&
+            (j.trainingRate === undefined || j.trainingRate === 1.45) &&
             int(j.recoveryDays, 0, 21) &&
             [null, "injury", "career-end", "mechanical"].includes(j.incident) &&
             typeof j.stopReason === "string" &&

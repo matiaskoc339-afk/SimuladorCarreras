@@ -1,5 +1,9 @@
 # Arquitectura de Racing Company Simulator
 
+## Equipo y muro en 0.13
+
+`team-life.js` incorpora encargos semanales guardables, comparte bahías/personal mediante los planificadores existentes y limita el ingreso a entregas reales. `race-life.js` marca solo carreras nuevas y añade decisiones/radio con RNG por piloto; las carreras históricas conservan su comportamiento. El techo de curva comparte el factor de Control entre el motor y la anticipación de frenado. `ui-race-command.js` agrupa controles existentes junto a la pista, conserva formularios/IDs de boxes y adapta la telemetría a una sección desplegable. `ui-team-life.js` añade encargos, explicación de atributos y previsión de aprendizaje sin mutar el estado al consultar. [Detalle](EQUIPO_Y_MURO_0_13.md).
+
 ## Avisos y previsiones en 0.12.1
 
 `feedback.js` comparte textos de importes, fechas, disponibilidad y contratación entre motor y vistas. `Practice.blockers` y la cotización del programa alimentan tanto la validación real como la lista visible del campus; consultar una previsión no gasta ni modifica el guardado. `UI.blocked`/`decorateBlocked` enlazan controles inhabilitados a su explicación; `UI.reject` conserva los datos y añade el error al formulario, y los avisos de rechazo requieren cierre explícito. `Camps.daily` integra el desgaste térmico en pasos de un segundo como máximo y los informes separan finalización e interrupción, manteniendo el esquema de guardado anterior. [Detalle y compatibilidad](AVISOS_ENTRENAMIENTO_0_12_1.md).

@@ -39,7 +39,9 @@
         grip = G.RaceWeekend.grip(r, a),
         quality =
           (0.78 + G.Performance.grip(a) / 260) *
-          (0.82 + a.stats.control / 300) *
+          (r.lifeVersion
+            ? G.RaceLife.cornerFactor(a)
+            : 0.82 + a.stats.control / 300) *
           (0.85 + a.tires * 0.0015) *
           Math.sqrt(grip);
       let limit = 75;

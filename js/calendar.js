@@ -26,6 +26,7 @@
         G.Drivers.daily(s);
         G.Research?.daily(s);
         G.Camps?.daily(s);
+        G.TeamLife?.daily(s);
         G.Operations.daily(s);
         G.Auctions?.daily(s);
         G.Challenge.daily(s);

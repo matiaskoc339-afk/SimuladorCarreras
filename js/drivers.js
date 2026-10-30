@@ -259,6 +259,7 @@
               d.potential,
               d.stats[d.training] +
                 0.015 *
+                  (G.TeamLife?.trainingRate(s) || 1) *
                   (d.age < 25 ? 1 : 0.5) *
                   G.Staff.training(s, d.companyId),
             );

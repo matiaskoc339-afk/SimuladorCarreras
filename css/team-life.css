@@ -1,0 +1,612 @@
+.support-income {
+  margin: 28px 0;
+}
+.support-income .section-title p {
+  max-width: 760px;
+  line-height: 1.6;
+  color: #5c7066;
+}
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.support-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.support-card h3 {
+  margin: 0;
+  font-size: 19px;
+}
+.support-card p {
+  line-height: 1.65;
+  margin: 0;
+}
+.support-card > button {
+  margin-top: auto;
+}
+.support-price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.support-price b {
+  font-size: 26px;
+  color: #376c52;
+}
+.support-price span {
+  font-size: 12px;
+  color: #5c7066;
+}
+.support-active {
+  margin: 16px 0;
+  border-left: 4px solid #688b65;
+}
+.support-active progress {
+  width: 100%;
+  accent-color: #527d62;
+}
+.support-history {
+  margin-top: 16px;
+}
+.support-history small {
+  display: block;
+  line-height: 1.6;
+}
+.driver-stat-guide {
+  margin: 18px 0;
+}
+.driver-stat-guide summary {
+  font-weight: 700;
+  color: #294b3b;
+  cursor: pointer;
+  line-height: 1.6;
+}
+.driver-stat-guide > p {
+  max-width: 1000px;
+  color: #5b6e64;
+  line-height: 1.7;
+}
+.driver-stat-guide dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 26px;
+}
+.driver-stat-guide dt {
+  font-weight: 700;
+  color: #345a45;
+}
+.driver-stat-guide dd {
+  margin: 5px 0 0;
+  line-height: 1.7;
+  font-size: 13px;
+}
+.stat-help {
+  display: inline-grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  margin-left: 5px;
+  border: 1px solid #99ac9f;
+  border-radius: 50%;
+  background: #f8fbf5;
+  color: #315341;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.stat-help:focus-visible {
+  outline: 3px solid #ff653e;
+  outline-offset: 2px;
+}
+.learning-boost {
+  color: #315d43;
+}
+.race-layout.command-layout {
+  grid-template-columns: 230px minmax(0, 1fr);
+  align-items: start;
+}
+.command-layout .race-track {
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+}
+.command-layout .race-track > canvas {
+  height: clamp(310px, 49vh, 620px);
+  min-height: 0;
+}
+.command-layout .timing-panel {
+  max-height: calc(100vh - 150px);
+  position: sticky;
+  top: 18px;
+  overflow-y: auto;
+}
+.race-command {
+  background: #f7faf5;
+  border-top: 1px solid #d5dfd4;
+  padding: 22px;
+  color: #294238;
+  text-align: left;
+}
+.command-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.command-heading .eyebrow {
+  color: #58715e;
+}
+.command-heading h2 {
+  font-size: 20px;
+  margin: 5px 0 12px;
+}
+.command-current {
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #365b44;
+  background: #e2ecdf;
+  font-size: 12px;
+  font-weight: 700;
+}
+.command-telemetry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid #d6e0d3;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+.command-telemetry #live-telemetry {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 16px;
+  min-width: 0;
+}
+.command-telemetry .telemetry-driver {
+  border: 0;
+  padding: 0;
+  min-width: 190px;
+  margin-right: auto;
+}
+.command-telemetry .telemetry-driver b {
+  color: #284436;
+}
+.command-telemetry .telemetry-driver small,
+.command-telemetry .telemetry-driver span {
+  color: #596d5e;
+}
+.command-telemetry .live-speed {
+  padding: 0;
+  font-size: 28px;
+  color: #284436;
+}
+.command-telemetry .live-speed small {
+  font-size: 10px;
+  color: #66796a;
+}
+.command-telemetry .telemetry-bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(90px, 1fr));
+  gap: 14px;
+  padding: 0;
+}
+.command-telemetry .metric b,
+.command-telemetry .metric span {
+  color: #41614c;
+}
+.command-telemetry .staff-race-support {
+  flex-basis: 100%;
+  font-size: 10px;
+  margin: 0;
+  padding: 6px 0;
+}
+.command-telemetry #weekend-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  width: 100%;
+}
+.command-telemetry #weekend-metrics span {
+  color: #54705b;
+  font-size: 11px;
+}
+.command-telemetry #weekend-metrics b {
+  color: #294b37;
+  font-size: 13px;
+}
+.command-orders {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 9px;
+}
+.command-orders .command-order {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
+  min-height: 122px;
+  margin: 0;
+  padding: 12px;
+  color: #395242;
+  border: 1px solid #cbd8c9;
+  background: #fff;
+  border-radius: 5px;
+  text-align: left;
+}
+.command-orders .command-order b {
+  font-size: 13px;
+  line-height: 1.35;
+  color: inherit;
+}
+.command-orders .command-order small {
+  color: #66776a;
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 5px 0 8px;
+}
+.command-orders .command-order em {
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 700;
+  margin-top: auto;
+  color: #48634c;
+}
+.command-orders .command-order.selected {
+  border-color: #567a5e;
+  box-shadow: inset 0 0 0 1px #567a5e;
+  background: #e8f0e3;
+  color: #284b33;
+}
+.command-orders .command-order:disabled {
+  opacity: 0.75;
+}
+.command-orders .command-order.order-requested {
+  border-color: #c98043;
+  background: #fff3df;
+  opacity: 1;
+}
+.order-mode-dot {
+  width: 6px;
+  height: 6px;
+  background: #81967d;
+  border-radius: 50%;
+  margin-bottom: 6px;
+}
+.command-order[data-value="attack"] .order-mode-dot {
+  background: #e87645;
+}
+.command-order[data-value="save"] .order-mode-dot {
+  background: #5f8b68;
+}
+.command-order[data-value="fuel"] .order-mode-dot {
+  background: #a9823a;
+}
+.command-order[data-value="defend"] .order-mode-dot {
+  background: #6c84a2;
+}
+.command-reply {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border-left: 3px solid #7b9882;
+  background: #eaf0e6;
+  border-radius: 4px;
+}
+.command-reply[data-status="pending"] {
+  background: #fff2df;
+  border-color: #ca8c47;
+}
+.command-reply[data-status="missed"],
+.command-reply[data-status="refused"],
+.command-reply[data-status="deferred"] {
+  background: #f9e9de;
+  border-color: #b2754e;
+}
+.reply-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+.reply-head b {
+  font-size: 13px;
+}
+.reply-head span {
+  font-size: 11px;
+  color: #6d725e;
+}
+.command-reply p {
+  margin: 8px 0;
+  line-height: 1.65;
+  font-size: 13px;
+  color: #354d3b;
+}
+.command-reply small {
+  display: block;
+  line-height: 1.6;
+  font-size: 11px;
+  color: #5e6b56;
+}
+.race-command .professional-strategy {
+  padding: 12px 0;
+  background: transparent;
+  border: 0;
+  color: #43634a;
+}
+.race-command .professional-strategy span {
+  line-height: 1.6;
+}
+.race-command .pit-strategy {
+  margin: 12px 0 0;
+  border: 1px solid #cbd8c9;
+  background: white;
+  color: #334f3c;
+}
+.race-command .pit-strategy summary {
+  color: #304e3b;
+  padding: 14px;
+}
+.race-command .pit-strategy summary > span {
+  color: #567b60;
+}
+.race-command .pit-strategy-body {
+  padding: 0 16px 16px;
+}
+.race-command .pit-strategy-body p {
+  color: #5d7063;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.race-command .pit-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.race-command .pit-strategy label > span {
+  color: #49624e;
+}
+.race-command .pit-strategy select {
+  background: #f9fbf6;
+  color: #35553e;
+  border-color: #ccd8c7;
+}
+.race-command .pit-strategy .checkbox-field {
+  color: #506850;
+}
+.race-command .pit-strategy .secondary {
+  color: #426346;
+  border-color: #c5d3c0;
+  background: #f6faf1;
+}
+.race-command .manual-pit {
+  margin: 12px 0;
+}
+.command-history {
+  margin-top: 16px;
+  font-size: 12px;
+}
+.command-history summary {
+  cursor: pointer;
+  color: #547057;
+  padding: 5px 0;
+  font-weight: 700;
+}
+.command-history p {
+  padding: 10px 0;
+  border-bottom: 1px solid #d4dece;
+}
+.command-history span {
+  display: block;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.command-race-feed {
+  margin-top: 18px;
+}
+@media (max-width: 1200px) {
+  .race-layout.command-layout {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .command-orders {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .command-orders .command-order {
+    min-height: 115px;
+  }
+}
+@media (max-width: 850px) {
+  .support-grid,
+  .driver-stat-guide dl {
+    grid-template-columns: 1fr;
+  }
+  .race-layout.command-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .command-layout .race-track {
+    width: 100%;
+    order: 0;
+  }
+  .command-layout .timing-panel {
+    width: 100%;
+    max-height: 330px;
+    position: static;
+    order: 1;
+  }
+  .command-layout .race-track > canvas {
+    height: 310px;
+  }
+  .race-command {
+    padding: 15px 12px;
+  }
+  .command-heading h2 {
+    font-size: 18px;
+  }
+  .command-orders {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .command-orders .command-order:last-child {
+    grid-column: 1 / -1;
+    min-height: 90px;
+  }
+  .command-telemetry .telemetry-driver {
+    min-width: 170px;
+  }
+  .race-command .pit-fields {
+    grid-template-columns: 1fr;
+  }
+  .race-command .professional-strategy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+.command-broadcast {
+  position: relative;
+  height: clamp(280px, 44vh, 520px);
+  flex: none;
+  overflow: hidden;
+}
+.command-broadcast > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.command-broadcast .track-bottom {
+  bottom: 12px;
+}
+.command-layout .camera-toolbar {
+  position: static;
+  flex: none;
+}
+.command-telemetry #live-telemetry {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) 70px minmax(180px, 1fr);
+  gap: 14px;
+}
+.command-telemetry .telemetry-driver .portrait {
+  width: 38px;
+  height: 46px;
+}
+.race-command .command-orders .command-order.selected b {
+  color: #294b33;
+}
+.command-car-details {
+  margin-top: 12px;
+}
+.command-car-details > summary {
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 0;
+  color: #547057;
+}
+#command-car-data {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+#command-car-data > * {
+  margin: 0;
+  padding: 12px;
+  border-radius: 4px;
+}
+@media (max-width: 850px) {
+  .command-broadcast {
+    height: 300px;
+  }
+  .command-telemetry #live-telemetry {
+    grid-template-columns: 1fr 60px;
+  }
+  .command-telemetry .telemetry-bars {
+    grid-column: 1 / -1;
+  }
+  #command-car-data {
+    grid-template-columns: 1fr;
+  }
+}
+
+.race-page:has(.command-layout) .race-location {
+  padding: 8px 12px;
+  margin: 0 0 8px;
+}
+.race-page:has(.command-layout) .race-regulation {
+  padding: 8px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.race-page:has(.command-layout) .broadcast-heading {
+  margin: 10px 0 14px;
+}
+.race-page:has(.command-layout) .broadcast-heading h1 {
+  font-size: 28px;
+  margin: 5px 0;
+}
+.race-page:has(.command-layout) .broadcast-heading p {
+  font-size: 12px;
+  margin: 0;
+}
+.race-page:has(.command-layout) .weekend-weather {
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+}
+.command-broadcast {
+  height: clamp(280px, 38vh, 480px);
+}
+.command-heading h2 {
+  font-size: 18px;
+  margin: 5px 0 10px;
+}
+.command-telemetry .telemetry-driver {
+  min-width: 0;
+}
+@media (max-width: 850px) {
+  .command-broadcast {
+    height: 280px;
+  }
+}
+.race-command {
+  display: flex;
+  flex-direction: column;
+}
+.command-heading {
+  order: 0;
+}
+.command-orders {
+  order: 1;
+}
+.command-reply {
+  order: 2;
+}
+#command-strategist {
+  order: 3;
+}
+.command-telemetry {
+  order: 4;
+  margin-top: 8px;
+}
+.command-boxes {
+  order: 5;
+}
+.command-history {
+  order: 6;
+}
+.command-car-details {
+  order: 7;
+}

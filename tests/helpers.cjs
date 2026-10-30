@@ -9,7 +9,9 @@ function engine({
   auctions = false,
   commerce = false,
   tour = false,
+  life = false,
 } = {}) {
+  if (life) tour = true;
   const store = new Map();
   const context = vm.createContext({
     console,
@@ -73,12 +75,15 @@ function engine({
     "commerce",
     "world-circuits",
     "season-tour",
+    "team-life",
+    "race-life",
   ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "../js/" + f + ".js"), "utf8"),
       context,
       { filename: f + ".js" },
     );
+  if (!life) context.RCS.createGame = context.RCS.createV121Game;
   if (!tour) {
     context.RCS.Data.tracks.length = 38;
     context.RCS.Competition.makeSeason =

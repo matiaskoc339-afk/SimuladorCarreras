@@ -95,7 +95,7 @@
         "El esfuerzo excesivo eleva estrés y riesgo de lesión o accidente. Al terminar recibes un informe.",
         "Un investigador contratado abre el árbol: mejoras pequeñas y permanentes. Más nivel reduce algo el coste y los días.",
       ],
-      more: "Un piloto y entrenador menos preparados suelen necesitar más días. El informe muestra ganancias, aprendizaje y posibles pérdidas o incidentes. Los investigadores cobran sueldos altos y los últimos proyectos siguen siendo caros y largos. Si la pestaña aparece bloqueada, indica qué profesional falta.",
+      more: "Un piloto y entrenador menos preparados suelen necesitar más días. La previsión estima la mejora del atributo elegido; el informe muestra ganancias, aprendizaje y posibles pérdidas o incidentes. Los investigadores cobran sueldos altos y los últimos proyectos siguen siendo caros y largos. Si la pestaña aparece bloqueada, indica qué profesional falta.",
     },
     {
       id: "events",
@@ -125,7 +125,7 @@
         "Vigila gomas, combustible, clima, temperatura y daños. Pide boxes con tiempo; cada equipo tiene su puesto.",
         "El mecánico puede hacer el servicio. Sin él, o si falla, tendrás que resolver el cambio manual mientras los demás siguen.",
       ],
-      more: "El cambio manual exige elevar el coche, seleccionar cada rueda, aflojar sus tornillos, quitarla, colocar la nueva, apretar y bajar el coche. Completa las cuatro ruedas. El nivel y la rapidez del personal cambian el servicio; el estratega puede ayudar a decidir. Puedes pausar, cambiar velocidad y cámara y consultar la repetición al terminar.",
+      more: "El cambio manual exige elevar el coche, seleccionar cada rueda, aflojar sus tornillos, quitarla, colocar la nueva, apretar y bajar el coche. Completa las cuatro ruedas. El nivel y la rapidez del personal cambian el servicio; el estratega puede ayudar a decidir. Las órdenes y los boxes comparten el muro junto a la pista. Comprueba el plan aplicado: enviar una orden no equivale a que el piloto la haya entendido; concentración, equipo, disciplina y estrés afectan a su respuesta. La bandera amarilla puede impedir atacar. Puedes pausar, cambiar velocidad y cámara y consultar la repetición al terminar.",
     },
     {
       id: "growth",
@@ -170,7 +170,7 @@
         "Los préstamos se devuelven con intereses. Revisa cuotas, nóminas y previsión de caja; el descubierto tiene un margen de recuperación limitado.",
         "Los rivales compran, contratan, entrenan y gastan sus propios recursos. Sus decisiones cambian el mercado y la parrilla.",
       ],
-      more: "Finanzas registra movimientos reales y permite aceptar encargos de taller, que necesitan días y comparten bahías. Las promesas y cláusulas de pilotos y patrocinio tienen consecuencias al incumplirse. En partidas actuales, catorce días seguidos de problemas de liquidez pueden terminar la actividad de la compañía.",
+      more: "Finanzas registra movimientos reales y permite aceptar encargos de taller, que necesitan días y comparten bahías. También ofrece tres tipos de encargos de apoyo semanales: pagan entre 110 y 270 US$ solo al entregarlos, con un límite de uno cada siete días. Algunos ocupan una bahía o un ingeniero. Son una ayuda y los salarios siguen corriendo. Las promesas y cláusulas de pilotos y patrocinio tienen consecuencias al incumplirse. En partidas actuales, catorce días seguidos de problemas de liquidez pueden terminar la actividad de la compañía.",
     },
     {
       id: "history",

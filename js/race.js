@@ -1090,8 +1090,9 @@
               a.professional.strategist
             )
           ) {
-            a.mode =
-              a.tires < 30 || a.components.engine < 45
+            a.mode = r.lifeVersion
+              ? G.RaceLife.aiMode(r, a, front, rear)
+              : a.tires < 30 || a.components.engine < 45
                 ? "save"
                 : front &&
                     front.gap < 26 &&
@@ -1133,7 +1134,9 @@
             const cornerSpeed =
               cornerLimit *
               (0.78 + grip / 260) *
-              (0.82 + a.stats.control / 300) *
+              (r.lifeVersion
+                ? G.RaceLife.cornerFactor(a)
+                : 0.82 + a.stats.control / 300) *
               (0.85 + a.tires * 0.0015) *
               (r.weekendVersion ? Math.sqrt(G.RaceWeekend.grip(r, a)) : 1);
             limit = Math.min(

@@ -111,6 +111,7 @@ const { chromium } = require("playwright"),
       RCS.App.render();
     });
     await p.waitForTimeout(150);
+    await p.locator(".command-car-details > summary").click();
     assert.match(
       await p.locator("#live-car-parts").innerText(),
       /Motor configurado/,

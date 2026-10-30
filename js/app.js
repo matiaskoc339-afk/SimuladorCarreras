@@ -174,6 +174,10 @@
           U.toast("Termina la carrera para volver a la sede.");
         return;
       }
+      if (G.Research.enabled(this.state) && !G.TeamLife.enabled(this.state)) {
+        G.TeamLife.initialize(this.state);
+        this.persist();
+      }
       if (
         ![
           "hq",
@@ -303,6 +307,7 @@
       }
       if (
         G.CommerceUI.action(this, name, data) ||
+        G.TeamLifeUI.action(this, name, data) ||
         G.AuctionUI.action(this, name, data) ||
         G.WorkbenchUI.action(this, name, data) ||
         G.DevelopmentUI.action(this, name, data) ||
