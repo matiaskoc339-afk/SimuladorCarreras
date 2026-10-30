@@ -1,3 +1,15 @@
+# Validación 0.11.0
+
+**Cierre verificado: 355/355 pruebas del motor, 17 recorridos de navegador y temporada financiera de veinte fechas aprobados.** Sintaxis de 106 archivos JS/CJS y presencia de 69 recursos locales comprobadas. Se inspeccionaron las nuevas vistas de catálogo, concesionario y vitrina, también en móvil.
+
+Veinte escenarios nuevos del motor en `commerce.test.cjs`: inicio difícil/reproducible; renovación del día siete sin cambios al leer; cincuenta semanas con 3200 referencias distintas y CV/retratos sin reciclar; stock acotado; conservación de compras, reservas, montajes y consignaciones; reposición y depreciación; compra de concesionario atómica y reventa usada; capacidad de garaje; influencia de nivel/prestigio y salarios; CV caducados/contratados; descubrimientos y descanso del ojeador; doce carrocerías con requisitos; podios regional/nacional, límites de reputación, exclusión de rondas/calle/DNF, persistencia entre temporadas y rechazo de trofeos falsos. Incluye prevalidación del piloto impuesto por patrocinio, carrera con piezas semanales y reanudación exacta, y la entrega de trofeo desde `Race.finish`.
+
+El recorrido `browser-commerce.cjs` utiliza controles reales para comparar piezas sin gastar, renovar el tablón al día siete, alternar nuevo/usado, confirmar una compra, consultar copa y resultado, recargar y comprobar las nuevas pantallas en 1440/1024/390. Compras y podio usan caja/resultado controlados para aislar esos flujos; el tutorial, la primera fundación y las carreras completas continúan en sus rutas específicas.
+
+La ruta financiera actual completa las veinte fechas, paga mantenimiento, gana la licencia, renueva al piloto antes de vencer, abre 2027 y paga entrenador, programa de pista, investigador y protocolo de aprendizaje con **9080 US$** restantes. La empresa no recibe fondos ni estadísticas artificiales. La estrategia prudente renuncia a las pruebas profesionales para las que no reúne piloto/puntos y no compra objetos de lujo durante el primer año. Demuestra supervivencia de esa estrategia y semilla, no equilibrio exhaustivo de todos los caminos. [Registro](BALANCE_0_11_1470.json).
+
+Los constructores anteriores están fijados por versión para mantener comparaciones auténticas. Las regresiones visuales actuales adaptan el nuevo número de elementos de navegación/referencias y seleccionan solo CV vigentes. El tutorial continúa sin ejecutar migraciones ni consumir dinero, días o RNG al visitar las pantallas.
+
 # Validación 0.10.1
 
 **Dieciséis recorridos de navegador aprobados**: las quince regresiones anteriores y el nuevo recorrido del tutorial. Las seis rutas que fundan una empresa omiten la guía con su botón real antes de continuar. El motor y sus reglas no cambian; el registro 0.10 conserva las 335 pruebas anteriores. No se repite la temporada financiera para un cambio de interfaz.

@@ -268,6 +268,11 @@
           "El presupuesto de esta marca ya está comprometido con otra compañía.";
       const d = s.drivers.find((d) => d.id === o.driverId);
       if (
+        !reason && G.Commerce?.enabled(s) && d && !d.companyId &&
+        (!G.Professionals.available(s, d) || company.level < G.Challenge.driverLevel(d))
+      )
+        reason = "El piloto impuesto tiene el CV caducado, no está disponible médicamente o exige un nivel empresarial superior.";
+      if (
         !reason &&
         o.driverId &&
         (!d || (d.companyId && d.companyId !== companyId))

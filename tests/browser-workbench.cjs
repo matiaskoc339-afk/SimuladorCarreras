@@ -153,11 +153,11 @@ const { chromium } = require("playwright"),
     );
     await p.locator("#wb-search").fill("");
     await tab("catalog");
-    assert.equal(await p.locator(".wb-catalog-grid .wb-part-card").count(), 29);
+    assert.equal(await p.locator(".wb-catalog-grid .wb-part-card").count(), 93);
     await p.locator("#wb-catalog-slot").selectOption("engine");
     assert.equal(
       await p.locator(".wb-catalog-grid .wb-part-card:visible").count(),
-      3,
+      7,
     );
     await p.locator("#wb-search").fill("Etapa 3");
     assert.equal(
@@ -185,7 +185,7 @@ const { chromium } = require("playwright"),
     await p.locator("#confirm-action").click();
     await days(3);
     await group("chassis");
-    await p.setViewportSize({ width: 1440, height: 2000 });
+    await p.setViewportSize({ width: 1440, height: 3200 });
     await p.evaluate(() => window.scrollTo(0, 0));
     const chassis = await p.evaluate(
         () => RCS.Workshop.stock(RCS.App.state, "chassis-street")[0].id,
@@ -300,13 +300,14 @@ const { chromium } = require("playwright"),
         s = G.App.state,
         car = G.ownedCars(s)[0],
         d = s.drivers
-          .filter((d) => !d.companyId)
+          .filter((d) => !d.companyId && G.Professionals.available(s,d))
           .sort((a, b) => a.ask - b.ask)[0],
         e = G.nextEvent(s);
       G.Drivers.offer(s, d.id, d.ask, 12);
       d.contract.end = e.day + 365;
       s.day = e.day;
       G.Auctions?.daily(s);
+      G.Commerce?.refresh(s);
       G.Race.register(s, e.id, d.id, car.id);
       G.Race.start(s, e.id);
       G.App.paused = true;

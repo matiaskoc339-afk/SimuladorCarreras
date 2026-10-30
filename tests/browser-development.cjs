@@ -36,7 +36,7 @@ const { chromium } = require("playwright"),
     );
     assert.equal(
       await p.evaluate(
-        () => RCS.Data.models.filter((m) => !m.auctionOnly).length,
+        () => RCS.Data.models.filter((m) => !m.auctionOnly && !m.showroomOnly).length,
       ),
       64,
     );
@@ -151,7 +151,7 @@ const { chromium } = require("playwright"),
     const driver = await p.evaluate(
       () =>
         RCS.App.state.drivers
-          .filter((d) => !d.companyId)
+          .filter((d) => !d.companyId && RCS.Professionals.available(RCS.App.state,d))
           .sort((a, b) => a.ask - b.ask)[0].id,
     );
     await p.locator(`[data-action="negotiate"][data-id="${driver}"]`).click();

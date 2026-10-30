@@ -7,6 +7,7 @@ function engine({
   development = false,
   workbench = false,
   auctions = false,
+  commerce = false,
 } = {}) {
   const store = new Map();
   const context = vm.createContext({
@@ -65,28 +66,35 @@ function engine({
     "coachwork",
     "auction-content",
     "auctions",
+    "weekly-content",
+    "trophies",
+    "commerce",
   ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "../js/" + f + ".js"), "utf8"),
       context,
       { filename: f + ".js" },
     );
-  if (!auctions) {
+  if (!commerce) {
+    context.RCS.Data.models.length = 76;
+    if (auctions) context.RCS.createGame = context.RCS.createV100Game;
+  }
+  if (!auctions && !commerce) {
     context.RCS.Data.models.length = 64;
     if (workbench) context.RCS.createGame = context.RCS.createV90Game;
   }
-  if (!workbench && !auctions) {
+  if (!workbench && !auctions && !commerce) {
     context.RCS.Parts.catalogue.length = 14;
     for (const slot of context.RCS.Coachwork.extraSlots)
       delete context.RCS.Parts.slots[slot];
     if (development) context.RCS.createGame = context.RCS.createV80Game;
   }
-  if (!development && !workbench && !auctions) {
+  if (!development && !workbench && !auctions && !commerce) {
     context.RCS.Data.models.length = 40;
     context.RCS.Data.tracks.length = 22;
     if (competitions) context.RCS.createGame = context.RCS.createV70Game;
   }
-  if (!competitions && !development && !workbench && !auctions) {
+  if (!competitions && !development && !workbench && !auctions && !commerce) {
     context.RCS.Data.models.length = 24;
     context.RCS.createGame = current
       ? context.RCS.createV64Game

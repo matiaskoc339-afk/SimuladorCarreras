@@ -355,7 +355,7 @@
         s.cars.push(car);
       }
       for (let i = 24; i < G.Data.models.length; i++) {
-        if (G.Data.models[i].auctionOnly) continue;
+        if (G.Data.models[i].auctionOnly || G.Data.models[i].showroomOnly) continue;
         const car = G.makeCar(
           s,
           null,

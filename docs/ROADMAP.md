@@ -1,6 +1,6 @@
 # Plan de desarrollo
 
-La entrega actual es **0.8.0 — Investigación de protocolos, campus por días y variedad**, conservando las carreras avanzadas, los contratos y el rediseño. La entrega incorpora investigadores, nueve protocolos, programas de pista por días e informes, 32 trazados y 64 modelos, tres ligas, finales por puntos, piezas dinámicas y boxes simultáneos. La etapa de expansión empresarial está en curso: siete especialidades de personal, niveles/estrés, relaciones salariales, boxes manuales, pista de entrenamiento, CVs, estratega automático y gerencia con políticas/presupuestos reales ya funcionan. Hay tratamientos de lesiones con médico. Academia, investigación y el resto del catálogo de empleados siguen pendientes. No se consideran implementados por disponer de campos de estado.
+La entrega actual es **0.11.0 — Suministro semanal, concesionario y palmarés**. Incluye catálogo con novedades semanales, doce familias de carrocería, autos nuevos/usados, CV influidos por prestigio, trofeos de grandes finales y tutorial de primera partida. Conserva ocho especialidades contratables, investigación de protocolos, formación por jornadas, operaciones y salud, 32 trazados, 88 modelos, tres ligas con finales por puntos, piezas físicas, boxes simultáneos y subastas. Siguen pendientes las áreas más amplias del prompt, entre ellas academia juvenil completa, prototipos/patentes, evolución por generaciones y fusiones; disponer de campos de estado no cuenta como implementarlas.
 
 La [comparación de los 42 apartados](ANALISIS_MECANICAS.md) detalla las mecánicas funcionales, parciales y pendientes frente al [prompt maestro original](PROMPT_MAESTRO.md). El alcance de una entrega no implica que todos los requisitos de su área estén completos.
 
@@ -44,3 +44,7 @@ La 0.10.0 incorpora las subastas de piezas y coches: sala en vivo, postores con 
 
 
 La 0.10.1 añade una guía de inicio opcional y de una sola aparición automática por perfil. Enseña el alcance jugable mediante once pasos y diecisiete pantallas, conserva el progreso y permite consulta manual. No altera progresión, dificultad ni las mecánicas pendientes. [Guía y comprobaciones](TUTORIAL_0_10_1.md).
+
+## Entrega 0.11.0
+
+Completados: tutorial 0.10.1; rotación semanal de 64 referencias, 12 familias de carrocería y recambios básicos; concesionario de doce modelos actuales separado de usados; CV semanales nuevos influidos por prestigio y ojeador; trofeos persistentes de finales profesionales con reputación. Estas entregas amplían variedad y progresión. Continúan pendientes las generaciones históricas completas, patentes/prototipos propios y grandes fusiones/cambios de propietario descritos en el análisis original.

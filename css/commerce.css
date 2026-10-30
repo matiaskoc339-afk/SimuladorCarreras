@@ -1,0 +1,221 @@
+.commerce-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 24px;
+}
+.weekly-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  padding: 26px 30px;
+  margin: 0 0 25px;
+  border: 1px solid #4c665b;
+  border-left: 4px solid #d5a16a;
+  border-radius: 12px;
+  background: linear-gradient(115deg, #253c35, #192a28);
+  color: #e5eadb;
+}
+.weekly-banner h2 {
+  font-size: clamp(21px, 2vw, 28px);
+  margin: 9px 0 10px;
+  letter-spacing: -0.6px;
+}
+.weekly-banner p {
+  max-width: 820px;
+  margin: 0;
+  color: #bdcabd;
+  line-height: 1.65;
+}
+.weekly-banner > .weekly-date {
+  flex-shrink: 0;
+  text-align: right;
+  display: grid;
+  gap: 7px;
+}
+.weekly-date small {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  color: #b5c4b8;
+}
+.weekly-date b {
+  font-size: 24px;
+  color: #efd2a7;
+}
+.weekly-date span {
+  font-size: 12px;
+  color: #b5c4b8;
+}
+.cv-banner {
+  margin-top: 28px;
+}
+.trophy-shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+  gap: 24px;
+}
+.trophy-card {
+  border: 1px solid #65715a;
+  border-radius: 12px;
+  padding: 26px 24px 0;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 25%, #495041 0, transparent 65%), #24332e;
+  overflow: hidden;
+}
+.trophy-card .eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #d7d1b8;
+}
+.trophy-art {
+  width: 220px;
+  max-width: 100%;
+  height: 200px;
+  display: block;
+  margin: auto;
+}
+.place-1 {
+  color: #dcb874;
+}
+.place-2 {
+  color: #b6c9cd;
+}
+.place-3 {
+  color: #c18d6a;
+}
+.trophy-card h2 {
+  font-size: 21px;
+  color: #eef0e2;
+  margin: 7px 0 12px;
+}
+.trophy-card > strong {
+  font-size: 14px;
+}
+.trophy-card p {
+  color: #ced5c6;
+  line-height: 1.8;
+}
+.trophy-card p span {
+  font-size: 12px;
+  color: #9caf9e;
+}
+.trophy-engraving {
+  margin: 22px -24px 0;
+  padding: 19px 18px;
+  background: #142722;
+  border-top: 2px solid currentColor;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  display: grid;
+  gap: 8px;
+}
+.trophy-engraving b {
+  font-size: 14px;
+}
+.trophy-empty {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  padding: 38px;
+  min-height: 290px;
+}
+.trophy-ghost {
+  opacity: 0.25;
+  filter: grayscale(1);
+  min-width: 210px;
+}
+.trophy-empty h2 {
+  font-size: 28px;
+  max-width: 620px;
+}
+.trophy-empty p {
+  max-width: 680px;
+  line-height: 1.8;
+  color: #596d61;
+}
+.trophy-requirements > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.trophy-requirements article p {
+  color: #586b60;
+  line-height: 1.7;
+}
+.trophy-requirements article strong {
+  color: #946d34;
+  font-size: 13px;
+}
+.trophy-result {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 15px;
+  background: #283b31;
+  border: 1px solid #7e7855;
+  border-radius: 10px;
+  margin: 16px 0;
+}
+.trophy-result .trophy-art {
+  height: 100px;
+  width: 110px;
+  margin: 0;
+}
+.trophy-result p {
+  font-size: 13px;
+}
+.weekly-mark {
+  display: inline-block;
+  color: #dec290;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+@media (max-width: 800px) {
+  .weekly-banner {
+    align-items: flex-start;
+    padding: 22px;
+    gap: 18px;
+    flex-direction: column;
+  }
+  .weekly-banner > .weekly-date {
+    text-align: left;
+    border-top: 1px solid #41584d;
+    padding-top: 14px;
+    width: 100%;
+  }
+  .weekly-date b {
+    font-size: 21px;
+  }
+  .trophy-empty {
+    flex-direction: column;
+    padding: 24px;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .trophy-ghost {
+    align-self: center;
+  }
+  .trophy-empty h2 {
+    font-size: 24px;
+  }
+  .trophy-requirements > div {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .trophy-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+  .trophy-shelf {
+    grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  }
+  .commerce-tabs button {
+    flex: 1;
+  }
+  .trophy-result {
+    align-items: flex-start;
+  }
+}

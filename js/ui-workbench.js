@@ -379,7 +379,7 @@
           )
           .map((p) => ({ p, d: G.Parts.definition(p.definitionId), count: 1 }));
       else
-        rows = G.Parts.catalogue
+        rows = G.WeeklyContent.definitions(s)
           .filter((d) => all || d.slot === slot)
           .map((d) => ({
             p: W.stock(s, d.id)[0],
@@ -399,7 +399,7 @@
               body && p
                 ? M.visual(s, car, { ...car.installed, shell: p.id })
                 : null;
-          return `<article class="wb-part-card ${selected ? "selected" : ""}" data-wb-slot="${d.slot}" data-wb-search="${esc((d.name + " " + d.description + " " + G.Parts.slots[d.slot]).toLowerCase())}" ${p && !p.reservedFor ? `draggable="true" data-wb-unit="${p.id}"` : ""}><div class="wb-part-art ${body ? "bodywork" : ""}">${visual ? Art.side(visual, { key: "part-" + p.id }) : G.Art.part(d)}<span>${owned ? "EN TU ALMACÉN" : count + " EN STOCK"}</span></div><div class="wb-part-copy"><span class="eyebrow">${G.Parts.slots[d.slot]}</span><h3>${esc(d.name)}</h3><p>${esc(d.description)}</p><div class="wb-fit-note ${reason ? "blocked" : "fits"}">${p?.reservedFor ? "Reservada para un montaje" : reason ? esc(reason) : "Compatible con esta configuración"}</div><div class="wb-part-price"><b>${owned ? "Ya comprada" : money(price)}</b><span>${p ? Math.round(p.condition) + " % de estado" : ""}</span></div><small>Montaje ${money(d.labor)} · ${G.Staff.plan(s, s.playerId, "install", d.days).days} días</small>${button("Comparar en el coche", "wb-preview", "secondary wide", `data-id="${p?.id || ""}" ${!p || p.reservedFor ? "disabled" : ""}`)}</div></article>`;
+          return `<article class="wb-part-card ${selected ? "selected" : ""}" data-wb-slot="${d.slot}" data-wb-search="${esc((d.name + " " + d.description + " " + G.Parts.slots[d.slot]).toLowerCase())}" ${p && !p.reservedFor ? `draggable="true" data-wb-unit="${p.id}"` : ""}><div class="wb-part-art ${body ? "bodywork" : ""}">${visual ? Art.side(visual, { key: "part-" + p.id }) : G.Art.part(d)}<span>${owned ? "EN TU ALMACÉN" : count + " EN STOCK"}</span></div><div class="wb-part-copy">${d.weekly ? `<span class="weekly-mark">NOVEDAD · SEMANA ${d.week + 1}</span>` : ""}<span class="eyebrow">${G.Parts.slots[d.slot]}</span><h3>${esc(d.name)}</h3><p>${esc(d.description)}</p><div class="wb-fit-note ${reason ? "blocked" : "fits"}">${p?.reservedFor ? "Reservada para un montaje" : reason ? esc(reason) : "Compatible con esta configuración"}</div><div class="wb-part-price"><b>${owned ? "Ya comprada" : money(price)}</b><span>${p ? Math.round(p.condition) + " % de estado" : ""}</span></div><small>Montaje ${money(d.labor)} · ${G.Staff.plan(s, s.playerId, "install", d.days).days} días</small>${button("Comparar en el coche", "wb-preview", "secondary wide", `data-id="${p?.id || ""}" ${!p || p.reservedFor ? "disabled" : ""}`)}</div></article>`;
         })
         .join("");
     },

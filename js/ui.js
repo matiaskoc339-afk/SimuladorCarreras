@@ -42,6 +42,7 @@
         home: "M3 10L12 3L21 10V21H14V14H10V21H3Z",
         news: "M4 3H18V21H4ZM8 7H14M8 11H14M8 15H14M8 18H12M18 7H21V19Q21 21 18 21",
         history: "M3 5V10H8M3 10A9 9 0 1 1 4 18M12 7V12L16 14",
+        trophy: "M7 3H17V10Q17 16 12 16Q7 16 7 10ZM7 5H3V8Q3 12 8 12M17 5H21V8Q21 12 16 12M12 16V21M7 21H17",
         save: "M4 3H18L21 6V21H3V3ZM7 3V9H16V3M7 21V14H17V21",
         arrow: "M5 12H20M14 6L20 12L14 18",
         flag: "M5 22V3M5 4Q10 0 14 4T22 4V15Q18 19 14 15T5 15",
@@ -120,6 +121,7 @@
             ["contracts", "finance", "Patrocinios y crédito"],
             ["news", "news", "Motor World Daily"],
             ["history", "history", "Archivo histórico"],
+            ["trophies", "trophy", "Vitrina de trofeos"],
           ],
         ],
       ];
@@ -239,9 +241,7 @@
     },
     team(s) {
       const hired = G.ownedDrivers(s),
-        free = s.drivers.filter(
-          (d) => !d.companyId && G.Professionals.available(s, d),
-        );
+        free = G.Commerce.candidates(s);
       return (
         this.heading(
           "SALA DE PILOTOS",

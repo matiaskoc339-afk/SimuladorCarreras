@@ -179,6 +179,8 @@
         "Resultados",
         "Temporada",
         "Mercado",
+        "Novedades semanales",
+        "Palmarés",
       ];
       for (const n of s.news)
         G.assert(
@@ -204,6 +206,8 @@
               "research",
               "operations",
               "auctions",
+              "workshop",
+              "trophies",
             ].includes(n.target),
           "Noticia inválida.",
         );
@@ -438,6 +442,8 @@
       G.Research?.validate(s);
       G.Coachwork?.validate(s);
       G.Auctions?.validate(s);
+      G.Commerce?.validate(s);
+      G.Trophies?.validate(s);
       G.Performance?.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");

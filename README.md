@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.10.1
+# Racing Company Simulator · 0.11.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,16 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.11.0 · catálogo vivo y grandes copas
+
+- **64 referencias nuevas cada siete días**, cuatro por cada alojamiento, con fabricantes, estadísticas y contrapartidas diferentes. Se reponen los 29 recambios básicos y se conservan tus compras y montajes.
+- **12 familias de carrocería**: Touring, Wide y Silueta para ligereza, refrigeración, resistencia, velocidad o apoyo; acabados visibles de lado, por arriba y en carrera.
+- **Autos nuevos separados de los usados**: doce deportivos actuales de 2026, 170–320 CV, 0 km y estado completo, desde **28 000 US$**. Sus prestaciones, precio y depreciación se conectan con el mercado y el taller. El mundo suma 88 modelos, incluidos los doce exclusivos de subasta.
+- **CV renovados semanalmente**: doce candidatos distintos, más los descubrimientos del ojeador disponible. Nivel empresarial y prestigio atraen mejores pilotos; sueldos, requisitos, precisión del informe y opciones modestas se mantienen.
+- **Vitrina de trofeos**: oro, plata y bronce por el podio de las grandes finales regional y nacional. Cada trofeo conserva temporada, piloto y circuito, concede reputación una sola vez y permanece entre temporadas. Una carrera normal no entrega una copa.
+
+Abre Taller, Mercado, Pilotos o Vitrina en una empresa con taller visual para activarlo sin reiniciar, fuera de carrera/subasta. El tutorial también explica estas mecánicas. [Reglas, renovación, requisitos y compatibilidad](docs/SUMINISTRO_PALMARES_0_11.md).
 
 ## Novedades de la 0.10.1 · guía para empezar
 
@@ -270,4 +280,4 @@ La 0.8.0 añade `tests/development.test.cjs`, `tests/browser-development.cjs` y 
 
 La 0.9.0 añade el taller visual y su recorrido de pruebas. `npm run test:balance:v80` conserva la temporada histórica 0.8; la ruta principal usa el constructor actual.
 
-La 0.10.0 incorpora la casa de subastas y sus pruebas de motor/navegador. La ruta financiera principal usa el constructor actual; `test:balance:v90` conserva la temporada anterior.
+La 0.11.0 añade suministro/CV semanales, concesionario y palmarés. La ruta financiera principal usa el constructor actual; `test:balance:v100` y `test:balance:v90` conservan las temporadas anteriores.

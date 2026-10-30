@@ -108,6 +108,7 @@
     setState(s, slot, { created = false } = {}) {
       this.state = s;
       this.selectedCarId = null;
+      this.marketTab = "used";
       this.auctionShownId = null;
       if (G.Auctions.active(s)) this.auctionTab = "room";
       G.AuctionUI.accumulator = 0;
@@ -182,6 +183,7 @@
           "competition",
           "news",
           "history",
+          "trophies",
           "market",
           "companies",
           "workshop",
@@ -209,6 +211,13 @@
         !G.Auctions.enabled(this.state)
       ) {
         G.Auctions.initialize(this.state);
+        this.persist();
+      }
+      if (
+        ["workshop", "market", "team", "trophies"].includes(view) &&
+        G.Coachwork.enabled(this.state) && !G.Commerce.enabled(this.state)
+      ) {
+        G.Commerce.initialize(this.state);
         this.persist();
       }
       this.view = view;
@@ -286,6 +295,7 @@
         return;
       }
       if (
+        G.CommerceUI.action(this, name, data) ||
         G.AuctionUI.action(this, name, data) ||
         G.WorkbenchUI.action(this, name, data) ||
         G.DevelopmentUI.action(this, name, data) ||
@@ -868,7 +878,7 @@
         Math.floor(n / 60) + ":" + (n % 60).toFixed(2).padStart(5, "0");
       U.modal(
         "Bandera a cuadros.",
-        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${this.raceRecap(e)}${s.season.phase === "complete" ? `<p class="fine-print">Temporada completada. ${s.competitions ? "Las clasificaciones y campeones de las finales están registrados en tu archivo histórico." : "La clasificación y la prima final ya están registradas en tu archivo histórico."}</p>` : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
+        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${G.CommerceUI.result(s,e)}${this.raceRecap(e)}${s.season.phase === "complete" ? `<p class="fine-print">Temporada completada. ${s.competitions ? "Las clasificaciones y campeones de las finales están registrados en tu archivo histórico." : "La clasificación y la prima final ya están registradas en tu archivo histórico."}</p>` : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
         true,
       );
       G.RaceUI.results(this, e);

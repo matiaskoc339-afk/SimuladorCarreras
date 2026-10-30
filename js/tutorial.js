@@ -50,7 +50,7 @@
         "El contrato debe cubrir el día de carrera. Firmar, renovar o despedir tiene costes.",
         "Descansa cuando haya fatiga o estrés. Un médico ayuda con las lesiones.",
       ],
-      more: "Ritmo, control, frenada, atención y resistencia cambian velocidad, decisiones y errores. El ojeador entrega CVs e informes de potencial con una precisión indicada: un informe poco fiable puede equivocarse.",
+      more: "Ritmo, control, frenada, atención y resistencia cambian velocidad, decisiones y errores. Los CV libres se renuevan cada siete días: más nivel empresarial y prestigio atraen mejores candidatos. El ojeador añade descubrimientos e informes de potencial con una precisión indicada; puede equivocarse. Un piloto contratado conserva su contrato.",
     },
     {
       id: "car",
@@ -65,7 +65,7 @@
         "Motor, frenos y llantas deben ser compatibles con chasis, carrocería y refrigeración.",
         "Montar y reparar cuesta dinero y días. La pieza sustituida vuelve al almacén con su desgaste.",
       ],
-      more: "En Garaje consultas el estado y el historial. En Taller → Mantenimiento reparas sistemas concretos; el diagnóstico profesional requiere mecánico y puede ser imperfecto. Las marcas y compuestos de neumáticos cambian agarre, duración y precio. El almacén y las bahías tienen capacidad limitada.",
+      more: "En Garaje consultas el estado y el historial. En Taller → Mantenimiento reparas sistemas concretos; el diagnóstico profesional requiere mecánico y puede ser imperfecto. Las marcas y compuestos de neumáticos cambian agarre, duración y precio. El almacén y las bahías tienen capacidad limitada. El catálogo recibe 64 novedades cada siete días; conserva recambios básicos y nunca retira las piezas que ya compraste.",
     },
     {
       id: "staff",
@@ -110,7 +110,7 @@
         "La licencia profesional requiere 24 puntos callejeros y 900 US$. La nacional exige además 12 puntos regionales.",
         "Cada final pide puntos de su propia liga. Al cerrar el año se archiva la temporada y puedes abrir la siguiente.",
       ],
-      more: "Hay circuitos con distinta dificultad y acceso por copa. Se comprueban potencia, estado, licencia, contrato y habilidad del piloto. En la calle se permiten contactos; las pruebas profesionales sancionan maniobras evitables. Si cargas una empresa antigua, conserva el reglamento que indica su ficha.",
+      more: "Hay circuitos con distinta dificultad y acceso por copa. Se comprueban potencia, estado, licencia, contrato y habilidad del piloto. En la calle se permiten contactos; las pruebas profesionales sancionan maniobras evitables. Solo el podio de la gran final regional o nacional concede trofeos y reputación extra; se guardan en Vitrina de trofeos. Una carrera normal no entrega copa. Si cargas una empresa antigua, conserva el reglamento que indica su ficha.",
     },
     {
       id: "race",
@@ -155,7 +155,7 @@
         "En subasta, cada puja reinicia diez segundos; la última gana. Retirarte no cancela una oferta que siga siendo la más alta.",
         "Puedes consignar coches y piezas libres: recibes el 80 % si se venden. Los lotes de la casa cambian cada siete días.",
       ],
-      more: "Observar una subasta es gratis. Sus postores tienen intereses y dinero propios: a veces hay una ganga y otras se paga demasiado. El dinero y la plaza de una oferta ganadora quedan comprometidos. Una pieza adjudicada va al almacén y se monta aparte; un coche preparado conserva sus piezas. Los objetos consignados quedan bloqueados hasta su venta o retirada.",
+      more: "El concesionario ofrece modelos actuales a 0 km y estado completo, más caros que un usado. Observar una subasta es gratis. Sus postores tienen intereses y dinero propios: a veces hay una ganga y otras se paga demasiado. El dinero y la plaza de una oferta ganadora quedan comprometidos. Una pieza adjudicada va al almacén y se monta aparte; un coche preparado conserva sus piezas. Los objetos consignados quedan bloqueados hasta su venta o retirada.",
     },
     {
       id: "business",

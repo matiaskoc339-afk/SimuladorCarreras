@@ -301,6 +301,7 @@
         }
       }
       if (
+        !G.Commerce?.enabled(s) &&
         s.day % 30 === 0 &&
         s.drivers.filter((d) => !d.companyId).length < 5
       ) {
