@@ -508,6 +508,95 @@
 .command-car-details {
   margin-top: 12px;
 }
+.hero-company-stats [data-hq-league] small {
+  display: block;
+  margin-top: 5px;
+  font-size: 10px;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+.league-points-summary [data-league-points] b {
+  font-size: 27px;
+}
+.league-points-summary .text-button {
+  margin-top: 8px;
+}
+.league-points-note {
+  color: #526b5c;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: -7px 0 18px;
+}
+.league-license-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 280px);
+  gap: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-left: 4px solid #b98848;
+}
+.league-license-panel.licensed {
+  border-left-color: #588467;
+}
+.league-license-panel h2 {
+  margin: 7px 0 12px;
+  font-size: 22px;
+}
+.league-license-panel p,
+.league-license-panel small {
+  line-height: 1.7;
+  color: #516a5b;
+}
+.league-license-panel small {
+  display: block;
+  font-size: 12px;
+}
+.league-license-panel .license-progress {
+  color: #30513a;
+}
+.league-license-panel .national-access {
+  font-size: 12px;
+  margin: 13px 0 0;
+}
+.license-actions {
+  align-self: center;
+}
+.license-actions button {
+  width: 100%;
+}
+.result-league-points {
+  padding: 16px;
+  margin: 14px 0;
+  background: #edf3e9;
+  border: 1px solid #cedac7;
+  border-radius: 5px;
+}
+.result-league-points p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.result-league-points > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.result-league-points span {
+  font-size: 11px;
+}
+.result-league-points strong {
+  display: block;
+  font-size: 22px;
+}
+.league-driver-table {
+  margin: 18px 0 26px;
+}
+@media (max-width: 850px) {
+  .league-license-panel {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    gap: 12px;
+  }
+}
 .command-car-details > summary {
   font-size: 12px;
   font-weight: 700;

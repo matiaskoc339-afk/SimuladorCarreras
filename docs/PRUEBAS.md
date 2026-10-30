@@ -1,3 +1,13 @@
+# Validación 0.13.1
+
+**393/393 pruebas de motor aprobadas y siete recorridos de navegador relevantes completados.** Se verificaron 124 archivos JS/CJS, 80 recursos locales y `git diff --check`. No cambian precios, premios, física ni formato de guardado; la comprobación se centra en puntos, licencia, presentación y compatibilidad.
+
+Los siete escenarios nuevos de `league-points.test.cjs` comprueban licencia obtenida exclusivamente con puntos callejeros, pago único sin gastar puntos, bloqueo de Regional/Nacional aun con otros marcadores elevados, inscripción/inicio rechazados antes de cobros o RNG, finales independientes, reinicio anual con licencia/trayectorias conservadas, liquidación de una carrera real guardada sin modificar otras ligas y tablas históricas por copa. La batería general conserva las fixtures y comprobaciones anteriores.
+
+`browser-league-points.cjs` comprueba la sede sin marcador combinado, tres contadores en Competición, falta de puntos callejeros, compra real de licencia, cobro y clasificaciones sin alteración, requisitos nacionales, archivo de un mismo piloto por liga y resultados de una carrera guardada. Revisa 1440/1024/390 sin errores de página ni desbordamiento. Se inspeccionaron capturas de los marcadores y del acceso profesional. Los ejemplos de puntos/archivo usan valores controlados; la liquidación de resultados completa la simulación desde `v110-race.json`.
+
+También pasaron las rutas de competición, atlas, comercio/trofeos, instalaciones/archivo, tutorial y avisos. [Reglas y compatibilidad](LIGAS_Y_LICENCIA_0_13_1.md).
+
 # Validación 0.13.0
 
 **386 escenarios de motor y 20 recorridos de navegador aprobados.** La batería general pasó 385/385; después se añadió el caso de formación diaria/delegada y se verificó la suite de equipo completa (12/12). Tras compartir el cálculo de previsión y aprendizaje se repitieron además desarrollo, compatibilidad de taller y equipo (48/48); el caso de impago de encargos también se comprobó con la liquidación salarial real. Sintaxis de 122 archivos JS/CJS y 80 recursos locales verificados.

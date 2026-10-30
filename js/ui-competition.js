@@ -44,10 +44,45 @@
   };
   const UI = (G.CompetitionUI = {
     map,
+    hqScores(s) {
+      return Object.entries(C.rules)
+        .map(
+          ([cup, rule]) =>
+            `<div data-hq-league="${cup}"><strong>${C.score(s, s.playerId, cup)}</strong><span>${U.escape(rule.name)}</span><small>Puntos de esta temporada</small></div>`,
+        )
+        .join("");
+    },
     progress(s) {
-      const points = s.competitions.streetPoints[s.playerId] || 0,
-        license = s.competitions.licenses[s.playerId];
-      return `<section class="career-path"><div><span class="eyebrow">01 · APRENDE EN LA CALLE</span><b>${points} puntos acumulados</b><p>Inscripción desde $220. Los daños persisten y se pagan.</p></div><div class="${license ? "ready" : ""}"><span class="eyebrow">02 · ACCESO PROFESIONAL</span><b>${license ? "Licencia obtenida" : `${Math.min(24, points)} / 24 puntos · licencia $900`}</b><p>Valoración de piloto 22, coche 70 %, frenos 75 %, suspensión 70 % y gomas 35 %.</p>${!license ? U.button("Tramitar licencia", "competition-license", "secondary", U.blocked(points < 24 ? `Necesitas 24 puntos callejeros acumulados: tienes ${points} y te faltan ${24 - points}. Gana puntos en las pruebas callejeras.` : G.player(s).balance < 900 ? G.Feedback.funds(s, 900, "la licencia profesional") : "")) : ""}</div><div><span class="eyebrow">03 · GANA TU PLAZA EN LA FINAL</span><b>Calle: ${C.score(s, s.playerId, "street", true)} / 12 · Regional: ${C.score(s, s.playerId, "pro", true)} / 18 · Nacional: ${C.score(s, s.playerId, "national", true)} / 18</b><p>Los puntos de cada liga se separan. La clasificación para finales se reinicia cada temporada.</p></div></section>`;
+      const license = C.licenseStatus(s),
+        regional = s.competitions.proPoints[s.playerId] || 0;
+      return `<section class="career-path league-points-summary" aria-label="Puntos separados por liga">${Object.entries(
+        C.rules,
+      )
+        .map(
+          ([cup, rule]) =>
+            `<div data-league-points="${cup}"><span class="eyebrow">${U.escape(rule.name)}</span><b><span data-season-points>${C.score(s, s.playerId, cup)}</span> puntos</b><p>Temporada ${s.season.year} · <span data-final-points>${C.score(s, s.playerId, cup, true)} / ${rule.qualify}</span> para su final</p>${U.button("Ver esta liga", "league-open", "text-button", `data-cup="${cup}" aria-label="Ver ${U.escape(rule.name)}"`)}</div>`,
+        )
+        .join(
+          "",
+        )}</section><p class="league-points-note">Cada carrera suma únicamente a su liga. Los puntos de temporada y de clasificación para finales se reinician cada año; no se transfieren entre ligas.</p><section class="panel league-license-panel ${license.owned ? "licensed" : ""}" aria-label="Licencia y acceso profesional"><div><span class="eyebrow">ACCESO A COMPETICIONES PROFESIONALES</span><h2>${license.owned ? "Licencia profesional obtenida" : "Consigue tu licencia en la calle"}</h2><p>Necesitas la licencia para competir en las copas regional y nacional. Se obtiene con <b>24 puntos callejeros acumulados</b> y un pago de <b>${U.money(license.cost)}</b>.</p><p class="license-progress" data-license-street>Trayectoria callejera: <b>${license.points} / ${license.required}</b>${license.missing ? ` · faltan ${license.missing} puntos callejeros` : " · requisito de puntos cumplido"}.</p><small>La licencia se conserva entre temporadas. Los puntos no se gastan al tramitarla.</small><p class="national-access">Acceso a la Nacional: licencia y <b>12 puntos regionales acumulados</b> · tienes ${regional}. Cada copa comprueba además piloto, coche y su propia clasificación a la final.</p></div><div class="license-actions">${license.owned ? '<span class="badge green">Válida en Regional y Nacional</span>' : U.button("Tramitar licencia profesional", "competition-license", "primary", U.blocked(license.reason))}</div></section>`;
+    },
+    resultPoints(s, e) {
+      return `<section class="result-league-points"><b>Puntos de ${U.escape(C.rule(e).name)}</b><p>Esta carrera suma exclusivamente a esta liga. Las otras clasificaciones se mantienen independientes.</p><div>${Object.entries(
+        C.rules,
+      )
+        .map(
+          ([cup, rule]) =>
+            `<span data-result-league="${cup}">${U.escape(rule.name)} <strong>${C.score(s, s.playerId, cup)}</strong></span>`,
+        )
+        .join("")}</div></section>`;
+    },
+    driverTables(events) {
+      return Object.entries(C.rules)
+        .map(([cup, rule]) => {
+          const rows = C.driverBoard(events, cup);
+          return `<section class="league-driver-table" data-driver-league="${cup}"><h3>${U.escape(rule.name)} · pilotos</h3>${rows.length ? `<div class="archive-scroll"><table class="standings"><thead><tr><th>POS</th><th>PILOTO</th><th>SAL.</th><th>VIC.</th><th>PTS DE ESTA LIGA</th></tr></thead><tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${U.escape(r.name)}</td><td>${r.starts}</td><td>${r.wins}</td><td>${r.points}</td></tr>`).join("")}</tbody></table></div>` : '<p class="fine-print">Todavía no hay resultados de pilotos en esta liga.</p>'}</section>`;
+        })
+        .join("");
     },
     event(A, id) {
       const s = A.state,
@@ -101,6 +136,11 @@
       }
     },
     action(A, name, data) {
+      if (name === "league-open") {
+        A.competitionTab = data.cup;
+        A.go("competition");
+        return true;
+      }
       if (name === "track-filter") {
         A[
           data.field === "difficulty" ? "circuitDifficulty" : "circuitCategory"
@@ -181,7 +221,7 @@
         })
         .join(
           "",
-        )}</div></section><section class="panel padded"><span class="eyebrow">PUNTOS SEPARADOS POR LIGA</span><h2>Clasificación ${s.season.year}</h2><p>La final exige ${rule.qualify} puntos en clasificatorias.${tab === "national" ? ` Acceso a la copa: 12 puntos regionales acumulados, piloto 24 y verificación nacional. Tasas desde ${U.money(rule.fee + rule.transport)}.` : ""}</p><div class="league-standings">${board.map((v, i) => `<div class="${v.company.id === s.playerId ? "my-team" : ""}"><span>${i + 1}</span><b>${U.escape(v.company.name)}</b><span>${v.points} pt<small>${v.qualifying} para acceso</small></span></div>`).join("")}</div>${s.season.cups[tab].champion ? `<p class="onboarding-note">Campeón de la final: <b>${U.escape(s.companies.find((c) => c.id === s.season.cups[tab].champion).name)}</b></p>` : ""}</section></div>`;
+        )}</div></section><section class="panel padded"><span class="eyebrow">PUNTOS SEPARADOS POR LIGA</span><h2>${U.escape(rule.name)} · ${s.season.year}</h2><p>La final exige ${rule.qualify} puntos en clasificatorias.${tab === "national" ? ` Acceso a la copa: 12 puntos regionales acumulados, piloto 24 y verificación nacional. Tasas desde ${U.money(rule.fee + rule.transport)}.` : ""}</p><div class="league-standings">${board.map((v, i) => `<div class="${v.company.id === s.playerId ? "my-team" : ""}"><span>${i + 1}</span><b>${U.escape(v.company.name)}</b><span>${v.points} pt<small>${v.qualifying} para su final</small></span></div>`).join("")}</div>${s.season.cups[tab].champion ? `<p class="onboarding-note">Campeón de la final: <b>${U.escape(s.companies.find((c) => c.id === s.season.cups[tab].champion).name)}</b></p>` : ""}</section></div>`;
     }
     const next = G.nextEvent(s);
     return (

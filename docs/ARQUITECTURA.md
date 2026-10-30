@@ -1,5 +1,9 @@
 # Arquitectura de Racing Company Simulator
 
+## Puntos y licencia en 0.13.1
+
+`Competition.licenseStatus` comparte los requisitos de la licencia y sus motivos de bloqueo entre motor e interfaz. `season.cups[cup].standings` sigue siendo la clasificación deportiva anual, mientras `competitions.streetPoints` y `proPoints` conservan sus trayectorias de acceso. La sede y los resultados usan los marcadores por copa; `Competition.driverBoard` deriva las tablas históricas a partir de eventos de una sola liga. El control previo al inicio de una prueba con inscripción rechaza una licencia ausente antes de consumir RNG; las renuncias siguen permitidas. [Reglas](LIGAS_Y_LICENCIA_0_13_1.md).
+
 ## Equipo y muro en 0.13
 
 `team-life.js` incorpora encargos semanales guardables, comparte bahías/personal mediante los planificadores existentes y limita el ingreso a entregas reales. `race-life.js` marca solo carreras nuevas y añade decisiones/radio con RNG por piloto; las carreras históricas conservan su comportamiento. El techo de curva comparte el factor de Control entre el motor y la anticipación de frenado. `ui-race-command.js` agrupa controles existentes junto a la pista, conserva formularios/IDs de boxes y adapta la telemetría a una sección desplegable. `ui-team-life.js` añade encargos, explicación de atributos y previsión de aprendizaje sin mutar el estado al consultar. [Detalle](EQUIPO_Y_MURO_0_13.md).

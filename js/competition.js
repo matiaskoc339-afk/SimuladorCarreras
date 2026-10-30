@@ -66,13 +66,56 @@
       const v = s.season.cups[cup].standings[id];
       return v ? (qualifying ? v.qualifying : v.points) : 0;
     },
+    licenseStatus(s, cid = s.playerId) {
+      const company = s.companies.find((c) => c.id === cid),
+        points = s.competitions.streetPoints[cid] || 0,
+        owned = !!s.competitions.licenses[cid],
+        required = 24,
+        cost = 900,
+        missing = Math.max(0, required - points);
+      const reason = owned
+        ? "Ya tienes licencia profesional. Es válida para las copas regional y nacional."
+        : company?.status !== "active"
+          ? "La compañía debe estar activa para tramitar la licencia profesional."
+          : s.race
+            ? "Termina la carrera antes de tramitar la licencia profesional."
+            : missing
+              ? `Necesitas ${required} puntos callejeros acumulados: tienes ${points} y te faltan ${missing}. Solo cuentan los de la Liga Callejera; los regionales y nacionales no sirven para obtener la licencia.`
+              : company.balance < cost
+                ? G.Feedback.funds(s, cost, "la licencia profesional")
+                : "";
+      return { owned, points, required, cost, missing, reason };
+    },
+    driverBoard(events, cup) {
+      const rows = new Map();
+      for (const e of events.filter((e) => e.cup === cup))
+        for (const r of e.results) {
+          const row = rows.get(r.driverId) || {
+            driverId: r.driverId,
+            name: r.name,
+            points: 0,
+            starts: 0,
+            wins: 0,
+          };
+          row.points += r.points;
+          row.starts++;
+          if (r.position === 1 && !r.dnf) row.wins++;
+          rows.set(r.driverId, row);
+        }
+      return [...rows.values()].sort(
+        (a, b) =>
+          b.points - a.points ||
+          b.wins - a.wins ||
+          a.name.localeCompare(b.name),
+      );
+    },
     eligible(s, e, cid = s.playerId) {
-      if (e.final && this.score(s, cid, e.cup, true) < this.rule(e).qualify)
-        return `Necesitas ${this.rule(e).qualify} puntos de clasificación de esta liga; tienes ${this.score(s, cid, e.cup, true)}.`;
       if (e.cup !== "street" && !s.competitions.licenses[cid])
-        return "Necesitas licencia profesional: 24 puntos callejeros acumulados y $900 para tramitarla.";
+        return `Necesitas licencia profesional para participar en ${this.rule(e).name}. Se obtiene con 24 puntos callejeros acumulados y $900; tramítala desde Competición. Los puntos de otras ligas no sustituyen la licencia.`;
       if (e.cup === "national" && (s.competitions.proPoints[cid] || 0) < 12)
         return `Necesitas 12 puntos acumulados en la copa regional; tienes ${s.competitions.proPoints[cid] || 0}.`;
+      if (e.final && this.score(s, cid, e.cup, true) < this.rule(e).qualify)
+        return `Necesitas ${this.rule(e).qualify} puntos de clasificación de ${this.rule(e).name}; tienes ${this.score(s, cid, e.cup, true)} y te faltan ${this.rule(e).qualify - this.score(s, cid, e.cup, true)}. Los puntos de otras ligas no sirven para esta final.`;
       return "";
     },
     registrationReason(s, e, cid = s.playerId) {
@@ -140,15 +183,11 @@
     },
     license(s) {
       G.ensurePlayable(s);
-      G.assert(!s.race, "Termina la carrera antes de tramitar la licencia.");
-      G.assert(!s.competitions.licenses[s.playerId], "Ya tienes licencia.");
-      G.assert(
-        (s.competitions.streetPoints[s.playerId] || 0) >= 24,
-        `Necesitas 24 puntos callejeros acumulados: tienes ${s.competitions.streetPoints[s.playerId] || 0} y te faltan ${Math.max(0, 24 - (s.competitions.streetPoints[s.playerId] || 0))}. Disputa más pruebas callejeras antes de tramitar la licencia.`,
-      );
+      const status = this.licenseStatus(s);
+      G.assert(!status.reason, status.reason);
       G.Economy.spend(
         s,
-        900,
+        status.cost,
         "Licencia",
         "Licencia de competición profesional",
       );
@@ -611,6 +650,11 @@
     C.enabled(s) ? C.makeSeason(s, year) : season(s, year);
   const start = R.start;
   R.start = function (s, ...args) {
+    const event = s.season.events.find((e) => e.id === args[0]);
+    if (C.enabled(s) && event?.entry && !args[1]) {
+      const reason = C.eligible(s, event);
+      G.assert(!reason, reason);
+    }
     const r = start.call(this, s, ...args);
     if (C.enabled(s)) {
       const e = s.season.events.find((e) => e.id === r.eventId);
