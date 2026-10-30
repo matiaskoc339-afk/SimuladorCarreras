@@ -300,10 +300,11 @@ const { chromium } = require("playwright"),
         s = G.App.state,
         car = G.ownedCars(s)[0],
         d = s.drivers
-          .filter((d) => !d.companyId && G.Professionals.available(s,d))
+          .filter((d) => !d.companyId && G.Professionals.available(s, d))
           .sort((a, b) => a.ask - b.ask)[0],
         e = G.nextEvent(s);
-      G.Drivers.offer(s, d.id, d.ask, 12);
+      const agreement = G.Drivers.offer(s, d.id, d.ask, 12);
+      if (!agreement.accepted) G.Drivers.offer(s, d.id, agreement.salary, 12);
       d.contract.end = e.day + 365;
       s.day = e.day;
       G.Auctions?.daily(s);

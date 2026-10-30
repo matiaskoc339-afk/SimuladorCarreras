@@ -184,7 +184,8 @@ const { chromium } = require("playwright"),
       G.Auctions.daily(s);
       G.Commerce.refresh(s);
       const d = G.Commerce.candidates(s).sort((a, b) => a.ask - b.ask)[0];
-      G.Drivers.offer(s, d.id, d.ask, 12);
+      const agreement = G.Drivers.offer(s, d.id, d.ask, 12);
+      if (!agreement.accepted) G.Drivers.offer(s, d.id, agreement.salary, 12);
       G.Race.register(s, e.id, d.id, car.id);
       G.Race.start(s, e.id);
       G.App.setState(s, 3);

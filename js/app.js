@@ -107,6 +107,15 @@
     },
     setState(s, slot, { created = false } = {}) {
       this.state = s;
+      this.raceTheatre = false;
+      this.radioFloating = false;
+      if (
+        G.TeamLife.enabled(s) &&
+        !G.DriverAgency.enabled(s) &&
+        !s.race &&
+        !G.Auctions.active(s)
+      )
+        G.DriverAgency.initialize(s);
       this.selectedCarId = null;
       this.marketTab = "used";
       this.auctionShownId = null;
@@ -176,6 +185,13 @@
       }
       if (G.Research.enabled(this.state) && !G.TeamLife.enabled(this.state)) {
         G.TeamLife.initialize(this.state);
+        this.persist();
+      }
+      if (
+        G.TeamLife.enabled(this.state) &&
+        !G.DriverAgency.enabled(this.state)
+      ) {
+        G.DriverAgency.initialize(this.state);
         this.persist();
       }
       if (
@@ -308,6 +324,8 @@
       if (
         G.CommerceUI.action(this, name, data) ||
         G.TeamLifeUI.action(this, name, data) ||
+        G.DriverAgencyUI.action(this, name, data) ||
+        G.RaceCommandUI.action(this, name, data) ||
         G.AuctionUI.action(this, name, data) ||
         G.WorkbenchUI.action(this, name, data) ||
         G.DevelopmentUI.action(this, name, data) ||
@@ -518,6 +536,7 @@
         case "pause":
           this.paused = !this.paused;
           this.updatePause();
+          if (s.race) U.updateRace(s);
           break;
         case "camera": {
           const modes = ["broadcast", "follow", "overview"];
@@ -1000,6 +1019,8 @@
       const values = new FormData(form),
         s = this.state;
       if (
+        G.DriverAgencyUI.submit(this, form, values) ||
+        G.RaceCommandUI.submit(this, form, values) ||
         G.DevelopmentUI.submit(this, form, values) ||
         G.OperationsUI.submit(this, form, values) ||
         G.ProfessionalUI.submit(this, form, values) ||

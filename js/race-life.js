@@ -81,12 +81,17 @@
         const radio = a.radio,
           p = radio.pending;
         if (!p) continue;
+        const blocked =
+          r.time >= p.answerAt && G.RaceDirector?.blocked(r, a, p);
         if (a.dnf || a.finishTime !== null) {
           p.status = "unavailable";
           p.text =
             "La orden quedó sin aplicar: el coche ya no sigue en carrera.";
         } else if (r.time < p.answerAt) continue;
-        else if (
+        else if (blocked) {
+          p.status = blocked.status;
+          p.text = blocked.text;
+        } else if (
           p.mode === "attack" &&
           (R.underYellow(r, a) || r.safety.active)
         ) {
@@ -116,7 +121,9 @@
             defend:
               "Recibido. Protegeré el interior cuando el rival se acerque, dejando espacio.",
           }[p.mode];
-          if (a.professional) a.professional.manualUntil = r.time + 35;
+          if (r.directorVersion && p.plan)
+            p.text = G.RaceDirector.apply(r, a, p);
+          else if (a.professional) a.professional.manualUntil = r.time + 35;
         }
         p.answered = r.time;
         radio.last = p;

@@ -24,6 +24,7 @@
         G.RaceWeekend.daily(s);
         G.Contracts.daily(s);
         G.Drivers.daily(s);
+        G.DriverAgency?.daily(s);
         G.Research?.daily(s);
         G.Camps?.daily(s);
         G.TeamLife?.daily(s);

@@ -1,3 +1,15 @@
+# Validación 0.14.0
+
+**410 escenarios de motor y 22 recorridos de navegador aprobados.** Se comprobaron 130 archivos JS/CJS, 84 recursos locales y `git diff --check`. La batería general conserva las fixtures históricas; la suite nueva de dirección se volvió a ejecutar tras el último ajuste de valoración de promesas, sin fallos (17/17).
+
+`director.test.cjs` comprueba migración sin reiniciar dinero/contratos/RNG, personalidad, valoración conjunta de cláusulas, concesiones sin repetir ofertas, pausas por ofertas muy bajas, primas limitadas, aumentos por progresión/resultados, consecuencias del rechazo, vencimiento, renovación con opción firmada, radio con guardado exacto, banderas, duración, consumo/desgaste/errores, criterio al adelantar, carriles ocupados, prioridad manual y continuidad del estratega. Una promesa ya cumplida no se vuelve a usar como descuento de renovación.
+
+`browser-director.cjs` recorre una negociación y contraoferta reales, contratación, petición y negociación de aumento, renovación, transmisión a todo el ancho, modo ampliado, radio flotante sin duplicar formularios, edición sin aplicar, confirmación tras reanudar, recarga de orden pendiente y boxes. Revisa 1440/1024/390, conserva los botones de tiempos durante las actualizaciones y comprueba que la radio móvil cabe íntegra en la ventana. Se inspeccionaron capturas de carrera y contratación. Las otras 21 rutas cubren compatibilidad, taller, personal, entrenamiento, investigación, subastas, tutorial, comercio, atlas y puntos por liga. Las rutas que contrataban directamente aceptan ahora una contrapropuesta real si el piloto la presenta.
+
+La temporada de balance actual utiliza 4.200 US$ iniciales, negocia contratación y renovación, paga mantenimiento, gomas y nóminas, gestiona aumentos y completa 20 eventos sin añadir dinero ni atributos. Obtiene licencia, conserva parrillas callejeras y regionales, abre 2027 y paga entrenador, programa de seis días e investigación de ocho días. Termina activa con **7.976 US$**; no utiliza los ingresos de apoyo nuevos. Es un recorrido conservador de la semilla 1470, no una garantía para cualquier decisión o semilla. [Informe completo](BALANCE_0_14_1470.json).
+
+[Reglas y compatibilidad](DIRECCION_Y_CONTRATOS_0_14.md).
+
 # Validación 0.13.1
 
 **393/393 pruebas de motor aprobadas y siete recorridos de navegador relevantes completados.** Se verificaron 124 archivos JS/CJS, 80 recursos locales y `git diff --check`. No cambian precios, premios, física ni formato de guardado; la comprobación se centra en puntos, licencia, presentación y compatibilidad.

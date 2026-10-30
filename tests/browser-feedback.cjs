@@ -39,7 +39,8 @@ const { chromium } = require("playwright"),
         e = s.employees
           .filter((e) => e.role === "trainer")
           .sort((a, b) => a.ask - b.ask)[0];
-      RCS.Drivers.offer(s, d.id, d.ask, 12);
+      const agreement = RCS.Drivers.offer(s, d.id, d.ask, 12);
+      if (!agreement.accepted) RCS.Drivers.offer(s, d.id, agreement.salary, 12);
       RCS.Staff.offer(s, e.id, {
         salary: Math.ceil(e.ask * 1.15),
         months: 12,

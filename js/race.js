@@ -1174,7 +1174,9 @@
                   (r.dynamicsVersion
                     ? 0.35 - passingSkill * 0.25
                     : 0.7 - passingSkill * 0.5) ||
-                a.mode === "attack") &&
+                (r.directorVersion
+                  ? a.directive.plan.pace >= 70 && a.directive.plan.risk >= 40
+                  : a.mode === "attack")) &&
               r.time > 1.2;
             if (tryPass) {
               const passingWidth =
@@ -1214,7 +1216,13 @@
                 (a.width + this.dimensions(front.b).lateral) / 2 + 0.3
             ) {
               const desiredGap =
-                4.4 + a.speed * (a.mode === "attack" ? 0.1 : 0.16);
+                4.4 +
+                a.speed *
+                  (r.directorVersion
+                    ? 0.21 - a.directive.plan.risk * 0.0012
+                    : a.mode === "attack"
+                      ? 0.1
+                      : 0.16);
               if (front.gap < desiredGap)
                 target = Math.min(
                   target,

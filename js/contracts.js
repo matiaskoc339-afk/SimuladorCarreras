@@ -268,10 +268,15 @@
           "El presupuesto de esta marca ya está comprometido con otra compañía.";
       const d = s.drivers.find((d) => d.id === o.driverId);
       if (
-        !reason && G.Commerce?.enabled(s) && d && !d.companyId &&
-        (!G.Professionals.available(s, d) || company.level < G.Challenge.driverLevel(d))
+        !reason &&
+        G.Commerce?.enabled(s) &&
+        d &&
+        !d.companyId &&
+        (!G.Professionals.available(s, d) ||
+          company.level < G.Challenge.driverLevel(d))
       )
-        reason = "El piloto impuesto tiene el CV caducado, no está disponible médicamente o exige un nivel empresarial superior.";
+        reason =
+          "El piloto impuesto tiene el CV caducado, no está disponible médicamente o exige un nivel empresarial superior.";
       if (
         !reason &&
         o.driverId &&
@@ -714,7 +719,11 @@
           typeof t.renewalOption === "boolean",
         "Cláusulas de piloto inválidas.",
       );
-      const eventIds = this.future(s)
+      const eventIds = (
+        G.DriverAgency?.enabled(s)
+          ? s.season.events.filter((e) => e.status === "scheduled")
+          : this.future(s)
+      )
         .filter((e) => e.day < s.day + months * 30)
         .map((e) => e.id);
       G.assert(

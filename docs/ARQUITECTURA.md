@@ -271,3 +271,13 @@ La preferencia `rcs.tutorial.v1` se guarda fuera de las ranuras. Solo una fundac
 ## Atlas y calendario 0.12
 
 `world-circuits.js` conserva los índices anteriores, añade metadatos geográficos y registra 36 geometrías mediante el compilador de `Circuits`. `season-tour.js` usa grupos por país y bloques rotativos independientes por copa, sin consumir RNG. Registra la transición de calendarios antiguos y valida que la selección corresponda a la semilla/año guardados. La activación ocurre en una empresa nueva o al crear el siguiente calendario; nunca al cargar ni al mostrar el atlas. `createV110Game` conserva el constructor anterior. `ui-world-circuits.js` implementa agrupación geográfica, filtros, búsqueda y ubicación durante la carrera; `ui-competition.js` conserva las inscripciones y dibuja también los boxes de cada pista. Los mapas, escenas y repeticiones usan los mismos índices y puntos físicos que la carrera.
+
+## Dirección de carrera y representantes · 0.14
+
+`driver-agency.js` añade `s.driverAgency` (versión 1), perfiles de relación, revisiones salariales y conversaciones de renovación. La personalidad se deriva de la identidad y semilla sin consumir RNG. La valoración de contratos incorpora mercado, duración, rol, prima, participación, resultados y confianza; las firmas reutilizan el pago y propiedad del motor existente. El calendario procesa peticiones una vez por día y la liquidación de carreras registra resultados recientes.
+
+`race-director.js` añade `race.directorVersion = 1` únicamente a las nuevas carreras de empresas actualizadas. Cada participante conserva una directiva y cada orden su plan completo. La radio existente mantiene su RNG, latencia y estados de respuesta. Los parámetros se conectan con maniobras, distancia de seguimiento, velocidad, desgaste, esfuerzo mecánico, fatiga y consumo; nunca eliminan los límites físicos ni las banderas. El puente con `PitCrew.decide` conserva la decisión del estratega entre ciclos y respeta la prioridad manual.
+
+`ui-race-command.js` distribuye la transmisión a todo el ancho y permite mover el mismo muro a una radio flotante. `ui-driver-agency.js` amplía contratación, fichas, aumentos y renovación. No se duplican formularios ni IDs al abrir/cerrar la radio. La clasificación reutiliza sus botones para que actualizar los tiempos no pierda clics o foco. `css/race-director.css` contiene estas adaptaciones y el modo ampliado.
+
+Las empresas con gestión moderna se actualizan fuera de una actividad en vivo. Las carreras ya guardadas conservan sus reglas; las fixtures y constructores históricos se mantienen y las pruebas nuevas usan `engine({ director: true })`.

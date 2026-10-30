@@ -52,3 +52,7 @@ Completados: tutorial 0.10.1; rotación semanal de 64 referencias, 12 familias d
 ## Entrega 0.12.0
 
 36 geometrías nuevas, atlas por países con filtros/búsqueda, veinte sedes distintas al año sin repetir las del anterior, finales rotativas y transición que conserva el campeonato antiguo. Se mantienen los costes y el acceso progresivo por copas. [Reglas y validación](CIRCUITOS_MUNDO_0_12.md).
+
+## 0.14.0 · dirección y negociación
+
+Implementados: retransmisión panorámica/ampliada, radio flotante, órdenes combinadas con plazos, maniobras condicionadas por habilidades y espacio, contratos con cuatro perfiles de negociación, concesiones ante mejoras, valoración del conjunto de cláusulas, revisiones salariales por resultados/progresión y confianza que afecta a renovaciones. Se conservan las cláusulas y las opciones firmadas. Esto amplía la IA local de reglas del simulador; no implica que estén terminadas todas las mecánicas pendientes del proyecto.

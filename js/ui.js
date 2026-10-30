@@ -430,7 +430,7 @@
       const leader = sorted.find((x) => !x.dnf) || sorted[0];
       const focusedTimingId =
         document.activeElement?.closest?.(".timing-row")?.dataset.id;
-      standings.innerHTML = sorted
+      const timingMarkup = sorted
         .map((x, i) => {
           const gap = x.dnf
             ? "RET"
@@ -447,6 +447,25 @@
           return `<button class="timing-row ${x.companyId === s.playerId ? "is-player" : ""} ${focusId === x.carId ? "is-watched" : ""}" data-action="watch-driver" data-id="${x.carId}" aria-label="Seguir a ${this.escape(x.name)}"><b>${String(i + 1).padStart(2, "0")}</b><i style="background:${x.color}"></i><span>${this.escape(x.name)}<small>${this.escape(x.team)}</small></span><em>${gap}</em>${x.incident && x.incidentUntil > r.time ? '<span class="timing-incident" title="Incidente en pista">!</span>' : ""}</button>`;
         })
         .join("");
+      const timingTemplate = document.createElement("template");
+      timingTemplate.innerHTML = timingMarkup;
+      const existingRows = new Map(
+        [...standings.children].map((row) => [row.dataset.id, row]),
+      );
+      const wantedRows = [...timingTemplate.content.children];
+      wantedRows.forEach((next, index) => {
+        const current = existingRows.get(next.dataset.id);
+        const row = current || next;
+        if (current) {
+          row.className = next.className;
+          if (row.innerHTML !== next.innerHTML) row.innerHTML = next.innerHTML;
+          row.setAttribute("aria-label", next.getAttribute("aria-label"));
+          existingRows.delete(next.dataset.id);
+        }
+        if (standings.children[index] !== row)
+          standings.insertBefore(row, standings.children[index] || null);
+      });
+      for (const row of existingRows.values()) row.remove();
       if (focusedTimingId)
         standings
           .querySelector(`[data-id="${focusedTimingId}"]`)

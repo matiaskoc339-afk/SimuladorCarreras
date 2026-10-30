@@ -511,7 +511,8 @@
                 ? 0.7
                 : a.mode === "save"
                   ? 0.9
-                  : 1) -
+                  : 1) *
+            (r.directorVersion ? G.RaceDirector.fuel(a) : 1) -
           dt * 0.000035,
       );
       const temp =

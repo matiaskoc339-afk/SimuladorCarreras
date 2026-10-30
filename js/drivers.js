@@ -116,7 +116,18 @@
       const clauses =
         terms === undefined ? null : G.Contracts.driverTerms(s, months, terms);
       const min = G.Contracts.salaryMinimum(d, months, bonus, clauses);
-      if (salary < min) {
+      if (G.DriverAgency?.enabled(s)) {
+        const response = G.DriverAgency.respond(
+          s,
+          d,
+          salary,
+          months,
+          bonus,
+          clauses,
+          old,
+        );
+        if (!response.accepted) return response;
+      } else if (salary < min) {
         const attempts = (old?.attempts || 0) + 1;
         s.negotiations[id] = {
           salary: min,
@@ -153,6 +164,7 @@
         ...(clauses ? { clauses } : {}),
       };
       delete s.negotiations[id];
+      G.DriverAgency?.signed(s, d);
       d.memory.push({ day: s.day, event: "Contrato firmado" });
       G.news(
         s,

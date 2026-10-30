@@ -64,11 +64,21 @@
           left *
           0.00013 *
           (a.hp / 180) *
-          (a.mode === "save" ? 0.9 : a.mode === "attack" ? 1.2 : 1);
+          (r.directorVersion
+            ? G.RaceDirector.fuel(a)
+            : a.mode === "save"
+              ? 0.9
+              : a.mode === "attack"
+                ? 1.2
+                : 1);
       const layout = G.RaceWeekend.pitLayout(r.track),
         position = ((a.progress % t.length) + t.length) % t.length,
         toEntry = (layout.entry - position + t.length) % t.length,
-        lapFuel = t.length * 0.00014 * (a.hp / 180);
+        lapFuel =
+          t.length *
+          0.00014 *
+          (a.hp / 180) *
+          (r.directorVersion ? G.RaceDirector.fuel(a) : 1);
       const fuel =
           a.fuel < fuelRequired + 0.12 &&
           a.fuel < (toEntry / t.length + 1) * lapFuel + 0.16,
@@ -252,7 +262,11 @@
       }
       if (
         r.cup === "street" &&
-        a.mode === "attack" &&
+        (r.directorVersion
+          ? a.directive.plan.risk > 75 &&
+            a.directive.plan.pace > 70 &&
+            a.stats.discipline < 30
+          : a.mode === "attack") &&
         c.front &&
         c.front.gap > 3 &&
         c.front.gap < 13 &&

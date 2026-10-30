@@ -106,7 +106,8 @@ const { chromium } = require("playwright"),
         s = G.App.state,
         e = s.season.events.find((e) => e.cup === "pro" && e.final),
         d = G.Commerce.candidates(s).sort((a, b) => a.ask - b.ask)[0];
-      G.Drivers.offer(s, d.id, d.ask, 12);
+      const agreement = G.Drivers.offer(s, d.id, d.ask, 12);
+      if (!agreement.accepted) G.Drivers.offer(s, d.id, agreement.salary, 12);
       s.day = e.day;
       G.Auctions.daily(s);
       G.Commerce.refresh(s);

@@ -456,10 +456,22 @@
       );
     },
     wear(a, moved, dt, braking) {
-      const load = a.mode === "attack" ? 1.5 : a.mode === "save" ? 0.7 : 1;
+      const load = a.directive
+        ? 0.65 + a.directive.plan.pace * 0.007 + a.directive.plan.risk * 0.001
+        : a.mode === "attack"
+          ? 1.5
+          : a.mode === "save"
+            ? 0.7
+            : 1;
       const temp =
         82 +
-        (a.mode === "attack" ? 18 : a.mode === "save" ? 3 : 8) +
+        (a.directive
+          ? 3 + a.directive.plan.pace * 0.1
+          : a.mode === "attack"
+            ? 18
+            : a.mode === "save"
+              ? 3
+              : 8) +
         a.stress * 42 -
         (a.cooling - 1) * 12 +
         (100 - a.components.cooling) * 0.16 -

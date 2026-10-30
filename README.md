@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.13.1
+# Racing Company Simulator · 0.14.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,16 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.14.0 · dirige la carrera y negocia con tus pilotos
+
+- **Transmisión panorámica** con la pista a todo el ancho, más altura, vista ampliada y radio flotante para dar instrucciones mientras ves los coches.
+- **Órdenes combinadas**: ajusta ritmo, riesgo, cuidado de neumáticos, ahorro de combustible, maniobra y duración. Conservas los cinco planes rápidos. El piloto confirma antes de aplicar; las banderas, los huecos y el estado del coche siguen mandando.
+- **Decisiones por habilidades**: los pilotos valoran la diferencia de velocidad, frenada, adelantamiento, control, concentración, disciplina, experiencia, clima y recursos para atacar, esperar, defender o conservar.
+- **Contratos con personalidad**: pilotos ambiciosos, leales, pragmáticos y humildes valoran de forma distinta las condiciones. Las contrapropuestas se acercan cuando mejoras el acuerdo; repetir la misma oferta no consigue descuentos automáticos.
+- **Resultados y salario conectados**: progresar y ganar cobrando por debajo de su valor puede provocar una petición de aumento. Puedes negociar o rechazar, con efectos sobre moral, confianza y futuras renovaciones. Se respetan las opciones de renovación ya firmadas.
+
+[Reglas, compatibilidad y comprobaciones](docs/DIRECCION_Y_CONTRATOS_0_14.md).
 
 ## Novedades de la 0.13.1 · puntos de cada liga y licencia
 
