@@ -37,7 +37,7 @@
           if (el.dataset.go) this.go(el.dataset.go);
           else this.action(el.dataset.action, el.dataset);
         } catch (error) {
-          U.toast(error.message, true);
+          U.reject(error.message, el);
         }
       });
       document.addEventListener("input", (event) => {
@@ -51,7 +51,7 @@
         try {
           this.submit(event.target);
         } catch (error) {
-          U.toast(error.message, true);
+          U.reject(error.message, event.target);
         }
       });
       document.addEventListener("keydown", (e) => {
@@ -215,7 +215,8 @@
       }
       if (
         ["workshop", "market", "team", "trophies"].includes(view) &&
-        G.Coachwork.enabled(this.state) && !G.Commerce.enabled(this.state)
+        G.Coachwork.enabled(this.state) &&
+        !G.Commerce.enabled(this.state)
       ) {
         G.Commerce.initialize(this.state);
         this.persist();
@@ -272,6 +273,12 @@
         this.view = "competition";
         this.render();
         this.event(result.event.id);
+        document
+          .querySelector(".modal-content")
+          ?.insertAdjacentHTML(
+            "afterbegin",
+            `<div class="onboarding-note"><strong>El calendario se detuvo en una jornada de carrera.</strong>Disputa esta prueba o renuncia desde esta ventana para poder seguir avanzando los días.</div>${program?.calendarVersion && program.report ? `<details class="camp-outcome"><summary>${U.escape(G.DevelopmentUI.outcome(program))} · consultar informe</summary>${G.DevelopmentUI.report(this.state, program)}</details>` : ""}`,
+          );
       } else {
         this.render();
         if (program?.calendarVersion && program.report)
@@ -878,7 +885,7 @@
         Math.floor(n / 60) + ":" + (n % 60).toFixed(2).padStart(5, "0");
       U.modal(
         "Bandera a cuadros.",
-        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${G.CommerceUI.result(s,e)}${this.raceRecap(e)}${s.season.phase === "complete" ? `<p class="fine-print">Temporada completada. ${s.competitions ? "Las clasificaciones y campeones de las finales están registrados en tu archivo histórico." : "La clasificación y la prima final ya están registradas en tu archivo histórico."}</p>` : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
+        `<div class="results-hero">${U.logo(s)}<span class="result-position">${row ? (row.dnf ? "DNF" : row.position + "º") : "—"}</span><div><span class="eyebrow">${G.Data.tracks[e.track].name}</span><h3>${row ? U.escape(row.name) : "Tu equipo no participó"}</h3><p>${row ? `${row.points} puntos · Premio ${U.money(row.prize)} · Desgaste aplicado al coche.` : "Renuncia registrada. Los rivales han disputado la ronda."}</p></div></div><div class="results-table"><table><thead><tr><th>POS</th><th>PILOTO / COMPAÑÍA</th><th>TIEMPO</th><th>PTS</th><th>PREMIO</th></tr></thead><tbody>${e.results.map((r) => `<tr class="${r.companyId === s.playerId ? "player-row" : ""}"><td class="position">${r.position}</td><td>${U.escape(r.name)}<br><small class="muted">${U.escape(r.team)}</small></td><td>${r.dnf ? "Abandono" : time(r.time)}${r.dnfReason ? `<small class="muted" style="display:block">${U.escape(r.dnfReason)}</small>` : ""}${r.compound ? `<small class="muted" style="display:block">${G.RaceWeekend.compounds[r.compound].name} · ${r.pitStops} paradas${r.penalty ? " · sanción " + r.penalty + " s" : ""}</small>` : ""}</td><td class="gold">${r.points}</td><td>${U.money(r.prize)}</td></tr>`).join("")}</tbody></table></div>${G.CommerceUI.result(s, e)}${this.raceRecap(e)}${s.season.phase === "complete" ? `<p class="fine-print">Temporada completada. ${s.competitions ? "Las clasificaciones y campeones de las finales están registrados en tu archivo histórico." : "La clasificación y la prima final ya están registradas en tu archivo histórico."}</p>` : ""}<div class="modal-actions"><button class="primary" data-go="competition">${s.season.phase === "complete" ? "Ver clasificación final" : "Volver al paddock"} ${U.icon("arrow")}</button></div>`,
         true,
       );
       G.RaceUI.results(this, e);

@@ -399,7 +399,7 @@
         plan = G.Staff.plan(s, s.playerId, "install", q.def.days);
       G.assert(
         G.player(s).balance >= total,
-        "No tienes fondos para la pieza y su mano de obra.",
+        G.Feedback.funds(s, total, "la pieza y su mano de obra"),
       );
       return {
         ...q,

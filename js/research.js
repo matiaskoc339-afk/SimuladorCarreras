@@ -199,11 +199,14 @@
       );
       G.assert(
         node.requires.every((id) => s.research.completed[id]),
-        "Investiga primero las mejoras anteriores de esta rama.",
+        `Investiga primero las mejoras anteriores de esta rama: ${node.requires
+          .filter((id) => !s.research.completed[id])
+          .map((id) => this.nodes.find((n) => n.id === id).name)
+          .join(", ")}.`,
       );
       G.assert(
         p.level >= node.level,
-        `Este proyecto requiere un investigador de nivel ${node.level}.`,
+        `Este proyecto requiere un investigador de nivel ${node.level}; ${e.name} es nivel ${p.level}. Déjalo ganar experiencia con proyectos anteriores o contrata uno de nivel suficiente.`,
       );
       G.assert(
         !P.resting(s, e.id) &&
@@ -212,7 +215,7 @@
             (resume &&
               project?.scientistId === eid &&
               project.status === "paused")),
-        "El investigador debe estar disponible, descansado y al día de sueldo.",
+        `El investigador debe estar disponible y descansado. ${G.Feedback.employee(s, e).join(" ")}`,
       );
       G.assert(
         resume
@@ -234,7 +237,7 @@
         cost = resume ? 0 : Math.round(node.cost * (1 - discount));
       G.assert(
         e.contract.end > s.day + days,
-        "Renueva el contrato del investigador para cubrir el plazo previsto.",
+        `Renueva el contrato del investigador para cubrir el plazo previsto: se necesitan ${days} días, hasta el ${G.Feedback.date(s.day + days)}, y su contrato vence el ${G.Feedback.date(e.contract.end)}. Gestiona la renovación desde Personal.`,
       );
       return {
         node,
@@ -348,8 +351,12 @@
           p.level < node.level
         ) {
           j.status = "paused";
-          j.blockedReason =
-            "Investigador ausente, contrato vencido, nómina pendiente o descanso. Reasigna y reanuda; no vuelves a pagar materiales.";
+          j.blockedReason = !e
+            ? "El investigador ya no tiene contrato con tu compañía. Contrata otro desde Personal y reasigna el proyecto; conserva el progreso y los materiales pagados."
+            : p.level < node.level
+              ? `El proyecto exige nivel ${node.level} y el investigador es nivel ${p.level}. Asigna uno de nivel suficiente y reanuda; conserva el progreso.`
+              : G.Feedback.employee(s, e).join(" ") +
+                " Después pulsa Reasignar y reanudar; no vuelves a pagar materiales.";
           G.news(
             s,
             "Compañía",

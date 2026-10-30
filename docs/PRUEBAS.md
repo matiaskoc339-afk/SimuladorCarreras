@@ -1,3 +1,13 @@
+# Validación 0.12.1
+
+**374/374 pruebas de motor y 19 recorridos de navegador aprobados.** Se verificaron sintaxis de 115 archivos JS/CJS, presencia de 75 recursos locales y `git diff --check`. La ruta financiera de veinte eventos abre 2027, paga programa e investigación y conserva **6562 US$**, igual que antes de la corrección, sin financiación ni estadísticas artificiales.
+
+Ocho escenarios nuevos en `feedback.test.cjs` cubren tres programas que antes fallaban por temperatura al tercer día y ahora completan sus doce días previstos, bloqueos múltiples con valores/fechas sin cobros ni RNG, fondos y contratos, impago previo/posterior, avería real de neumáticos, lesión temprana y equivalencia de guardado/avance agrupado. La fixture auténtica del programa 0.8 permanece intacta: la comparación exceptúa solo integración térmica/desgaste y prestaciones derivadas, manteniendo fechas, caja, informe y el resto del estado exactos.
+
+`browser-feedback.cjs` verifica con controles reales reserva y confirmación, dos jornadas/recarga/doce jornadas completas, repetición bloqueada con la causa concreta, piloto lesionado visible, entrenador descansando, aviso persistente/cierre, explicación accesible de contratación e inscripción que se habilita al corregir el coche y vuelve a bloquearse por dinero. No aparecen errores de página ni desbordamiento en 1440/390; las regresiones históricas mantienen sus tamaños adicionales. Se inspeccionaron las capturas del campus y los avisos en escritorio/móvil.
+
+La batería completa incluye las 18 rutas anteriores. Tras el ajuste final del texto de gastos también se repitieron los ocho escenarios de avisos. [Reglas y compatibilidad](AVISOS_ENTRENAMIENTO_0_12_1.md).
+
 # Validación 0.12.0
 
 **366/366 pruebas de motor y 18 recorridos de navegador aprobados.** Sintaxis de 112 archivos JS/CJS y presencia de 73 recursos locales verificadas. Se completó la batería anterior y once escenarios de atlas/rotación; se repitieron estos últimos tras reforzar la exclusión de las sedes de una empresa antigua en su primera temporada nueva.

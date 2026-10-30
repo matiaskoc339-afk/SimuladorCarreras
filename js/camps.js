@@ -46,11 +46,15 @@
       G.assert(
         q.driver.contract.end > s.day + days &&
           q.coach.contract.end > s.day + days,
-        "Los contratos del piloto y entrenador deben cubrir todos los días previstos del programa.",
+        `Los contratos del piloto y entrenador deben cubrir todos los días previstos del programa (${days} días, hasta el ${G.Feedback.date(s.day + days)}). ${q.driver.contract.end <= s.day + days ? `Renueva a ${q.driver.name}: vence el ${G.Feedback.date(q.driver.contract.end)}. ` : ""}${q.coach.contract.end <= s.day + days ? `Renueva a ${q.coach.name}: vence el ${G.Feedback.date(q.coach.contract.end)}.` : ""}`,
       );
       G.assert(
         G.player(s).balance >= cost,
-        "No hay fondos para reservar el programa completo.",
+        G.Feedback.funds(
+          s,
+          cost,
+          "reservar el programa completo (sueldos aparte)",
+        ),
       );
       const stressPerLap = q.stressPerLap * (1 - R.effect(s, "trainingStress"));
       let stress = P.care(s, q.driver.id).stress,
@@ -146,8 +150,34 @@
         car.repair ||
         !P.fit(s, d.id)
       ) {
-        j.stopReason =
-          "Programa interrumpido: contrato, disponibilidad o salud del equipo.";
+        const reasons = [];
+        if (!d?.contract || d.companyId !== s.playerId)
+          reasons.push(
+            "El piloto ya no tiene contrato con tu empresa. Contrata o renueva a un piloto antes de reservar otro programa.",
+          );
+        if (!e?.contract || e.companyId !== s.playerId)
+          reasons.push(
+            "El entrenador ya no tiene contrato con tu empresa. Contrata otro desde Personal.",
+          );
+        else if (e.contract.arrears)
+          reasons.push(
+            `${e.name} tiene ${G.Feedback.money(e.contract.arrears)} de sueldo vencido. Recupera saldo para liquidar la nómina al avanzar el calendario.`,
+          );
+        if (!car || car.companyId !== s.playerId)
+          reasons.push(
+            "El coche ya no pertenece a tu empresa. Selecciona otro coche propio.",
+          );
+        else if (car.repair)
+          reasons.push(
+            `El coche está en el taller hasta el ${G.Feedback.date(car.repair.end)}. Espera la entrega antes de entrenar.`,
+          );
+        if (d && !P.fit(s, d.id))
+          reasons.push(
+            P.care(s, d.id).retired
+              ? "El piloto se ha retirado por un accidente grave. Necesitas otro piloto."
+              : `El piloto está lesionado hasta el ${G.Feedback.date(care.injuryUntil)}. Espera su recuperación o consulta Operaciones y salud.`,
+          );
+        j.stopReason = "Programa interrumpido. " + reasons.join(" ");
         return this.finish(s, "cancelled");
       }
       j.daysWorked++;
@@ -176,7 +206,13 @@
             (1 - R.effect(s, "tireWear")),
       );
       a.components.tires = a.tires;
-      G.Workshop.wear(a, distance, seconds, 0.25);
+      // A daily block can represent many minutes. The thermal integrator used by
+      // race ticks needs small steps; a single giant tick produced false engine failures.
+      for (let elapsed = 0; elapsed < seconds; ) {
+        const dt = Math.min(1, seconds - elapsed);
+        G.Workshop.wear(a, (distance * dt) / seconds, dt, 0.25);
+        elapsed += dt;
+      }
       G.Performance.refresh(a);
       while (j.completed < Math.floor(target + 1e-8)) {
         j.completed++;
@@ -202,6 +238,9 @@
         a.dnf = true;
         a.headingSlip = 0.7;
         a.lateral = 4;
+        j.stopReason = severe
+          ? "Programa interrumpido por accidente grave: el piloto no puede continuar su carrera deportiva. Contrata otro piloto."
+          : `Programa interrumpido por una lesión: necesita ${j.recoveryDays} días de recuperación, hasta el ${G.Feedback.date(s.day + j.recoveryDays)}. Espera su recuperación o consulta Operaciones y salud antes de volver a entrenarlo.`;
         return this.finish(s, "completed");
       }
       if (
@@ -214,6 +253,17 @@
       ) {
         j.incident = "mechanical";
         a.dnf = true;
+        const failed = ["engine", "transmission", "cooling"]
+          .filter((k) => a.components[k] < 20)
+          .map(
+            (k) =>
+              `${G.Parts.components[k]} al ${a.components[k].toFixed(1)} % (mínimo de seguridad 20 %)`,
+          );
+        if (a.tires <= 5)
+          failed.push(
+            `neumáticos al ${a.tires.toFixed(1)} % (mínimo de seguridad 5 %)`,
+          );
+        j.stopReason = `Programa interrumpido por avería: ${failed.join("; ")}. Repara el coche o cambia las gomas desde Taller antes de reservar otro programa. Solo se ha trabajado la parte indicada en el informe.`;
         return this.finish(s, "completed");
       }
       if (j.daysWorked >= j.days) return this.finish(s, "completed");
@@ -307,7 +357,11 @@
           (status === "cancelled"
             ? "Interrumpido por el jugador."
             : j.incident
-              ? "Programa terminado por incidente."
+              ? j.incident === "mechanical"
+                ? "Programa interrumpido por avería. Consulta el estado de los componentes y neumáticos en Taller y repáralos antes de volver a entrenar."
+                : j.incident === "injury"
+                  ? `Programa interrumpido por lesión. Recuperación prevista hasta el ${G.Feedback.date(care.injuryUntil)}. Consulta Operaciones y salud.`
+                  : "Programa interrumpido por accidente grave. El piloto se ha retirado; necesitas contratar otro."
               : "Objetivo del programa completado."),
         cost: j.cost,
       };
@@ -438,7 +492,8 @@
   const depart = S.depart;
   S.depart = function (s, e, ...args) {
     if (T.active(s)?.calendarVersion && T.active(s).coachId === e.id) {
-      T.active(s).stopReason = "El entrenador deja la plantilla.";
+      T.active(s).stopReason =
+        "El entrenador deja la plantilla. El programa queda interrumpido; contrata otro entrenador desde Personal antes de reservar uno nuevo. El informe conserva solo el trabajo realizado.";
       C.finish(s, "cancelled");
     }
     if (

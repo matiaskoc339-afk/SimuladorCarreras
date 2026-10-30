@@ -16,6 +16,46 @@
           (1.5 - control / 200)
       );
     },
+    blockers(s, options = {}) {
+      const F = G.Feedback,
+        reasons = [],
+        active = this.active(s);
+      if (s.race)
+        reasons.push(
+          "Hay una carrera en curso. Termínala antes de iniciar otro entrenamiento.",
+        );
+      if (active)
+        reasons.push(
+          `Ya hay un entrenamiento en curso${active.end ? ` hasta el ${F.date(active.end)}` : ""}. Espera a que termine o interrúmpelo desde Campus de pilotos.`,
+        );
+      const driver = G.ownedDrivers(s).find((d) => d.id === options.driverId),
+        coach = S.owned(s).find(
+          (e) => e.id === options.coachId && e.role === "trainer",
+        ),
+        car = G.ownedCars(s).find((c) => c.id === options.carId);
+      if (!driver?.contract)
+        reasons.push(
+          "Selecciona un piloto contratado. Si no tienes ninguno, contrátalo desde Pilotos.",
+        );
+      else {
+        const care = P.care(s, driver.id);
+        if (care?.retired)
+          reasons.push(
+            `${driver.name} se ha retirado por un accidente grave y no puede volver a entrenar. Selecciona o contrata otro piloto.`,
+          );
+        else if (care?.injuryUntil > s.day)
+          reasons.push(
+            `${driver.name} está lesionado hasta el ${F.date(care.injuryUntil)} (${care.injuryUntil - s.day} días restantes). Espera su recuperación o consulta Operaciones y salud.`,
+          );
+      }
+      if (!coach)
+        reasons.push(
+          "Selecciona un entrenador contratado desde Personal. Un mecánico u otro especialista no sustituye al entrenador.",
+        );
+      else reasons.push(...F.employee(s, coach));
+      reasons.push(...F.car(s, car));
+      return reasons;
+    },
     quote(s, options) {
       const driver = s.drivers.find(
           (d) => d.id === options.driverId && d.companyId === s.playerId,
@@ -27,26 +67,11 @@
           (c) => c.id === options.carId && c.companyId === s.playerId,
         );
       G.ensurePlayable(s);
-      G.assert(
-        !s.race && !this.active(s),
-        "Termina la carrera o el entrenamiento en curso.",
-      );
-      G.assert(
-        driver &&
-          P.fit(s, driver.id) &&
-          driver.contract &&
-          coach &&
-          !P.resting(s, coach.id) &&
-          !S.busy(s, coach.id) &&
-          car &&
-          !car.repair &&
-          !G.Market.listed(s, car.id) &&
-          G.Workshop.ready(car),
-        "Necesitas un piloto apto, un entrenador disponible y un coche operativo propios.",
-      );
+      const blockers = this.blockers(s, options);
+      G.assert(!blockers.length, blockers.join("\n"));
       G.assert(
         coach.contract.end >= s.day + 1 && driver.contract.end >= s.day + 1,
-        "Los contratos deben cubrir la jornada de entrenamiento.",
+        `Los contratos deben cubrir la jornada de entrenamiento. Renueva desde Pilotos o Personal; piloto hasta ${G.Feedback.date(driver.contract.end)}, entrenador hasta ${G.Feedback.date(coach.contract.end)}.`,
       );
       const laps = Number(options.laps),
         intensity = options.intensity || "normal",
@@ -55,15 +80,15 @@
         [3, 5, 10, 20].includes(laps) &&
           ["easy", "normal", "hard"].includes(intensity) &&
           ["pace", "brakes", "control", "consistency"].includes(focus),
-        "Plan de entrenamiento inválido.",
+        "Plan de entrenamiento inválido. Elige 3, 5, 10 o 20 vueltas, una intensidad y un objetivo del formulario.",
       );
       G.assert(
         !G.nextEvent(s) || G.nextEvent(s).day > s.day,
-        "Resuelve la carrera de hoy antes de entrenar.",
+        "Resuelve la carrera de hoy antes de entrenar. Abre Competición para disputarla o renunciar a esa prueba; después podrás reservar el programa.",
       );
       G.assert(
         G.player(s).balance >= 80,
-        "No hay fondos para los $80 de uso de pista y consumibles.",
+        G.Feedback.funds(s, 80, "el uso de pista y consumibles"),
       );
       const level = P.profile(s, coach.id).level,
         ability = Math.max(

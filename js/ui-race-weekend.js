@@ -95,9 +95,32 @@
             msg.textContent += ` Referencia en seco y ritmo normal: unas ${laps} vueltas hasta el 22 % de estado. La prueba dura ${G.Data.tracks[e.track].laps} vueltas. Ataque, lluvia sobre seco, fatiga y derrapes acortan el stint; conservar prolonga la duración.`;
           }
           submit.textContent = "Confirmar inscripción · $" + q.total;
-          submit.disabled = G.player(s).balance < q.total;
+          const lacksFunds = G.player(s).balance < q.total;
+          form.dataset.strategyBlocked = String(lacksFunds);
+          if (lacksFunds)
+            msg.textContent +=
+              " " +
+              G.Feedback.funds(
+                s,
+                q.total,
+                "la inscripción, transporte y neumáticos",
+              );
+          const technical = G.Competition.enabled(s)
+            ? G.Competition.technical(
+                s,
+                e,
+                s.cars.find((c) => c.id === form.elements.car.value),
+                s.drivers.find((d) => d.id === form.elements.driver.value),
+              )
+            : "";
+          submit.disabled = lacksFunds || !!technical;
+          submit.setAttribute(
+            "aria-describedby",
+            "entry-technical entry-tyre-quote",
+          );
         } catch (err) {
           msg.textContent = err.message;
+          form.dataset.strategyBlocked = "true";
           submit.disabled = true;
         }
       };

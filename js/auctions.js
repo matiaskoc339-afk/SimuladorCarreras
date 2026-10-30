@@ -1182,7 +1182,7 @@
       !held ||
         amount >= 0 ||
         s.companies.find((c) => c.id === id).balance + amount >= held,
-      "Ese dinero respalda tu puja vinculante en la subasta.",
+      `Ese dinero respalda tu puja vinculante en la subasta: ${G.Feedback.money(held)} están reservados y quedan ${G.Feedback.money(Math.max(0, (s.companies.find((c) => c.id === id)?.balance || 0) - held))} libres para otros gastos. Espera a que otro postor supere tu oferta o a que se adjudique el lote; retirarte no cancela una puja vigente.`,
     );
     return transact.call(this, s, id, amount, ...args);
   };

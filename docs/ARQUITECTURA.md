@@ -1,5 +1,9 @@
 # Arquitectura de Racing Company Simulator
 
+## Avisos y previsiones en 0.12.1
+
+`feedback.js` comparte textos de importes, fechas, disponibilidad y contratación entre motor y vistas. `Practice.blockers` y la cotización del programa alimentan tanto la validación real como la lista visible del campus; consultar una previsión no gasta ni modifica el guardado. `UI.blocked`/`decorateBlocked` enlazan controles inhabilitados a su explicación; `UI.reject` conserva los datos y añade el error al formulario, y los avisos de rechazo requieren cierre explícito. `Camps.daily` integra el desgaste térmico en pasos de un segundo como máximo y los informes separan finalización e interrupción, manteniendo el esquema de guardado anterior. [Detalle y compatibilidad](AVISOS_ENTRENAMIENTO_0_12_1.md).
+
 ## Un mundo, un estado
 
 `RCS.createGame(nombre, logo, semilla)` crea el estado versionado. Las entidades tienen identificadores únicos dentro de la partida, generados con un contador persistente. Las relaciones usan esos identificadores, nunca índices de pantalla. Al cargar no se regenera ninguna entidad. La partida usa fechas UTC para que el calendario no dependa de la zona horaria del ordenador.

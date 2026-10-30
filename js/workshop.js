@@ -158,7 +158,7 @@
       );
       G.assert(
         this.occupied(s, companyId) < c.sparesCapacity,
-        "El almacén de repuestos está lleno.",
+        `El almacén de repuestos está lleno (${this.occupied(s, companyId)}/${c.sparesCapacity}). Vende una pieza libre, monta una de tu inventario o amplía el almacén desde Instalaciones.`,
       );
       const cost = Math.round(
         (G.Parts.definition(part.definitionId).price * part.condition) / 100,
@@ -207,7 +207,7 @@
     available(s, car, companyId = s.playerId) {
       G.assert(
         G.Practice.active(s)?.carId !== car?.id,
-        "El coche está entrenando en pista.",
+        `El coche está entrenando en pista${G.Practice.active(s)?.end ? ` hasta el ${G.Feedback.date(G.Practice.active(s).end)}` : ""}. Espera a que termine o interrumpe el programa desde Campus de pilotos antes de modificarlo.`,
       );
       const c = s.companies.find((c) => c.id === companyId);
       G.assert(
@@ -215,13 +215,20 @@
         "El vehículo no pertenece a una compañía activa.",
       );
       G.assert(
-        !s.race && !G.Market.listed(s, car.id),
-        "Termina la carrera o retira el anuncio de venta.",
+        !s.race,
+        "Termina la carrera en curso antes de utilizar el taller.",
       );
       G.assert(
-        !car.repair &&
-          G.Facilities.workload(s, companyId) < G.Facilities.bays(s, companyId),
-        "El taller está ocupado.",
+        !G.Market.listed(s, car.id),
+        "El coche tiene un anuncio de venta activo. Retira el anuncio desde Mercado antes de modificarlo.",
+      );
+      G.assert(
+        !car.repair,
+        `El coche está ocupado en el taller hasta el ${G.Feedback.date(car.repair?.end ?? s.day)}. Espera a que se entregue ese trabajo antes de encargar otro.`,
+      );
+      G.assert(
+        G.Facilities.workload(s, companyId) < G.Facilities.bays(s, companyId),
+        `El taller está ocupado: ${G.Facilities.workload(s, companyId)}/${G.Facilities.bays(s, companyId)} bahías en uso. Espera la entrega de un trabajo o amplía el taller desde Instalaciones.`,
       );
     },
     install(s, carId, partId, companyId = s.playerId) {

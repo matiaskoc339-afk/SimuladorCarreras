@@ -19,14 +19,26 @@
             (p, i) => (i ? "L" : "M") + p.x.toFixed(1) + " " + p.y.toFixed(1),
           )
           .join("") + "Z";
-    const pit = G.RaceWeekend.pitLayout(index), scale = G.Race.worldScale(index),
-      pitPoints = Array.from({length:65},(_,i) => {
-        const distance = pit.entry + (pit.exit-pit.entry)*i/64;
-        const p = G.Racecraft.metric(index,distance,G.RaceWeekend.pitLateral(index,distance));
-        return `${i ? "L" : "M"}${(p.x/scale).toFixed(1)} ${(p.y/scale).toFixed(1)}`;
-      }).join(""), boxes = Array.from({length:9},(_,i) => {
-        const distance=pit.entry+(pit.exit-pit.entry)*(.32+i/9*.36), p=G.Racecraft.metric(index,distance,G.RaceWeekend.pitLateral(index,distance)+pit.side*5);
-        return `<rect x="${p.x/scale-5}" y="${p.y/scale-4}" width="10" height="8" fill="#b47c43"/>`;
+    const pit = G.RaceWeekend.pitLayout(index),
+      scale = G.Race.worldScale(index),
+      pitPoints = Array.from({ length: 65 }, (_, i) => {
+        const distance = pit.entry + ((pit.exit - pit.entry) * i) / 64;
+        const p = G.Racecraft.metric(
+          index,
+          distance,
+          G.RaceWeekend.pitLateral(index, distance),
+        );
+        return `${i ? "L" : "M"}${(p.x / scale).toFixed(1)} ${(p.y / scale).toFixed(1)}`;
+      }).join(""),
+      boxes = Array.from({ length: 9 }, (_, i) => {
+        const distance =
+            pit.entry + (pit.exit - pit.entry) * (0.32 + (i / 9) * 0.36),
+          p = G.Racecraft.metric(
+            index,
+            distance,
+            G.RaceWeekend.pitLateral(index, distance) + pit.side * 5,
+          );
+        return `<rect x="${p.x / scale - 5}" y="${p.y / scale - 4}" width="10" height="8" fill="#b47c43"/>`;
       }).join("");
     return `<svg class="circuit-map" viewBox="${x} ${y} ${w} ${h}" role="img" aria-label="Trazado y boxes de ${U.escape(G.Data.tracks[index].name)}"><path d="${d}" fill="none" stroke="#546c60" stroke-width="26" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#e4e7d7" stroke-width="9"/><path data-pit-route="true" d="${pitPoints}" fill="none" stroke="#b47c43" stroke-width="4"/>${boxes}<circle cx="${scaled[0].x}" cy="${scaled[0].y}" r="16" fill="#ee6246"/></svg>`;
   };
@@ -35,7 +47,7 @@
     progress(s) {
       const points = s.competitions.streetPoints[s.playerId] || 0,
         license = s.competitions.licenses[s.playerId];
-      return `<section class="career-path"><div><span class="eyebrow">01 · APRENDE EN LA CALLE</span><b>${points} puntos acumulados</b><p>Inscripción desde $220. Los daños persisten y se pagan.</p></div><div class="${license ? "ready" : ""}"><span class="eyebrow">02 · ACCESO PROFESIONAL</span><b>${license ? "Licencia obtenida" : `${Math.min(24, points)} / 24 puntos · licencia $900`}</b><p>Valoración de piloto 22, coche 70 %, frenos 75 %, suspensión 70 % y gomas 35 %.</p>${!license ? U.button("Tramitar licencia", "competition-license", "secondary", points < 24 ? "disabled" : "") : ""}</div><div><span class="eyebrow">03 · GANA TU PLAZA EN LA FINAL</span><b>Calle: ${C.score(s, s.playerId, "street", true)} / 12 · Regional: ${C.score(s, s.playerId, "pro", true)} / 18 · Nacional: ${C.score(s, s.playerId, "national", true)} / 18</b><p>Los puntos de cada liga se separan. La clasificación para finales se reinicia cada temporada.</p></div></section>`;
+      return `<section class="career-path"><div><span class="eyebrow">01 · APRENDE EN LA CALLE</span><b>${points} puntos acumulados</b><p>Inscripción desde $220. Los daños persisten y se pagan.</p></div><div class="${license ? "ready" : ""}"><span class="eyebrow">02 · ACCESO PROFESIONAL</span><b>${license ? "Licencia obtenida" : `${Math.min(24, points)} / 24 puntos · licencia $900`}</b><p>Valoración de piloto 22, coche 70 %, frenos 75 %, suspensión 70 % y gomas 35 %.</p>${!license ? U.button("Tramitar licencia", "competition-license", "secondary", U.blocked(points < 24 ? `Necesitas 24 puntos callejeros acumulados: tienes ${points} y te faltan ${24 - points}. Gana puntos en las pruebas callejeras.` : G.player(s).balance < 900 ? G.Feedback.funds(s, 900, "la licencia profesional") : "")) : ""}</div><div><span class="eyebrow">03 · GANA TU PLAZA EN LA FINAL</span><b>Calle: ${C.score(s, s.playerId, "street", true)} / 12 · Regional: ${C.score(s, s.playerId, "pro", true)} / 18 · Nacional: ${C.score(s, s.playerId, "national", true)} / 18</b><p>Los puntos de cada liga se separan. La clasificación para finales se reinicia cada temporada.</p></div></section>`;
     },
     event(A, id) {
       const s = A.state,
@@ -57,7 +69,7 @@
       else if (!drivers.length || !cars.length)
         content = `<p>Necesitas un piloto contratado y un coche propio operativo.</p><button class="primary" data-go="${drivers.length ? "garage" : "team"}">${drivers.length ? "Consultar garaje" : "Buscar piloto"}</button>`;
       else
-        content = `<form id="entry-form" data-id="${id}"><div class="form-row"><label class="form-field"><span>Piloto</span><select name="driver">${drivers.map((d) => `<option value="${d.id}">${U.escape(d.name)} · valoración ${G.Drivers.rating(d)} · contrato hasta ${U.date(d.contract.end, true)}</option>`).join("")}</select></label><label class="form-field"><span>Coche</span><select name="car">${cars.map((c) => `<option value="${c.id}">${U.escape(c.brand + " " + c.model)} · ${Math.round(c.hp)} CV · ${Math.round(c.condition)} %</option>`).join("")}</select></label></div><p id="entry-technical" class="fine-print"></p><div class="modal-actions">${U.button("Cancelar", "close", "secondary")}<button class="primary" type="submit">Confirmar inscripción</button></div></form>`;
+        content = `<form id="entry-form" data-id="${id}"><div class="form-row"><label class="form-field"><span>Piloto</span><select name="driver">${drivers.map((d) => `<option value="${d.id}">${U.escape(d.name)} · valoración ${G.Drivers.rating(d)} · contrato hasta ${U.date(d.contract.end, true)}</option>`).join("")}</select></label><label class="form-field"><span>Coche</span><select name="car">${cars.map((c) => `<option value="${c.id}">${U.escape(c.brand + " " + c.model)} · ${Math.round(c.hp)} CV · ${Math.round(c.condition)} %</option>`).join("")}</select></label></div><p id="entry-technical" class="fine-print" role="status" aria-live="polite"></p><div class="modal-actions">${U.button("Cancelar", "close", "secondary")}<button class="primary" type="submit">Confirmar inscripción</button></div></form>`;
       U.modal(
         U.escape(t.name),
         caption +
@@ -77,7 +89,12 @@
           document.getElementById("entry-technical").textContent =
             reason ||
             "Alineación conforme. Prepara las modificaciones antes de inscribirte: la inscripción fija coche y piloto. Las tasas no incluyen sueldos ni gomas de carrera.";
-          if (reason) form.querySelector('[type="submit"]').disabled = true;
+          const submit = form.querySelector('[type="submit"]');
+          submit.disabled = !!reason || form.dataset.strategyBlocked === "true";
+          submit.setAttribute(
+            "aria-describedby",
+            "entry-technical entry-tyre-quote",
+          );
         };
         form.addEventListener("change", check);
         check();
@@ -173,7 +190,8 @@
         "Gana tu sitio en la parrilla.",
         "Empieza en la calle, prepara el coche y el piloto, consigue la licencia y clasifica a las finales.",
       ) +
-      UI.progress(s) + G.WorldCircuitUI.notice(s) +
+      UI.progress(s) +
+      G.WorldCircuitUI.notice(s) +
       `<nav class="competition-tabs">${[
         ["street", "Liga callejera"],
         ["pro", "Copa regional"],

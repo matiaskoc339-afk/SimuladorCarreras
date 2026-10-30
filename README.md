@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.12.0
+# Racing Company Simulator · 0.12.1
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,14 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.12.1 · avisos que explican cómo continuar
+
+- Los rechazos permanecen visibles hasta cerrarlos y explican costes, saldo y diferencia, fechas de disponibilidad, requisitos y siguientes pasos. Las acciones bloqueadas de contratación, negociación e inscripción muestran su motivo junto al control.
+- El campus mantiene visibles a pilotos lesionados y especialistas ocupados, enumera lo que impide reservar y enlaza a contratos, descansos, salud y taller. Distingue programas completados e interrumpidos y compara días previstos con días realizados.
+- Corregida una integración térmica que aplicaba minutos de entrenamiento como un solo instante y provocaba averías falsas al tercer día. Se conserva el desgaste real y una lesión, avería o impago puede interrumpir el programa con un informe parcial claro.
+
+[Detalles y compatibilidad](docs/AVISOS_ENTRENAMIENTO_0_12_1.md).
 
 ## Novedades de la 0.12.0 · el mundo cambia cada temporada
 

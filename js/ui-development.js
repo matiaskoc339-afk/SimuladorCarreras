@@ -19,6 +19,38 @@
       tireWear: "Menos desgaste continuo",
     };
   const D = (G.DevelopmentUI = {
+    outcome(j) {
+      return j.incident === "mechanical"
+        ? "Interrumpido por avería"
+        : j.incident === "injury"
+          ? "Interrumpido por lesión"
+          : j.incident === "career-end"
+            ? "Interrumpido por accidente grave"
+            : j.status === "cancelled"
+              ? "Programa interrumpido"
+              : "Programa completado";
+    },
+    preview(s, form) {
+      if (!form || !R.enabled(s)) return;
+      const target = form.querySelector("#practice-risk"),
+        submit = form.querySelector('[type="submit"]');
+      if (!target || !submit) return;
+      form.querySelector(".action-error")?.remove();
+      try {
+        const q = T.quote(s, G.ProfessionalUI.options(form));
+        target.innerHTML = G.ProfessionalUI.risk(q);
+        target.classList.remove("practice-blocked");
+        submit.disabled = false;
+      } catch (error) {
+        target.innerHTML = `<strong>Antes de iniciar el entrenamiento:</strong><ul class="training-requirements">${error.message
+          .split("\n")
+          .map((reason) => `<li>${U.escape(reason)}</li>`)
+          .join("")}</ul>`;
+        target.classList.add("practice-blocked");
+        submit.disabled = true;
+      }
+      submit.setAttribute("aria-describedby", "practice-risk");
+    },
     action(A, name, data) {
       const s = A.state;
       if (name === "development-enable") {
@@ -95,7 +127,7 @@
         q = T.quote(A.state, options);
       A.confirm(
         "Reservar programa de pista",
-        `${q.driver.name} · ${q.coach.name} (nivel ${q.level}). ${q.laps} vueltas distribuidas en ${q.days} días, hasta ${U.date(q.end)}. Reserva: ${U.money(q.cost)}. Sueldos durante el programa: piloto ${U.money(q.pilotWages)}, entrenador ${U.money(q.coachWages)}, aparte del resto del equipo. Riesgo estimado de lesión ${q.incidentRisk.toFixed(2)} %. Fatiga final estimada ${Math.round(q.fatigueAfter)}/100, estrés ${Math.round(q.stressAfter)}/100. Intensidad alta con estrés excesivo puede empeorar la regularidad.`,
+        `${q.driver.name} · ${q.coach.name} (nivel ${q.level}). ${q.laps} vueltas distribuidas en ${q.days} días, hasta ${U.date(q.end)}. Reserva: ${U.money(q.cost)}. Sueldos durante el programa: piloto ${U.money(q.pilotWages)}, entrenador ${U.money(q.coachWages)}, aparte del resto del equipo. Riesgo estimado de lesión ${q.incidentRisk.toFixed(2)} %. Fatiga final estimada ${Math.round(q.fatigueAfter)}/100, estrés ${Math.round(q.stressAfter)}/100. Intensidad alta con estrés excesivo puede empeorar la regularidad. El plazo supone que no hay incidentes: una avería, lesión o impago puede interrumpirlo antes. En ese caso recibirás un informe parcial y la reserva no se devuelve.`,
         () => A.mutate(() => T.start(A.state, options), "practice"),
       );
       return true;
@@ -104,7 +136,7 @@
       const r = j.report,
         good = Object.entries(r.changes).filter(([, v]) => v > 1e-6),
         bad = Object.entries(r.changes).filter(([, v]) => v < -0.000001);
-      return `<section class="camp-report"><span class="eyebrow">${U.escape(s.drivers.find((d) => d.id === j.driverId).name)} · ${U.date(r.day)}</span><h3>${j.status === "cancelled" ? "Programa interrumpido" : "Programa finalizado"}</h3><p>${U.escape(r.learned)}</p><p>${j.daysWorked}/${j.days} jornadas · ${j.workLaps.toFixed(1)}/${j.laps} vueltas · reserva ${U.money(j.cost)}</p><div class="camp-report-columns"><div><h4>Qué mejoró</h4>${good.length ? good.map(([key, v]) => `<p><b>${U.escape(G.Drivers.labels[key])}</b><strong class="positive">${signed(v)}</strong></p>`).join("") : "<p>Sin mejora consolidada de atributos.</p>"}</div><div><h4>Qué empeoró o exige descanso</h4>${bad.map(([key, v]) => `<p><b>${U.escape(G.Drivers.labels[key])}</b><strong class="negative">${signed(v)}</strong></p>`).join("")}${r.fatigueChange > 0 ? `<p>Fatiga <strong>+${r.fatigueChange.toFixed(1)}</strong></p>` : ""}${r.stressChange > 0 ? `<p>Estrés <strong>+${r.stressChange.toFixed(1)}</strong></p>` : ""}<p>Estado de neumáticos <strong>${r.tireChange.toFixed(1)} puntos</strong></p>${!bad.length ? "<p>Sin pérdidas permanentes de habilidad.</p>" : ""}</div></div><p>${U.escape(r.reason)}</p>${j.incident === "injury" ? `<p class="negative">Lesión: ${j.recoveryDays} días de recuperación. Consulta Operaciones y salud.</p>` : j.incident === "career-end" ? '<p class="negative">Accidente grave: fin de la carrera deportiva.</p>' : ""}</section>`;
+      return `<section class="camp-report camp-outcome ${j.incident || j.status === "cancelled" ? "interrupted" : ""}"><span class="eyebrow">${U.escape(s.drivers.find((d) => d.id === j.driverId).name)} · ${U.date(r.day)}</span><h3>${D.outcome(j)}</h3><p>${U.escape(r.learned)}</p><p>Duración prevista: ${j.days} días, hasta el ${U.date(j.end)}. Duración real: ${j.daysWorked} días; ${j.workLaps.toFixed(1)}/${j.laps} vueltas. ${j.daysWorked < j.days ? `Quedaron ${j.days - j.daysWorked} días sin realizar; el programa no se completó.` : "Se realizaron todas las jornadas previstas."} Reserva ${U.money(j.cost)}; los días no realizados no generan aprendizaje y la reserva no se devuelve.</p><div class="camp-report-columns"><div><h4>Qué mejoró</h4>${good.length ? good.map(([key, v]) => `<p><b>${U.escape(G.Drivers.labels[key])}</b><strong class="positive">${signed(v)}</strong></p>`).join("") : "<p>Sin mejora consolidada de atributos.</p>"}</div><div><h4>Qué empeoró o exige descanso</h4>${bad.map(([key, v]) => `<p><b>${U.escape(G.Drivers.labels[key])}</b><strong class="negative">${signed(v)}</strong></p>`).join("")}${r.fatigueChange > 0 ? `<p>Fatiga <strong>+${r.fatigueChange.toFixed(1)}</strong></p>` : ""}${r.stressChange > 0 ? `<p>Estrés <strong>+${r.stressChange.toFixed(1)}</strong></p>` : ""}<p>Estado de neumáticos <strong>${r.tireChange.toFixed(1)} puntos</strong></p>${!bad.length ? "<p>Sin pérdidas permanentes de habilidad.</p>" : ""}</div></div><p>${U.escape(r.reason)}</p>${j.incident === "injury" ? `<p class="negative">Lesión: ${j.recoveryDays} días de recuperación. Consulta Operaciones y salud.</p>` : j.incident === "career-end" ? '<p class="negative">Accidente grave: fin de la carrera deportiva.</p>' : ""}</section>`;
     },
     frame(A, time, elapsed) {
       if (A.view !== "practice") return;
@@ -145,7 +177,7 @@
       const metrics = document.getElementById("practice-metrics");
       if (metrics)
         metrics.innerHTML = j
-          ? `<span>Jornadas <b>${j.daysWorked}/${j.days}</b></span><span>Vueltas acumuladas <b>${j.workLaps.toFixed(1)}/${j.laps}</b></span><span>Estrés <b>${Math.round(j.driverStress)}/100</b></span><span>Fatiga <b>${Math.round(j.driverFatigue)}/100</b></span><span>${j.status === "running" ? "Vista del programa · el progreso avanza por días" : "Programa finalizado"}</span>`
+          ? `<span>Jornadas <b>${j.daysWorked}/${j.days}</b></span><span>Vueltas acumuladas <b>${j.workLaps.toFixed(1)}/${j.laps}</b></span><span>Estrés <b>${Math.round(j.driverStress)}/100</b></span><span>Fatiga <b>${Math.round(j.driverFatigue)}/100</b></span><span>${j.status === "running" ? "Vista del programa · el progreso avanza por días" : D.outcome(j)}</span>`
           : "La pista espera un programa. Elige piloto, entrenador y coche.";
     },
   });
@@ -207,23 +239,23 @@
     const j =
         T.active(s) ||
         s.professional.practices.filter((j) => j.calendarVersion).at(-1),
-      drivers = G.ownedDrivers(s).filter((d) => P.fit(s, d.id)),
+      drivers = G.ownedDrivers(s),
       coaches = S.owned(s).filter((e) => e.role === "trainer"),
-      cars = G.ownedCars(s).filter((c) => !G.Market.listed(s, c.id));
+      cars = G.ownedCars(s);
     return (
       this.heading(
         "CAMPUS DE PILOTOS",
         "Entrena hoy. Consolida en los próximos días.",
         "Cada programa reserva piloto, entrenador y coche. Avanza el calendario para progresar; observar la pista no consume días ni concede mejoras.",
       ) +
-      `<div class="practice-layout"><section class="panel practice-track"><div class="panel-heading"><h2>Autódromo de la Vega · campus</h2><span class="eyebrow">${T.active(s) ? "PROGRAMA EN CURSO" : "PISTA DISPONIBLE"}</span></div><canvas id="practice-canvas" aria-label="Vista del piloto entrenando durante el programa por días"></canvas><div id="practice-metrics" class="practice-metrics"></div><div class="practice-controls">${["follow", "overview"].map((mode) => button(mode === "follow" ? "Seguir piloto" : "Ver circuito", "practice-camera", "secondary", `data-mode="${mode}"`)).join("")}</div></section><section class="panel padded practice-plan">${T.active(s) ? `<span class="eyebrow">PROGRAMA RESERVADO</span><h2>${this.escape(s.drivers.find((d) => d.id === j.driverId).name)}</h2><p>${j.daysWorked} de ${j.days} días · fecha prevista ${this.date(j.end)}</p><p>${this.escape(s.employees.find((e) => e.id === j.coachId).name)} · entrenador NV ${j.coachLevel}</p><p>${G.Drivers.labels[j.focus]} · ${j.laps} vueltas · reserva pagada ${this.money(j.cost)}</p><progress max="${j.days}" value="${j.daysWorked}"></progress><p>Los sueldos se pagan cada día. Puedes gestionar la empresa y competir con otra alineación mientras termina el programa.</p>${button("Avanzar un día de calendario", "camp-day", "primary wide")}${button("Interrumpir y recibir informe", "camp-stop", "text-button negative")}` : drivers.length && coaches.length && cars.length ? `<form id="practice-form"><label class="form-field"><span>Piloto</span><select name="driverId"><option value="">Selecciona piloto</option>${drivers.map((d) => `<option value="${d.id}">${this.escape(d.name)} · valoración ${G.Drivers.rating(d)} · estrés ${Math.round(P.care(s, d.id).stress)}</option>`).join("")}</select></label><label class="form-field"><span>Entrenador</span><select name="coachId"><option value="">Selecciona entrenador</option>${coaches.map((e) => `<option value="${e.id}">${this.escape(e.name)} · NV ${P.profile(s, e.id).level} · habilidad ${Math.round(e.skill)}</option>`).join("")}</select></label><label class="form-field"><span>Coche</span><select name="carId">${cars.map((c) => `<option value="${c.id}">${this.escape(c.brand + " " + c.model)} · ${Math.round(c.condition)} %</option>`).join("")}</select></label><div class="form-row"><label class="form-field"><span>Vueltas del programa</span><select name="laps">${[3, 5, 10, 20].map((n) => `<option value="${n}" ${n === 5 ? "selected" : ""}>${n}</option>`).join("")}</select></label><label class="form-field"><span>Intensidad</span><select name="intensity"><option value="easy">Suave</option><option value="normal" selected>Normal</option><option value="hard">Alta</option></select></label></div><label class="form-field"><span>Objetivo</span><select name="focus">${["control", "pace", "brakes", "consistency"].map((k) => `<option value="${k}">${G.Drivers.labels[k]}</option>`).join("")}</select></label><div id="practice-risk" class="onboarding-note">Selecciona piloto y entrenador para consultar días, coste y riesgos.</div><button class="primary wide" type="submit">Revisar programa por días</button></form>` : `<h2>Reúne al equipo.</h2><p>Necesitas un piloto contratado, un entrenador disponible y un coche operativo.</p><button class="secondary" data-go="staff">Contratar entrenador</button><button class="text-button" data-go="team">Consultar pilotos</button>`}</section></div>${j?.report ? `<section class="panel padded spaced">${D.report(s, j)}</section>` : ""}<section class="panel padded spaced"><h2>Informes de programas</h2>${
+      `<div class="practice-layout"><section class="panel practice-track"><div class="panel-heading"><h2>Autódromo de la Vega · campus</h2><span class="eyebrow">${T.active(s) ? "PROGRAMA EN CURSO" : "PISTA DISPONIBLE"}</span></div><canvas id="practice-canvas" aria-label="Vista del piloto entrenando durante el programa por días"></canvas><div id="practice-metrics" class="practice-metrics"></div><div class="practice-controls">${["follow", "overview"].map((mode) => button(mode === "follow" ? "Seguir piloto" : "Ver circuito", "practice-camera", "secondary", `data-mode="${mode}"`)).join("")}</div></section><section class="panel padded practice-plan">${T.active(s) ? `<span class="eyebrow">PROGRAMA RESERVADO</span><h2>${this.escape(s.drivers.find((d) => d.id === j.driverId).name)}</h2><p>${j.daysWorked} de ${j.days} días · fecha prevista ${this.date(j.end)}</p><p>${this.escape(s.employees.find((e) => e.id === j.coachId).name)} · entrenador NV ${j.coachLevel}</p><p>${G.Drivers.labels[j.focus]} · ${j.laps} vueltas · reserva pagada ${this.money(j.cost)}</p><progress max="${j.days}" value="${j.daysWorked}"></progress><p>Los sueldos se pagan cada día. Puedes gestionar la empresa y competir con otra alineación mientras termina el programa.</p>${button("Avanzar un día de calendario", "camp-day", "primary wide")}${button("Interrumpir y recibir informe", "camp-stop", "text-button negative")}` : `<form id="practice-form"><label class="form-field"><span>Piloto</span><select name="driverId"><option value="">Selecciona piloto</option>${drivers.map((d) => `<option value="${d.id}" ${j?.driverId === d.id ? "selected" : ""}>${this.escape(d.name)}${P.care(s, d.id)?.retired ? " · retirado" : !P.fit(s, d.id) ? " · lesionado hasta " + this.date(P.care(s, d.id).injuryUntil, true) : ""} · valoración ${G.Drivers.rating(d)} · estrés ${Math.round(P.care(s, d.id).stress)}</option>`).join("")}</select></label><label class="form-field"><span>Entrenador</span><select name="coachId"><option value="">Selecciona entrenador</option>${coaches.map((e) => `<option value="${e.id}" ${j?.coachId === e.id ? "selected" : ""}>${this.escape(e.name)}${P.resting(s, e.id) ? " · descansando" : S.busy(s, e.id) ? " · ocupado" : ""} · NV ${P.profile(s, e.id).level} · habilidad ${Math.round(e.skill)}</option>`).join("")}</select></label><label class="form-field"><span>Coche</span><select name="carId"><option value="">Selecciona coche</option>${cars.map((c) => `<option value="${c.id}" ${(j?.carId || cars[0]?.id) === c.id ? "selected" : ""}>${this.escape(c.brand + " " + c.model)}${c.repair ? " · en taller" : G.Market.listed(s, c.id) ? " · anunciado" : ""} · ${Math.round(c.condition)} %</option>`).join("")}</select></label><div class="form-row"><label class="form-field"><span>Vueltas del programa</span><select name="laps">${[3, 5, 10, 20].map((n) => `<option value="${n}" ${n === 5 ? "selected" : ""}>${n}</option>`).join("")}</select></label><label class="form-field"><span>Intensidad</span><select name="intensity"><option value="easy">Suave</option><option value="normal" selected>Normal</option><option value="hard">Alta</option></select></label></div><label class="form-field"><span>Objetivo</span><select name="focus">${["control", "pace", "brakes", "consistency"].map((k) => `<option value="${k}">${G.Drivers.labels[k]}</option>`).join("")}</select></label><div id="practice-risk" class="onboarding-note" role="status" aria-live="polite">Selecciona piloto y entrenador para consultar días, coste y riesgos.</div><button class="primary wide" type="submit">Revisar programa por días</button></form>`}<div class="practice-help-links"><button class="text-button" data-go="team">Pilotos y contratos</button><button class="text-button" data-go="staff">Personal y descansos</button><button class="text-button" data-go="workshop">Taller y neumáticos</button><button class="text-button" data-go="operations">Operaciones y salud</button></div></section></div>${j?.report ? `<section class="panel padded spaced">${D.report(s, j)}</section>` : ""}<section class="panel padded spaced"><h2>Informes de programas</h2>${
         s.professional.practices
           .filter((j) => j.report)
           .slice()
           .reverse()
           .map(
             (j) =>
-              `<div class="timeline-line"><small>${this.date(j.completedDay, true)}</small><span>${this.escape(s.drivers.find((d) => d.id === j.driverId).name)} · ${j.daysWorked}/${j.days} días · ${G.Drivers.labels[j.focus]} ${signed(j.gain)}</span>${button("Ver informe", "camp-report", "secondary", `data-id="${j.id}"`)}</div>`,
+              `<div class="timeline-line"><small>${this.date(j.completedDay, true)}</small><span>${this.escape(s.drivers.find((d) => d.id === j.driverId).name)} · ${D.outcome(j)} · ${j.daysWorked}/${j.days} días · ${G.Drivers.labels[j.focus]} ${signed(j.gain)}</span>${button("Ver informe", "camp-report", "secondary", `data-id="${j.id}"`)}</div>`,
           )
           .join("") ||
         "<p>Al terminar o interrumpir un programa recibirás el informe de aprendizaje, mejoras y desgaste.</p>"

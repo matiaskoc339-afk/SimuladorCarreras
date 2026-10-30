@@ -251,16 +251,16 @@
       );
       G.assert(
         this.owned(s, id).length < this.capacity(s, id),
-        "La oficina no tiene plazas libres para más personal.",
+        `La oficina no tiene plazas libres para más personal (${this.owned(s, id).length}/${this.capacity(s, id)}). Amplía la oficina desde Instalaciones o libera una plaza.`,
       );
       G.assert(
         !this.owned(s, id).some((other) => other.role === e.role),
-        "Ya hay un responsable de esta especialidad en la plantilla.",
+        "Ya hay un responsable de esta especialidad en la plantilla. Solo se permite uno por especialidad; rescinde el contrato actual si quieres sustituirlo.",
       );
       if (G.Challenge.enabled(s))
         G.assert(
           c.level >= G.Challenge.staffLevel(s, e),
-          `Esta especialidad exige una compañía de nivel ${G.Challenge.staffLevel(s, e)}.`,
+          `Esta especialidad exige una compañía de nivel ${G.Challenge.staffLevel(s, e)}; tu empresa es nivel ${c.level}. Cumple los objetivos de Instalaciones y progreso para ascender.`,
         );
       const t = {
         salary: Number(terms.salary),
@@ -279,9 +279,14 @@
       );
       G.assert(
         c.balance >= t.bonus + Math.ceil(t.salary * (G.Pay.daily(e) ? 7 : 0.5)),
-        G.Pay.daily(e)
-          ? "Necesitas fondos para la prima y una reserva de siete días de sueldo."
-          : "Necesitas fondos para la prima y una reserva de media nómina.",
+        G.Feedback.funds(
+          s,
+          t.bonus + Math.ceil(t.salary * (G.Pay.daily(e) ? 7 : 0.5)),
+          G.Pay.daily(e)
+            ? "la prima y una reserva de siete días de sueldo"
+            : "la prima y una reserva de media nómina",
+          id,
+        ),
       );
       return {
         employee: e,

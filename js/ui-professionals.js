@@ -24,7 +24,7 @@
     }
     return `<section class="panel padded professional-review spaced"><div class="section-title"><div><span class="eyebrow">DIAGNÓSTICO Y MANEJO</span><h2>Una revisión depende de quién la hace.</h2><p>El mecánico es obligatorio; un ingeniero disponible mejora la precisión del diagnóstico y del ajuste.</p></div>${U.button("Revisión profesional", "pro-review", "primary", `data-id="${car.id}" ${reason ? "disabled" : ""}`)}</div>${reason ? `<p class="fine-print">${U.escape(reason)}</p>` : ""}${report ? `<div class="professional-report-line"><span>Última revisión: ${U.date(report.day, true)} · acierto estimado <b>${report.accuracy} %</b></span>${U.button("Consultar diagnóstico", "pro-report", "secondary", `data-id="${report.id}"`)}</div>` : ""}${setup && setup.until >= s.day && setup.kmLimit >= car.km ? `<p class="fine-print">Ajuste de manejo aplicado · válido hasta ${U.date(setup.until, true)} o ${Math.round(setup.kmLimit)} km. Depende de las recomendaciones del informe.</p>` : ""}</section>`;
   }
-  G.ProfessionalReviewPanel=reviewPanel;
+  G.ProfessionalReviewPanel = reviewPanel;
   for (const name of ["garage", "workshop"]) {
     const original = U[name];
     U[name] = function (s) {
@@ -76,10 +76,11 @@
       e = s.employees.find((e) => e.id === id),
       p = P.profile(s, id),
       own = e.companyId === s.playerId;
-    const fields = `<section class="professional-profile"><div class="professional-level"><b>NV ${p.level}<small>/ 10</small></b><span>${Math.round(p.xp)} / ${p.level === 10 ? "MÁXIMO" : 150 + p.level * 75} XP</span><strong>${U.money(P.marketSalary(s, e))}/${G.Pay.unit(e)} de referencia</strong></div>${U.bar("Estrés profesional", p.stress, p.stress > 70 ? "#bd5c44" : "#708b7a")}<p class="fine-print">La experiencia sube de nivel. El estrés y el descanso cambian precisión, velocidad y rendimiento.${P.resting(s, id) ? " Descanso hasta " + U.date(p.restUntil) + "; conserva su sueldo." : ""}</p>${["mechanic", "engineer"].includes(e.role) ? `<p>Especialidad: ${e.role === "mechanic" ? "servicio de boxes" : "diagnóstico y ajuste"}. El nivel, la habilidad y el estrés afectan al acierto. Velocidad individual: ${p.speed}/100.</p>` : ""}${own ? `<div class="professional-rest">${[1, 3, 7].map((days) => U.button(`Descansar ${days} día${days === 1 ? "" : "s"}`, "pro-rest", "secondary", `data-id="${id}" data-days="${days}" ${S.busy(s, id) ? "disabled" : ""}`)).join("")}</div>` : ""}</section>`;
+    const fields = `<section class="professional-profile"><div class="professional-level"><b>NV ${p.level}<small>/ 10</small></b><span>${Math.round(p.xp)} / ${p.level === 10 ? "MÁXIMO" : 150 + p.level * 75} XP</span><strong>${U.money(P.marketSalary(s, e))}/${G.Pay.unit(e)} de referencia</strong></div>${U.bar("Estrés profesional", p.stress, p.stress > 70 ? "#bd5c44" : "#708b7a")}<p class="fine-print">La experiencia sube de nivel. El estrés y el descanso cambian precisión, velocidad y rendimiento.${P.resting(s, id) ? " Descanso hasta " + U.date(p.restUntil) + "; conserva su sueldo." : ""}</p>${["mechanic", "engineer"].includes(e.role) ? `<p>Especialidad: ${e.role === "mechanic" ? "servicio de boxes" : "diagnóstico y ajuste"}. El nivel, la habilidad y el estrés afectan al acierto. Velocidad individual: ${p.speed}/100.</p>` : ""}${own ? `<div class="professional-rest">${[1, 3, 7].map((days) => U.button(`Descansar ${days} día${days === 1 ? "" : "s"}`, "pro-rest", "secondary", `data-id="${id}" data-days="${days}" ${U.blocked(S.busy(s, id) ? "No puede descansar mientras está ocupado. Termina el trabajo, informe o entrenamiento en curso antes de dar descanso." : "")}`)).join("")}</div>` : ""}</section>`;
     document
       .querySelector(".modal-content")
       .insertAdjacentHTML("afterbegin", fields);
+    U.decorateBlocked(document.querySelector(".modal-content"));
   };
   const details = G.StaffUI.driverDetails;
   G.StaffUI.driverDetails = function (s, d) {
@@ -508,6 +509,10 @@
   document.addEventListener("change", (event) => {
     const form = event.target.closest("#practice-form");
     if (!form) return;
+    if (G.Research.enabled(G.App.state)) {
+      G.DevelopmentUI.preview(G.App.state, form);
+      return;
+    }
     const target = document.getElementById("practice-risk");
     try {
       target.innerHTML = UI.risk(T.quote(G.App.state, UI.options(form)));

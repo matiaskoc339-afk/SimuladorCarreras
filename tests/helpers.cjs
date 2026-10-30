@@ -33,6 +33,7 @@ function engine({
     "data",
     "content",
     "core",
+    "feedback",
     "parts",
     "workshop",
     "economy",
@@ -80,7 +81,8 @@ function engine({
     );
   if (!tour) {
     context.RCS.Data.tracks.length = 38;
-    context.RCS.Competition.makeSeason = context.RCS.SeasonTour.legacyMakeSeason;
+    context.RCS.Competition.makeSeason =
+      context.RCS.SeasonTour.legacyMakeSeason;
     if (commerce) context.RCS.createGame = context.RCS.createV110Game;
   }
   if (!commerce && !tour) {
@@ -102,7 +104,14 @@ function engine({
     context.RCS.Data.tracks.length = 22;
     if (competitions) context.RCS.createGame = context.RCS.createV70Game;
   }
-  if (!competitions && !development && !workbench && !auctions && !commerce && !tour) {
+  if (
+    !competitions &&
+    !development &&
+    !workbench &&
+    !auctions &&
+    !commerce &&
+    !tour
+  ) {
     context.RCS.Data.models.length = 24;
     context.RCS.createGame = current
       ? context.RCS.createV64Game

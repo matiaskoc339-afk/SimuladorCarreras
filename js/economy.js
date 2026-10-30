@@ -26,7 +26,15 @@
       G.assert(company?.status === "active", "La compañía no está activa.");
       if (companyId === s.playerId) G.ensurePlayable(s);
       G.assert(Number.isFinite(amount) && amount >= 0, "Importe inválido.");
-      G.assert(company.balance >= amount, "No tienes fondos suficientes.");
+      G.assert(
+        company.balance >= amount,
+        G.Feedback.funds(
+          s,
+          amount,
+          label || category || "esta acción",
+          companyId,
+        ),
+      );
       this.transact(s, companyId, -amount, category, label);
     },
     monthly(s) {
@@ -67,14 +75,21 @@
       const c = s.companies.find((c) => c.id === companyId);
       G.assert(c?.status === "active", "La compañía no está activa.");
       G.assert(
-        !s.race &&
-          !(companyId === s.playerId ? s.job : c.job) &&
-          G.Facilities.workload(s, companyId) < G.Facilities.bays(s, companyId),
-        "El taller está ocupado.",
+        !s.race,
+        "Termina la carrera en curso antes de aceptar un encargo de taller.",
+      );
+      const currentJob = companyId === s.playerId ? s.job : c.job;
+      G.assert(
+        !currentJob,
+        `El taller está ocupado con un encargo que se entrega el ${G.Feedback.date(currentJob?.end ?? s.day)}. Espera a que termine antes de aceptar otro.`,
+      );
+      G.assert(
+        G.Facilities.workload(s, companyId) < G.Facilities.bays(s, companyId),
+        `El taller está ocupado: ${G.Facilities.workload(s, companyId)}/${G.Facilities.bays(s, companyId)} bahías en uso. Espera la entrega de un trabajo o amplía el taller desde Instalaciones.`,
       );
       G.assert(
         s.day - (companyId === s.playerId ? s.lastJob : c.lastJob) >= 7,
-        "El siguiente encargo estará disponible en unos días.",
+        `El siguiente encargo estará disponible el ${G.Feedback.date((companyId === s.playerId ? s.lastJob : c.lastJob) + 7)}. Deben pasar 7 días desde el último encargo; avanza el calendario hasta esa fecha.`,
       );
       const plan = G.Staff.plan(s, companyId, "repair", 3);
       if (companyId === s.playerId) {

@@ -42,7 +42,8 @@
         home: "M3 10L12 3L21 10V21H14V14H10V21H3Z",
         news: "M4 3H18V21H4ZM8 7H14M8 11H14M8 15H14M8 18H12M18 7H21V19Q21 21 18 21",
         history: "M3 5V10H8M3 10A9 9 0 1 1 4 18M12 7V12L16 14",
-        trophy: "M7 3H17V10Q17 16 12 16Q7 16 7 10ZM7 5H3V8Q3 12 8 12M17 5H21V8Q21 12 16 12M12 16V21M7 21H17",
+        trophy:
+          "M7 3H17V10Q17 16 12 16Q7 16 7 10ZM7 5H3V8Q3 12 8 12M17 5H21V8Q21 12 16 12M12 16V21M7 21H17",
         save: "M4 3H18L21 6V21H3V3ZM7 3V9H16V3M7 21V14H17V21",
         arrow: "M5 12H20M14 6L20 12L14 18",
         flag: "M5 22V3M5 4Q10 0 14 4T22 4V15Q18 19 14 15T5 15",
@@ -60,6 +61,47 @@
     },
     button(text, action, cls = "", extra = "") {
       return `<button class="${cls}" data-action="${action}" ${extra}>${text}</button>`;
+    },
+    blocked(reason) {
+      return reason
+        ? `disabled data-blocked-reason="${this.escape(reason)}"`
+        : "";
+    },
+    decorateBlocked(root = document) {
+      for (const button of root.querySelectorAll(
+        "button[data-blocked-reason]",
+      )) {
+        let note = button.nextElementSibling;
+        if (!note?.classList.contains("action-block-reason")) note = null;
+        if (!button.disabled || !button.dataset.blockedReason) {
+          note?.remove();
+          button.removeAttribute("aria-describedby");
+          continue;
+        }
+        if (!note) {
+          note = document.createElement("p");
+          note.className = "action-block-reason";
+          note.id =
+            "action-reason-" +
+            (this.reasonSequence = (this.reasonSequence || 0) + 1);
+          button.after(note);
+        }
+        note.textContent = button.dataset.blockedReason;
+        button.setAttribute("aria-describedby", note.id);
+      }
+    },
+    reject(message, source) {
+      this.toast(message, true);
+      const form = source?.closest("form");
+      if (!form || !form.isConnected) return;
+      let note = form.querySelector(".action-error");
+      if (!note) {
+        note = document.createElement("div");
+        note.className = "action-error";
+        note.setAttribute("role", "alert");
+        form.append(note);
+      }
+      note.textContent = message;
     },
     badge(text, cls = "") {
       return `<span class="badge ${cls}">${text}</span>`;
@@ -481,20 +523,48 @@
       const focus = document.querySelector(
         '.modal input:not([type="hidden"]),.modal button',
       );
+      this.decorateBlocked(document.getElementById("modal-root"));
       focus?.focus();
     },
     toast(message, error = false) {
       const el = document.getElementById("toast");
-      el.textContent = message;
+      el.replaceChildren();
+      el.setAttribute("role", error ? "alert" : "status");
+      el.setAttribute("aria-live", error ? "assertive" : "polite");
+      if (error) {
+        const previousFocus = document.activeElement;
+        const content = document.createElement("div"),
+          title = document.createElement("strong"),
+          body = document.createElement("p"),
+          close = document.createElement("button");
+        title.textContent = "No se pudo completar la acción";
+        body.textContent = message;
+        content.append(title, body);
+        close.type = "button";
+        close.className = "feedback-close";
+        close.setAttribute("aria-label", "Cerrar aviso");
+        close.textContent = "×";
+        close.addEventListener("click", () => {
+          el.className = "";
+          el.replaceChildren();
+          if (previousFocus?.isConnected)
+            previousFocus.focus({ preventScroll: true });
+        });
+        el.append(content, close);
+      } else el.textContent = message;
       el.className = "show " + (error ? "error" : "");
       clearTimeout(this.toastTimer);
-      this.toastTimer = setTimeout(() => (el.className = ""), 4500);
+      // Denials stay available until dismissed; long explanations need time to read.
+      if (!error) this.toastTimer = setTimeout(() => (el.className = ""), 4500);
     },
     render(s, view) {
       document.getElementById("app").innerHTML = s
         ? this.shell(s, view, this[view](s))
         : this.menu();
       if (view === "race" && s) this.updateRace(s);
+      if (view === "practice" && s)
+        G.DevelopmentUI?.preview(s, document.getElementById("practice-form"));
+      this.decorateBlocked(document.getElementById("app"));
     },
   };
 })();

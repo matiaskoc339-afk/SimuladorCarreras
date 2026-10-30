@@ -95,13 +95,17 @@
       if (d.contract.end <= e.day)
         return "El contrato del piloto debe cubrir la jornada de carrera. Renueva antes de inscribirte.";
       if (!G.Professionals.fit(s, d.id))
-        return "El piloto necesita recuperación médica antes de competir.";
+        return G.Professionals.care(s, d.id)?.retired
+          ? `${d.name} se ha retirado por un accidente grave y no puede competir. Selecciona otro piloto.`
+          : `El piloto necesita recuperación médica: ${d.name} está lesionado hasta el ${G.Feedback.date(G.Professionals.care(s, d.id).injuryUntil)}. Espera o consulta Operaciones y salud.`;
       if (d.fatigue >= 90)
-        return "El piloto necesita descansar antes de competir.";
+        return `El piloto necesita descansar: fatiga ${d.fatigue.toFixed(1)}/100; debe estar por debajo de 90. Ponlo a descansar y avanza el calendario antes de inscribirlo.`;
       if (car.repair || !G.Workshop.ready(car))
-        return "El coche necesita mantenimiento: revisa sus componentes y neumáticos antes de inscribirte.";
+        return (
+          "El coche necesita mantenimiento: " + G.Feedback.car(s, car).join(" ")
+        );
       if (car.hp > this.rule(e).maxHP)
-        return `Límite de ${this.rule(e).maxHP} CV para esta prueba.`;
+        return `Límite de ${this.rule(e).maxHP} CV para esta prueba; tu coche tiene ${car.hp.toFixed(1)} CV. Reduce su preparación en Taller o selecciona otro coche.`;
       if (
         e.cup !== "street" &&
         (car.condition < (e.cup === "national" ? 75 : 70) ||
@@ -109,14 +113,29 @@
           car.components.suspension < (e.cup === "national" ? 75 : 70) ||
           car.tires < (e.cup === "national" ? 45 : 35))
       )
-        return e.cup === "national"
-          ? "Verificación nacional: estado 75 %, frenos 80 %, suspensión 75 % y neumáticos 45 % como mínimo."
-          : "Verificación técnica profesional: estado 70 %, frenos 75 %, suspensión 70 % y neumáticos 35 % como mínimo.";
+        return `Verificación ${e.cup === "national" ? "nacional" : "técnica profesional"}: ${[
+          ["estado general", car.condition, e.cup === "national" ? 75 : 70],
+          ["frenos", car.components.brakes, e.cup === "national" ? 80 : 75],
+          [
+            "suspensión",
+            car.components.suspension,
+            e.cup === "national" ? 75 : 70,
+          ],
+          ["neumáticos", car.tires, e.cup === "national" ? 45 : 35],
+        ]
+          .filter(([, value, minimum]) => value < minimum)
+          .map(
+            ([label, value, minimum]) =>
+              `${label} al ${value.toFixed(1)} %, mínimo ${minimum} %`,
+          )
+          .join(
+            "; ",
+          )}. Repara esos sistemas o cambia las gomas en Taller antes de inscribirte.`;
       if (
         e.cup !== "street" &&
         G.Drivers.rating(d) < (e.cup === "national" ? 24 : 22)
       )
-        return `El piloto necesita valoración ${e.cup === "national" ? 24 : 22} como mínimo para esta prueba.`;
+        return `El piloto necesita valoración ${e.cup === "national" ? 24 : 22} como mínimo para esta prueba; ${d.name} tiene ${G.Drivers.rating(d)}. Entrénalo en el campus o selecciona otro piloto.`;
       return "";
     },
     license(s) {
@@ -125,7 +144,7 @@
       G.assert(!s.competitions.licenses[s.playerId], "Ya tienes licencia.");
       G.assert(
         (s.competitions.streetPoints[s.playerId] || 0) >= 24,
-        "Necesitas 24 puntos callejeros acumulados.",
+        `Necesitas 24 puntos callejeros acumulados: tienes ${s.competitions.streetPoints[s.playerId] || 0} y te faltan ${Math.max(0, 24 - (s.competitions.streetPoints[s.playerId] || 0))}. Disputa más pruebas callejeras antes de tramitar la licencia.`,
       );
       G.Economy.spend(
         s,
@@ -355,7 +374,8 @@
         s.cars.push(car);
       }
       for (let i = 24; i < G.Data.models.length; i++) {
-        if (G.Data.models[i].auctionOnly || G.Data.models[i].showroomOnly) continue;
+        if (G.Data.models[i].auctionOnly || G.Data.models[i].showroomOnly)
+          continue;
         const car = G.makeCar(
           s,
           null,
