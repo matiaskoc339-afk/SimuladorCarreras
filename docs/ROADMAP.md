@@ -1,6 +1,6 @@
 # Plan de desarrollo
 
-La entrega actual es **0.11.0 — Suministro semanal, concesionario y palmarés**. Incluye catálogo con novedades semanales, doce familias de carrocería, autos nuevos/usados, CV influidos por prestigio, trofeos de grandes finales y tutorial de primera partida. Conserva ocho especialidades contratables, investigación de protocolos, formación por jornadas, operaciones y salud, 32 trazados, 88 modelos, tres ligas con finales por puntos, piezas físicas, boxes simultáneos y subastas. Siguen pendientes las áreas más amplias del prompt, entre ellas academia juvenil completa, prototipos/patentes, evolución por generaciones y fusiones; disponer de campos de estado no cuenta como implementarlas.
+La entrega actual es **0.12.0 — Atlas por países y temporadas renovadas**. Incluye catálogo con novedades semanales, doce familias de carrocería, autos nuevos/usados, CV influidos por prestigio, trofeos de grandes finales y tutorial de primera partida. Conserva ocho especialidades contratables, investigación de protocolos, formación por jornadas, operaciones y salud, 68 trazados en 13 países, 88 modelos, tres ligas con finales por puntos, piezas físicas, boxes simultáneos y subastas. Siguen pendientes las áreas más amplias del prompt, entre ellas academia juvenil completa, prototipos/patentes, evolución por generaciones y fusiones; disponer de campos de estado no cuenta como implementarlas.
 
 La [comparación de los 42 apartados](ANALISIS_MECANICAS.md) detalla las mecánicas funcionales, parciales y pendientes frente al [prompt maestro original](PROMPT_MAESTRO.md). El alcance de una entrega no implica que todos los requisitos de su área estén completos.
 
@@ -48,3 +48,7 @@ La 0.10.1 añade una guía de inicio opcional y de una sola aparición automáti
 ## Entrega 0.11.0
 
 Completados: tutorial 0.10.1; rotación semanal de 64 referencias, 12 familias de carrocería y recambios básicos; concesionario de doce modelos actuales separado de usados; CV semanales nuevos influidos por prestigio y ojeador; trofeos persistentes de finales profesionales con reputación. Estas entregas amplían variedad y progresión. Continúan pendientes las generaciones históricas completas, patentes/prototipos propios y grandes fusiones/cambios de propietario descritos en el análisis original.
+
+## Entrega 0.12.0
+
+36 geometrías nuevas, atlas por países con filtros/búsqueda, veinte sedes distintas al año sin repetir las del anterior, finales rotativas y transición que conserva el campeonato antiguo. Se mantienen los costes y el acceso progresivo por copas. [Reglas y validación](CIRCUITOS_MUNDO_0_12.md).

@@ -262,14 +262,14 @@ const { chromium } = require("playwright"),
       RCS.App.competitionTab = "tracks";
       RCS.App.render();
     });
-    assert.equal(await p.locator(".circuit-card").count(), 32);
+    assert.equal(await p.locator(".circuit-card").count(), 68);
     assert.match(await p.locator(".circuit-atlas").innerText(), /Experta/);
     await p
       .locator(
         '[data-action="track-filter"][data-field="difficulty"][data-value="Experta"]',
       )
       .click();
-    assert.ok((await p.locator(".circuit-card").count()) < 32);
+    assert.ok((await p.locator(".circuit-card").count()) < 68);
     await p
       .locator(
         '[data-action="track-filter"][data-field="category"][data-value="street"]',
@@ -325,7 +325,7 @@ const { chromium } = require("playwright"),
     await p.evaluate(() => RCS.Storage.validate(RCS.App.state));
     assert.deepEqual(errors, []);
     console.log(
-      "0.8: científico, árbol, pausa/recarga, programa por días con vista animada, informe real, 32 escenas, actualización y tres tamaños: OK",
+      "0.8: científico, árbol, pausa/recarga, programa por días con vista animada, informe real, 68 escenas, actualización y tres tamaños: OK",
     );
   } finally {
     await browser.close();

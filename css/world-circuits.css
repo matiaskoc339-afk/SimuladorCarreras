@@ -1,0 +1,290 @@
+.tour-overview {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: space-between;
+  background: #203c33;
+  color: #e6eddf;
+  border-radius: 12px;
+  padding: 28px;
+  margin: 24px 0;
+}
+.tour-overview .eyebrow {
+  color: #c2ae86;
+}
+.tour-overview h2 {
+  color: #f1f2e6;
+  font-size: 25px;
+  margin: 10px 0;
+}
+.tour-overview p {
+  color: #bdcdbf;
+  max-width: 760px;
+  line-height: 1.75;
+  margin: 0;
+}
+.tour-numbers {
+  display: flex;
+  gap: 22px;
+  flex-shrink: 0;
+}
+.tour-numbers span {
+  display: grid;
+  gap: 8px;
+  color: #bdcdbf;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+.tour-numbers b {
+  font-size: 32px;
+  color: #f0d2a0;
+  font-weight: 500;
+}
+.atlas-tools {
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.atlas-primary-filters {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 2fr);
+  gap: 18px;
+}
+.atlas-primary-filters label {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  color: #52675b;
+  font-weight: 700;
+}
+.atlas-primary-filters select,
+.atlas-primary-filters input {
+  width: 100%;
+  border: 1px solid #cbd7ce;
+  border-radius: 7px;
+  min-height: 44px;
+  padding: 10px 13px;
+  background: #fafcf8;
+  color: #243b30;
+  font: inherit;
+}
+.atlas-tools .circuit-filters {
+  margin: 20px 0 16px;
+}
+.atlas-scopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.atlas-count {
+  font-size: 12px;
+  color: #5a6c60;
+  margin: 20px 0 0;
+}
+.country-circuits {
+  margin: 32px 0 40px;
+}
+.country-circuits > header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+}
+.country-monogram {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid #adbdad;
+  border-radius: 9px;
+  color: #375c47;
+  background: #e4eadd;
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: 1px;
+}
+.country-circuits > header h2 {
+  font-size: 25px;
+  margin: 4px 0 0;
+  letter-spacing: -0.5px;
+}
+.country-circuits .circuit-atlas {
+  align-items: stretch;
+}
+.world-atlas .circuit-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.world-atlas .circuit-card > div:last-child {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.world-atlas .circuit-card > div:last-child > button {
+  margin-top: auto;
+  align-self: flex-start;
+}
+.atlas-map {
+  position: relative;
+  padding: 10px 8px 5px !important;
+  background: #f3f5ee;
+  border-bottom: 1px solid #dde3da;
+}
+.atlas-map .circuit-map {
+  height: 180px;
+  width: 100%;
+  display: block;
+}
+.atlas-map > span {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #516a57;
+}
+.track-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0;
+}
+.track-tags > span {
+  padding: 5px 7px;
+  background: #edf1e9;
+  color: #4f6655;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.track-tags > .difficulty-dificil {
+  background: #f4e7d2;
+  color: #845d21;
+}
+.track-tags > .difficulty-experta {
+  background: #f4dfd7;
+  color: #99533b;
+}
+.track-tags > .difficulty-facil {
+  background: #e1ecd9;
+  color: #4c7040;
+}
+.tour-scheduled {
+  display: inline-block;
+  color: #98682c;
+  margin-top: 7px;
+}
+.venue-country {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #506e5c;
+  font-size: 12px;
+  font-weight: 500;
+}
+.venue-country > b {
+  display: inline-block;
+  padding: 3px 5px;
+  border: 1px solid #bac9bc;
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+}
+.league-event .venue-country {
+  margin: 7px 0 2px;
+}
+.event-location {
+  margin: 10px 0;
+}
+.atlas-empty {
+  padding: 35px;
+  text-align: center;
+}
+.race-location {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  margin: 0 0 12px;
+  padding: 10px 15px;
+  background: #edf1e7;
+  border: 1px solid #d1dbcc;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #586c5d;
+}
+@media (max-width: 1100px) {
+  .tour-overview {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .tour-numbers {
+    gap: 35px;
+  }
+  .tour-numbers span {
+    text-align: left;
+  }
+}
+@media (max-width: 650px) {
+  .tour-overview {
+    padding: 22px;
+  }
+  .tour-overview h2 {
+    font-size: 22px;
+  }
+  .tour-numbers {
+    width: 100%;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .tour-numbers b {
+    font-size: 28px;
+  }
+  .atlas-tools {
+    padding: 18px;
+  }
+  .atlas-primary-filters {
+    grid-template-columns: 1fr;
+  }
+  .atlas-scopes button {
+    flex: 1;
+    font-size: 11px;
+  }
+  .atlas-scopes .text-button {
+    flex-basis: 100%;
+  }
+  .country-circuits > header h2 {
+    font-size: 22px;
+  }
+  .race-location {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .venue-country {
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+}
+
+.world-atlas .country-atlas {
+  display: block;
+}
+.country-track-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+@media (max-width: 1100px) {
+  .country-track-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 650px) {
+  .country-track-grid {
+    grid-template-columns: 1fr;
+  }
+}

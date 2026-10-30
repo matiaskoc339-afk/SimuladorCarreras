@@ -1,3 +1,13 @@
+# Validación 0.12.0
+
+**366/366 pruebas de motor y 18 recorridos de navegador aprobados.** Sintaxis de 112 archivos JS/CJS y presencia de 73 recursos locales verificadas. Se completó la batería anterior y once escenarios de atlas/rotación; se repitieron estos últimos tras reforzar la exclusión de las sedes de una empresa antigua en su primera temporada nueva.
+
+`world-circuits.test.cjs` verifica 68 pistas/13 países, 36 nuevas sedes, categorías/dificultades, cuarenta semillas a lo largo de veinte temporadas sin duplicar ni repetir sedes consecutivas, cobertura completa en cuatro años, tasas/fechas, apertura callejera accesible, transición 0.11 sin modificar el campeonato archivado, persistencia y rechazo de calendarios incoherentes. Las 36 geometrías nuevas completan carreras físicas individuales con piloto experimentado/coche mantenido, desgaste y guardado válido. La fixture `v110-race.json`, capturada con el código original 3012e86, termina con resultados y estado final exactos.
+
+`browser-world-circuits.cjs` añade atlas, filtros combinados, búsqueda/foco, selección de esta temporada/novedades, planos de boxes, tres tamaños, cambio de año mediante el botón real, atlas sin migración de una partida anterior y una carrera en Oporto. El recorrido de desarrollo también construye las 68 escenas y comprueba el atlas ampliado. Se inspeccionaron capturas del atlas, Perú, calendario y carrera en escritorio/móvil.
+
+La ruta financiera actual completa las veinte fechas y abre 2027. Después paga formación e investigación y conserva **6562 US$** sin financiar artificialmente a la empresa. La estrategia renuncia a las pruebas profesionales cuyos requisitos no alcanza; no demuestra el equilibrio de todas las semillas o estilos. [Registro](BALANCE_0_12_1470.json).
+
 # Validación 0.11.0
 
 **Cierre verificado: 355/355 pruebas del motor, 17 recorridos de navegador y temporada financiera de veinte fechas aprobados.** Sintaxis de 106 archivos JS/CJS y presencia de 69 recursos locales comprobadas. Se inspeccionaron las nuevas vistas de catálogo, concesionario y vitrina, también en móvil.

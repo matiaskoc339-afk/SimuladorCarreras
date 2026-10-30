@@ -1,13 +1,13 @@
 {
   "name": "racing-company-simulator",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "Simulador local de gestión automovilística, sin dependencias de ejecución.",
   "scripts": {
     "start": "node scripts/server.cjs",
     "test": "node --test tests/*.test.cjs",
-    "test:browser": "node tests/browser-smoke.cjs && node tests/browser-business.cjs && node tests/browser-workshop.cjs && node tests/browser-presentation.cjs && node tests/browser-contracts.cjs && node tests/browser-race-weekend.cjs && node tests/browser-facilities.cjs && node tests/browser-staff.cjs && node tests/browser-professionals.cjs && node tests/browser-operations.cjs && node tests/browser-challenge.cjs && node tests/browser-competition.cjs && node tests/browser-development.cjs && node tests/browser-workbench.cjs && node tests/browser-auctions.cjs && node tests/browser-tutorial.cjs && node tests/browser-commerce.cjs",
-    "test:balance": "node scripts/check-balance-v110.cjs",
+    "test:browser": "node tests/browser-smoke.cjs && node tests/browser-business.cjs && node tests/browser-workshop.cjs && node tests/browser-presentation.cjs && node tests/browser-contracts.cjs && node tests/browser-race-weekend.cjs && node tests/browser-facilities.cjs && node tests/browser-staff.cjs && node tests/browser-professionals.cjs && node tests/browser-operations.cjs && node tests/browser-challenge.cjs && node tests/browser-competition.cjs && node tests/browser-development.cjs && node tests/browser-workbench.cjs && node tests/browser-auctions.cjs && node tests/browser-tutorial.cjs && node tests/browser-commerce.cjs && node tests/browser-world-circuits.cjs",
+    "test:balance": "node scripts/check-balance-v120.cjs",
     "test:balance:v64": "node scripts/check-balance-v64.cjs",
     "test:leagues": "node --test tests/competition.test.cjs",
     "test:balance:v70": "node scripts/check-balance-v70.cjs",
@@ -19,6 +19,9 @@
     "test:tutorial": "node tests/browser-tutorial.cjs",
     "test:balance:v100": "node scripts/check-balance.cjs",
     "test:commerce": "node --test tests/commerce.test.cjs",
-    "test:commerce:browser": "node tests/browser-commerce.cjs"
+    "test:commerce:browser": "node tests/browser-commerce.cjs",
+    "test:balance:v110": "node scripts/check-balance-v110.cjs",
+    "test:world-circuits": "node --test tests/world-circuits.test.cjs",
+    "test:world-circuits:browser": "node tests/browser-world-circuits.cjs"
   }
 }

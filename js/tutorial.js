@@ -110,7 +110,7 @@
         "La licencia profesional requiere 24 puntos callejeros y 900 US$. La nacional exige además 12 puntos regionales.",
         "Cada final pide puntos de su propia liga. Al cerrar el año se archiva la temporada y puedes abrir la siguiente.",
       ],
-      more: "Hay circuitos con distinta dificultad y acceso por copa. Se comprueban potencia, estado, licencia, contrato y habilidad del piloto. En la calle se permiten contactos; las pruebas profesionales sancionan maniobras evitables. Solo el podio de la gran final regional o nacional concede trofeos y reputación extra; se guardan en Vitrina de trofeos. Una carrera normal no entrega copa. Si cargas una empresa antigua, conserva el reglamento que indica su ficha.",
+      more: "Hay circuitos con distinta dificultad y acceso por copa. El atlas agrupa las pistas por país y permite ver solo las de tu temporada. Al abrir el siguiente año se renuevan las veinte sedes, incluidas las finales; el calendario antiguo se conserva hasta cerrar su temporada. Se comprueban potencia, estado, licencia, contrato y habilidad del piloto. En la calle se permiten contactos; las pruebas profesionales sancionan maniobras evitables. Solo el podio de la gran final regional o nacional concede trofeos y reputación extra; se guardan en Vitrina de trofeos. Una carrera normal no entrega copa. Si cargas una empresa antigua, conserva el reglamento que indica su ficha.",
     },
     {
       id: "race",

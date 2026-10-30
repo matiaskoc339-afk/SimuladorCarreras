@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.11.0
+# Racing Company Simulator · 0.12.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,15 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.12.0 · el mundo cambia cada temporada
+
+- **36 pistas nuevas: 68 trazados modernos en 13 países**, con sedes en Perú, Argentina, Brasil, México, Japón, Estados Unidos, Australia y Europa. Urbanos y circuitos profesionales de cuatro dificultades, con geometrías y entornos distintos.
+- **Veinte sedes diferentes cada año**, incluidas las finales, sin repetir las del año anterior. La rotación respeta cada copa y permite conocer todo el atlas en cuatro temporadas.
+- **Atlas organizado por países**, con filtros por copa, dificultad, temporada actual, novedades y búsqueda. Los planos incluyen salida y ramal de boxes; el calendario y la carrera muestran país y ciudad.
+- **Tu temporada actual se conserva**. Al abrir el siguiente año se activa el calendario renovado sin perder inscripciones, resultados, archivo ni trofeos.
+
+[Países, pistas, rotación y compatibilidad](docs/CIRCUITOS_MUNDO_0_12.md).
 
 ## Novedades de la 0.11.0 · catálogo vivo y grandes copas
 

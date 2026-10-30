@@ -19,7 +19,16 @@
             (p, i) => (i ? "L" : "M") + p.x.toFixed(1) + " " + p.y.toFixed(1),
           )
           .join("") + "Z";
-    return `<svg class="circuit-map" viewBox="${x} ${y} ${w} ${h}" role="img" aria-label="Trazado de ${U.escape(G.Data.tracks[index].name)}"><path d="${d}" fill="none" stroke="#546c60" stroke-width="26" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#e4e7d7" stroke-width="9"/><circle cx="${scaled[0].x}" cy="${scaled[0].y}" r="16" fill="#ee6246"/></svg>`;
+    const pit = G.RaceWeekend.pitLayout(index), scale = G.Race.worldScale(index),
+      pitPoints = Array.from({length:65},(_,i) => {
+        const distance = pit.entry + (pit.exit-pit.entry)*i/64;
+        const p = G.Racecraft.metric(index,distance,G.RaceWeekend.pitLateral(index,distance));
+        return `${i ? "L" : "M"}${(p.x/scale).toFixed(1)} ${(p.y/scale).toFixed(1)}`;
+      }).join(""), boxes = Array.from({length:9},(_,i) => {
+        const distance=pit.entry+(pit.exit-pit.entry)*(.32+i/9*.36), p=G.Racecraft.metric(index,distance,G.RaceWeekend.pitLateral(index,distance)+pit.side*5);
+        return `<rect x="${p.x/scale-5}" y="${p.y/scale-4}" width="10" height="8" fill="#b47c43"/>`;
+      }).join("");
+    return `<svg class="circuit-map" viewBox="${x} ${y} ${w} ${h}" role="img" aria-label="Trazado y boxes de ${U.escape(G.Data.tracks[index].name)}"><path d="${d}" fill="none" stroke="#546c60" stroke-width="26" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#e4e7d7" stroke-width="9"/><path data-pit-route="true" d="${pitPoints}" fill="none" stroke="#b47c43" stroke-width="4"/>${boxes}<circle cx="${scaled[0].x}" cy="${scaled[0].y}" r="16" fill="#ee6246"/></svg>`;
   };
   const UI = (G.CompetitionUI = {
     map,
@@ -39,7 +48,7 @@
         drivers = G.ownedDrivers(s),
         cars = G.ownedCars(s).filter((c) => !G.Market.listed(s, c.id)),
         due = e.day <= s.day;
-      const caption = `<div class="event-facts"><b>${rule.name} · ${e.final ? "FINAL" : `Ronda ${e.round}`}</b><span>${U.date(e.day)} · ${t.laps} vueltas · ${(t.length / 1000).toFixed(2)} km/vuelta</span><span>Inscripción ${U.money(C.fee(e) - rule.transport)} + transporte ${U.money(rule.transport)} = <b>${U.money(C.fee(e))}</b>, más gomas elegidas</span></div>${map(e.track)}<div class="competition-rule ${e.cup}">${e.cup === "street" ? "Contacto entre vehículos admitido. Muros próximos, mayor riesgo y daños persistentes; nadie paga tus reparaciones." : "Reglamento profesional: los contactos evitables se sancionan. Exige licencia y verificación técnica."} Máximo ${rule.maxHP} CV. ${e.final ? `Acceso: ${rule.qualify} puntos de clasificación en esta liga.` : ""}</div>`;
+      const caption = `<div class="event-facts"><b>${rule.name} · ${e.final ? "FINAL" : `Ronda ${e.round}`}</b><span>${U.date(e.day)} · ${t.laps} vueltas · ${(t.length / 1000).toFixed(2)} km/vuelta</span><span>Inscripción ${U.money(C.fee(e) - rule.transport)} + transporte ${U.money(rule.transport)} = <b>${U.money(C.fee(e))}</b>, más gomas elegidas</span></div><div class="event-location">${G.WorldCircuitUI.location(t)}</div>${map(e.track)}<div class="competition-rule ${e.cup}">${e.cup === "street" ? "Contacto entre vehículos admitido. Muros próximos, mayor riesgo y daños persistentes; nadie paga tus reparaciones." : "Reglamento profesional: los contactos evitables se sancionan. Exige licencia y verificación técnica."} Máximo ${rule.maxHP} CV. ${e.final ? `Acceso: ${rule.qualify} puntos de clasificación en esta liga.` : ""}</div>`;
       let content;
       if (e.entry)
         content = `<div class="onboarding-note"><strong>Inscripción confirmada · ${U.money(e.entry.paid)} de tasas pagadas</strong>${U.escape(s.drivers.find((d) => d.id === e.entry.driverId)?.name)} · ${U.escape(s.cars.find((c) => c.id === e.entry.carId)?.model)}</div><div class="modal-actions">${due ? U.button("Ir a la parrilla", "start-race", "primary", `data-id="${id}"`) : U.button("Volver al calendario", "close", "primary")}${U.button("Retirar inscripción sin reembolso", "withdraw-entry", "text-button", `data-id="${id}"`)}</div>`;
@@ -101,7 +110,7 @@
         G.assert(t?.modern, "Trazado no disponible.");
         U.modal(
           t.name,
-          `${map(i)}<p>${U.escape(t.inspiration)}.</p><div class="spec-grid">${U.stat("Longitud", (t.length / 1000).toFixed(2) + " km")}${U.stat("Anchura", t.width + " m")}${U.stat("Tipo", t.kind === "street" ? "Urbano" : "Profesional")}</div><p>Diseño original inspirado en el carácter de estos circuitos. Recta de boxes con carril de paso y puestos individuales. El servicio es simultáneo; la salida a pista espera un hueco seguro.</p>`,
+          `<div class="event-location">${G.WorldCircuitUI.location(t)}</div>${map(i)}<p>${U.escape(t.inspiration)}.</p><div class="spec-grid">${U.stat("Longitud", (t.length / 1000).toFixed(2) + " km")}${U.stat("Anchura", t.width + " m")}${U.stat("Tipo", t.kind === "street" ? "Urbano" : "Profesional")}</div><p>Diseño original inspirado en el carácter de estos circuitos. Recta de boxes con carril de paso y puestos individuales. El servicio es simultáneo; la salida a pista espera un hueco seguro.</p>`,
           true,
         );
         return true;
@@ -135,40 +144,7 @@
     }
     const tab = G.App.competitionTab || "street";
     let content = "";
-    if (tab === "tracks")
-      content = `<div class="circuit-filters" aria-label="Filtros de trazados"><div>${[
-        ["all", "Todas las categorías"],
-        ["street", "Callejeras"],
-        ["pro", "Copa regional"],
-        ["national", "Copa nacional"],
-      ]
-        .map(([value, label]) =>
-          U.button(
-            label,
-            "track-filter",
-            (G.App.circuitCategory || "all") === value
-              ? "primary"
-              : "secondary",
-            `data-field="category" data-value="${value}"`,
-          ),
-        )
-        .join(
-          "",
-        )}</div><div>${["Todas", "Fácil", "Intermedia", "Difícil", "Experta"].map((value) => U.button(value, "track-filter", (G.App.circuitDifficulty || "Todas") === value ? "primary" : "secondary", `data-field="difficulty" data-value="${value}"`)).join("")}</div></div><div class="circuit-atlas">${G.Circuits.indices()
-        .filter(
-          (i) =>
-            (!G.App.circuitCategory ||
-              G.App.circuitCategory === "all" ||
-              G.Data.tracks[i].cups?.includes(G.App.circuitCategory)) &&
-            (!G.App.circuitDifficulty ||
-              G.App.circuitDifficulty === "Todas" ||
-              G.Data.tracks[i].difficulty === G.App.circuitDifficulty),
-        )
-        .map((i) => {
-          const t = G.Data.tracks[i];
-          return `<article class="panel circuit-card">${map(i)}<div><span class="eyebrow">${t.kind === "street" ? "CALLEJERO" : "PROFESIONAL"} · ${(t.length / 1000).toFixed(2)} KM</span><h3>${U.escape(t.name)}</h3><p>${U.escape(t.inspiration)}</p><p class="fine-print">${t.difficulty || "Intermedia"} · ${t.vertices.length} curvas · ${(t.cups || [t.kind === "street" ? "street" : "pro"]).map((key) => C.rules[key].name).join(" / ")}</p>${U.button("Ver trazado y boxes", "track-view", "secondary", `data-track="${i}"`)}</div></article>`;
-        })
-        .join("")}</div>`;
+    if (tab === "tracks") content = G.WorldCircuitUI.atlas(s);
     else {
       const rule = C.rules[tab],
         events = s.season.events.filter((e) => e.cup === tab),
@@ -184,7 +160,7 @@
           const t = G.Data.tracks[e.track],
             block = e.status === "scheduled" ? C.registrationReason(s, e) : "",
             results = e.results.find((r) => r.companyId === s.playerId);
-          return `<article class="panel league-event ${e.final ? "final-event" : ""}"><span class="event-round">${e.final ? "FINAL" : String(e.round).padStart(2, "0")}</span><div><span class="eyebrow">${U.date(e.day, true)} · ${t.laps} VUELTAS</span><h3>${U.escape(t.name)}</h3><p>${e.status === "scheduled" ? `${U.money(C.fee(e))} en tasas · ${e.entry ? "INSCRITO" : block || "Plazas abiertas"}` : results ? `${results.dnf ? "Abandono" : results.position + "º puesto"} · ${results.points} puntos · ${U.money(results.prize)}` : "Prueba resuelta sin participación"}</p></div>${U.button(e.status !== "scheduled" ? "Resultados" : e.entry ? "Ver inscripción" : block ? "Ver requisitos" : "Preparar salida", "event", "secondary", `data-id="${e.id}"`)}</article>`;
+          return `<article class="panel league-event ${e.final ? "final-event" : ""}"><span class="event-round">${e.final ? "FINAL" : String(e.round).padStart(2, "0")}</span><div><span class="eyebrow">${U.date(e.day, true)} · ${t.laps} VUELTAS</span><h3>${U.escape(t.name)}</h3>${G.WorldCircuitUI.location(t)}<p>${e.status === "scheduled" ? `${U.money(C.fee(e))} en tasas · ${e.entry ? "INSCRITO" : block || "Plazas abiertas"}` : results ? `${results.dnf ? "Abandono" : results.position + "º puesto"} · ${results.points} puntos · ${U.money(results.prize)}` : "Prueba resuelta sin participación"}</p></div>${U.button(e.status !== "scheduled" ? "Resultados" : e.entry ? "Ver inscripción" : block ? "Ver requisitos" : "Preparar salida", "event", "secondary", `data-id="${e.id}"`)}</article>`;
         })
         .join(
           "",
@@ -197,7 +173,7 @@
         "Gana tu sitio en la parrilla.",
         "Empieza en la calle, prepara el coche y el piloto, consigue la licencia y clasifica a las finales.",
       ) +
-      UI.progress(s) +
+      UI.progress(s) + G.WorldCircuitUI.notice(s) +
       `<nav class="competition-tabs">${[
         ["street", "Liga callejera"],
         ["pro", "Copa regional"],
