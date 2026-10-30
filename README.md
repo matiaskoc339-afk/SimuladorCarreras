@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.14.0
+# Racing Company Simulator · 0.15.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,17 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.15.0 · entiende y mejora la conducción
+
+- **Control más decisivo en curvas**: cada punto cambia el margen. En una misma curva de comparación, Control 10 ronda 37 km/h, Control 50 ronda 64 y Control 90 ronda 82. El coche, el agarre, la frenada y el desgaste mantienen sus límites.
+- **Trazadas con consecuencias**: el interior acorta el recorrido y cierra el radio; el exterior recorre más metros pero puede conservar velocidad y preparar una mejor salida. Puedes ver la línea prevista.
+- **Maniobras preparadas por habilidad**: rebufos, observación de frenadas, amagos, salidas cruzadas y defensa estable con espacio para el rival emparejado.
+- **Errores ligados a la ejecución**: frenadas tardías, bloqueos y aceleración excesiva afectan a velocidad, trazada, tracción y gomas.
+- **Conducción explicada en el muro y el resultado**: tiempo cedido estimado por conducción, coche, neumáticos y tráfico, gráfica de velocidad y contadores de errores.
+- **Campus ampliado** con programas por días de Adelantamiento y Defensa, costes, atributos secundarios e informe real.
+
+[Reglas, ejemplos y compatibilidad](docs/CONDUCCION_Y_COMBATE_0_15.md).
 
 ## Novedades de la 0.14.0 · dirige la carrera y negocia con tus pilotos
 
@@ -299,6 +310,8 @@ npm test
 ```
 
 Pruebas del motor con el runner incluido en Node: negociación, duplicados, capacidad, vencimientos, gastos y nóminas, revisiones, neumáticos, bloqueo de fechas, órdenes, determinismo a diferentes velocidades, reanudación en carrera, temporada completa, contabilidad rival, noticias, corrupción/recuperación y bancarrota. Las nuevas pruebas del taller comprueban montaje con plazo, compatibilidad/requisitos, inventario, recuperación, reparación focal, refrigeración y rendimiento real en pista.
+
+`npm run test:skills` comprueba conducción, combate, los dos programas nuevos y continuidad exacta de una carrera auténtica 0.14. `npm run test:skills:browser` recorre sus controles y resultados. La ruta financiera principal usa la conducción 0.15; `npm run test:balance:v140` conserva la anterior.
 
 Comprobación opcional de navegador con Playwright disponible y el servidor iniciado:
 

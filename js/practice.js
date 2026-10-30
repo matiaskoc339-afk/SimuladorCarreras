@@ -79,7 +79,14 @@
       G.assert(
         [3, 5, 10, 20].includes(laps) &&
           ["easy", "normal", "hard"].includes(intensity) &&
-          ["pace", "brakes", "control", "consistency"].includes(focus),
+          (
+            G.RaceSkills?.focuses(s) || [
+              "pace",
+              "brakes",
+              "control",
+              "consistency",
+            ]
+          ).includes(focus),
         "Plan de entrenamiento inválido. Elige 3, 5, 10 o 20 vueltas, una intensidad y un objetivo del formulario.",
       );
       G.assert(
@@ -393,7 +400,14 @@
             j.completed >= 0 &&
             j.completed <= j.laps &&
             ["running", "completed", "cancelled"].includes(j.status) &&
-            ["pace", "brakes", "control", "consistency"].includes(j.focus) &&
+            (
+              G.RaceSkills?.focuses(s) || [
+                "pace",
+                "brakes",
+                "control",
+                "consistency",
+              ]
+            ).includes(j.focus) &&
             ["easy", "normal", "hard"].includes(j.intensity) &&
             Number.isInteger(j.coachLevel) &&
             j.coachLevel >= 1 &&

@@ -11,7 +11,9 @@ function engine({
   tour = false,
   life = false,
   director = false,
+  skills = false,
 } = {}) {
+  if (skills) director = true;
   if (director) life = true;
   if (life) tour = true;
   const store = new Map();
@@ -81,12 +83,14 @@ function engine({
     "race-life",
     "driver-agency",
     "race-director",
+    "race-skills",
   ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "../js/" + f + ".js"), "utf8"),
       context,
       { filename: f + ".js" },
     );
+  if (!skills) context.RCS.createGame = context.RCS.createV140Game;
   if (!director) context.RCS.createGame = context.RCS.createV131Game;
   if (!life) context.RCS.createGame = context.RCS.createV121Game;
   if (!tour) {

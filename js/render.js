@@ -758,7 +758,12 @@
           ),
           slip = Math.abs(a.headingSlip || 0),
           sliding =
-            slip > 0.13 || a.incident === "spin" || a.incident === "slide";
+            slip > 0.13 ||
+            a.incident === "spin" ||
+            a.incident === "slide" ||
+            Math.abs(a.skills?.rotation || 0) > 0.02 ||
+            (a.skills?.execution.kind === "lock" &&
+              a.skills.execution.until > r.time);
         if (sliding && !a.dnf) {
           const old = fx.lastPoints.get(a.carId);
           if (old && Math.hypot(old.x - p.x, old.y - p.y) < 30)
@@ -1112,6 +1117,26 @@
               -0.45,
               0.45,
             );
+          if (
+            r.skillsVersion &&
+            opt.showLine &&
+            (a === focus || a.companyId === "player")
+          ) {
+            c.save();
+            c.strokeStyle = "#dbeab499";
+            c.lineWidth = 0.22;
+            c.setLineDash([1.3, 1.3]);
+            c.beginPath();
+            for (let look = 2; look <= 55; look += 3) {
+              const mix = Math.min(1, look / 28),
+                lane = a.lateral + (a.skills.plannedLane - a.lateral) * mix,
+                point = worldPoint(index, a.progress + look, lane);
+              if (look === 2) c.moveTo(point.x, point.y);
+              else c.lineTo(point.x, point.y);
+            }
+            c.stroke();
+            c.restore();
+          }
           carCanvas(c, a, p, cam.scale, logo, r.entrants.indexOf(a) + 1);
           pitCrew(c, r, a, index);
           if (mode === "overview") {

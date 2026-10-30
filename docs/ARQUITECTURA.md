@@ -1,5 +1,13 @@
 # Arquitectura de Racing Company Simulator
 
+## Conducción y combate · 0.15
+
+`race-skills.js` añade `s.raceSkills` y marca las nuevas carreras con `skillsVersion = 1`. Construye una envolvente de velocidad con Control continuo, techo físico independiente y anticipación de frenada; transforma distancia física en avance por la línea escogida. `race.js` integra esa envolvente, la ejecución y la distancia lateral en su paso fijo. Los errores antiguos sin contexto quedan fuera de estas carreras, conservándose para las anteriores.
+
+Cada participante guarda preparación de maniobras, observaciones limitadas de rivales, RNG de ejecución, referencia de ritmo y telemetría atribuida. La referencia integra aceleración y frenada del mismo coche sano; la pérdida equivalente local se reparte entre cuatro motivos sin duplicados y excluye neutralizaciones/boxes. La validación comprueba valores, referencias y límites antes de reanudar. La liquidación conserva una copia del informe del jugador, con historial acotado.
+
+`ui-race-skills.js` agrega una sección al mismo muro móvil, sin duplicar controles. `render.js` dibuja la trayectoria efectivamente prevista y las pequeñas rotaciones/bloqueos. `Practice` y `Camps` admiten seis focos solo en empresas actualizadas; las dos nuevas especialidades reutilizan jornadas, cuotas, riesgos y reportes. El constructor anterior y una fixture auténtica 0.14 prueban continuidad exacta de las carreras antiguas. [Reglas y alcance](CONDUCCION_Y_COMBATE_0_15.md).
+
 ## Puntos y licencia en 0.13.1
 
 `Competition.licenseStatus` comparte los requisitos de la licencia y sus motivos de bloqueo entre motor e interfaz. `season.cups[cup].standings` sigue siendo la clasificación deportiva anual, mientras `competitions.streetPoints` y `proPoints` conservan sus trayectorias de acceso. La sede y los resultados usan los marcadores por copa; `Competition.driverBoard` deriva las tablas históricas a partir de eventos de una sola liga. El control previo al inicio de una prueba con inscripción rechaza una licencia ausente antes de consumir RNG; las renuncias siguen permitidas. [Reglas](LIGAS_Y_LICENCIA_0_13_1.md).

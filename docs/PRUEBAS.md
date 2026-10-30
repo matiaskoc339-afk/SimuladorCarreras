@@ -1,3 +1,15 @@
+# Validación 0.15.0
+
+**429/429 escenarios de motor y 23 recorridos de navegador aprobados.** Se comprobaron 136 archivos JS/CJS, 87 recursos locales y `git diff --check`. Las diecinueve pruebas nuevas de conducción/compatibilidad se repitieron tras los últimos ajustes, con 19/19 aprobadas. Se conservan los escenarios y fixtures anteriores.
+
+`skills.test.cjs` cubre migración sin alterar dinero/contratos/puntos/RNG, incremento continuo de Control, comparación de velocidades y techo físico independiente, tiempo de una vuelta real, radio/distancia interior y exterior, coste del desplazamiento lateral, carriles ocupados, preparación y referencias observadas, defensa estable, órdenes/banderas/boxes, errores contextuales y salida sin potencia extra. También comprueba atribución aislada de coche/gomas/conducción/tráfico, reparto sin duplicados, exclusión de neutralización, reanudación exacta con orden pendiente, los dos programas completos por jornadas, datos corruptos, informe real y carreras individuales en pistas fácil/difícil/experta.
+
+`skills-compat.test.cjs` carga una carrera capturada con el código original 0.14 (`7ffe0d8cc8dca224bb72e590c6768dc09987e743`). Termina con sus resultados originales y SHA-256 exacto de todo el estado, y después actualiza la gestión sin modificar los demás datos. Las fixtures históricas permanecen intactas.
+
+`browser-skills.cjs` completa los dos nuevos programas mediante formulario, reserva, jornadas, guardado/recarga e informes. Comprueba que consultar previsión, telemetría o trazada no altera el estado. Revisa causas/gráfica, cámara con preferencia conservada, radio flotante sin duplicados y escritorio/tableta/móvil a 1440/1024/390. Su informe de conducción procede de una carrera completa, y se inspeccionaron capturas de campus, radio e informe móvil. Las condiciones controladas de interfaz/física no se usan como prueba financiera.
+
+La ruta financiera actual completa veinte fechas con 4.200 US$ iniciales, nóminas, contratación/renovación, aumentos, mantenimiento, gomas, licencia y clasificaciones reales. Abre 2027, paga un programa de seis jornadas e investigación de ocho y conserva **6.769 US$**, sin inyectar dinero ni habilidades. Renuncia a pruebas que no puede disputar; no utiliza los nuevos encargos de apoyo y no demuestra el equilibrio de todas las semillas o decisiones. [Registro](BALANCE_0_15_1470.json) · [reglas y alcance](CONDUCCION_Y_COMBATE_0_15.md).
+
 # Validación 0.14.0
 
 **410 escenarios de motor y 22 recorridos de navegador aprobados.** Se comprobaron 130 archivos JS/CJS, 84 recursos locales y `git diff --check`. La batería general conserva las fixtures históricas; la suite nueva de dirección se volvió a ejecutar tras el último ajuste de valoración de promesas, sin fallos (17/17).

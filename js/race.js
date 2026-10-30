@@ -1126,10 +1126,12 @@
               pointAt(a.progress - 20).angle,
             );
           const corner = G.clamp((64 - point.limit) / 46, 0, 1);
-          let limit = 70;
-          for (const look of a.brain
-            ? [0, 35, 75, 120, 180, 240]
-            : [0, 25, 55, 85]) {
+          let limit = r.skillsVersion ? Infinity : 70;
+          for (const look of r.skillsVersion
+            ? []
+            : a.brain
+              ? [0, 35, 75, 120, 180, 240]
+              : [0, 25, 55, 85]) {
             const cornerLimit = pointAt(a.progress + look).limit;
             const cornerSpeed =
               cornerLimit *
@@ -1151,6 +1153,7 @@
             (0.94 + (a.morale ?? 75) * 0.0008);
           if (r.competitionVersion)
             target = Math.min(target, G.Driving.safeSpeed(r, a, brakePower));
+          if (r.skillsVersion) G.RaceSkills.prepare(r, a, target);
           let lateralTarget = a.brain
             ? G.Racecraft.line(r, a)
             : Math.abs(curve) > 0.025
@@ -1311,11 +1314,14 @@
             a.headingSlip *= Math.max(0, 1 - dt * 5);
             if (a.incident === "contact") target *= 0.82;
           }
-          const lateralSpeed =
+          if (r.skillsVersion) a.skills.plannedLane = lateralTarget;
+          const lateralSpeed = Math.min(
+            r.skillsVersion ? a.speed * 0.32 : Infinity,
             (1.1 +
               a.stats.control / 90 +
               (preparingPass ? passingSkill * 0.55 : 0)) *
-            (a.incident === "spin" ? 1.2 : 1);
+              (a.incident === "spin" ? 1.2 : 1),
+          );
           a.lateral += G.clamp(
             lateralTarget - a.lateral,
             -lateralSpeed * dt,
@@ -1326,7 +1332,7 @@
           if (a.offTrack) target *= 0.65;
           a.lateralVelocity = (a.lateral - beforeLateral) / dt;
           a.braking = a.speed > target + 1;
-          const accel =
+          let accel =
             a.acceleration *
             (0.85 + a.components.engine * 0.0015) *
             Math.min(
@@ -1335,12 +1341,29 @@
                 ((a.weight + (r.weekendVersion ? a.fuel * 0.75 : 0)) *
                   Math.max(a.speed, 12)),
             );
+          let appliedBrake = brakePower;
+          if (r.skillsVersion) {
+            const execution = G.RaceSkills.motion(
+              r,
+              a,
+              target,
+              brakePower,
+              accel,
+              corner,
+              yellow,
+            );
+            target = execution.target;
+            appliedBrake = execution.brakes;
+            accel = execution.accel;
+          }
           a.speed = Math.max(
             0,
-            a.speed + G.clamp(target - a.speed, -brakePower * dt, accel * dt),
+            a.speed + G.clamp(target - a.speed, -appliedBrake * dt, accel * dt),
           );
           const moved = a.speed * dt;
-          a.progress += moved;
+          a.progress += r.skillsVersion
+            ? G.RaceSkills.advance(r, a, moved, dt)
+            : moved;
           a.tires = Math.max(
             0,
             a.tires -
@@ -1357,6 +1380,7 @@
           const pressure =
             front && front.gap < 12 ? 1 : rear && rear.gap < 10 ? 0.7 : 0;
           if (
+            !r.skillsVersion &&
             !a.incident &&
             r.time > a.errorCooldown &&
             a.speed > 15 &&
@@ -1401,7 +1425,12 @@
           }
           if (a.progress >= distance) {
             a.finishTime =
-              r.time - (a.progress - distance) / Math.max(a.speed, 1);
+              r.time -
+              (a.progress - distance) /
+                Math.max(
+                  r.skillsVersion ? a.skills.lastAdvance / dt : a.speed,
+                  1,
+                );
             a.progress = distance;
             this.event(
               r,

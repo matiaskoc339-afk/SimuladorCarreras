@@ -312,6 +312,8 @@
           pace: "consistency",
           brakes: "control",
           consistency: "focus",
+          overtake: "brakes",
+          defense: "focus",
         }[j.focus];
       for (const [key, mult] of [
         [j.focus, 1],
@@ -372,6 +374,10 @@
                 brakes: "Nuevas referencias de frenada y entradas de curva.",
                 consistency:
                   "Repetición de referencias y concentración entre vueltas.",
+                overtake:
+                  "Rebufo, amagos, referencias del rival y preparación de adelantamientos.",
+                defense:
+                  "Lectura del ataque rival, elección de línea y defensa dejando espacio.",
               }[j.focus]
             : "No hubo tiempo de pista suficiente para consolidar una mejora.",
         stressChange: care.stress - j.beforeStress,
@@ -448,7 +454,14 @@
             ) &&
             s.cars.some((c) => c.id === j.carId) &&
             j.track === 10 &&
-            ["pace", "brakes", "control", "consistency"].includes(j.focus) &&
+            (
+              G.RaceSkills?.focuses(s) || [
+                "pace",
+                "brakes",
+                "control",
+                "consistency",
+              ]
+            ).includes(j.focus) &&
             ["easy", "normal", "hard"].includes(j.intensity) &&
             int(j.coachLevel, 1, 10) &&
             num(j.coachAbility, 1, j.coachLevel) &&

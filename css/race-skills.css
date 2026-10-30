@@ -1,0 +1,177 @@
+.skills-reading {
+  order: 1;
+  background: #eef4e8;
+  border: 1px solid #c2d2bc;
+  border-radius: 5px;
+  padding: 15px 17px;
+  margin: 10px 0 16px;
+  color: #345540;
+  min-width: 0;
+}
+.skills-reading-head {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.skills-reading-head > b {
+  font-size: 12px;
+  color: #43664d;
+}
+#skills-current-reason {
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 10px 0;
+  font-weight: 600;
+}
+#skills-corner-data {
+  display: flex;
+  gap: 9px 18px;
+  flex-wrap: wrap;
+}
+#skills-corner-data span {
+  font-size: 11px;
+  line-height: 1.7;
+}
+#skills-corner-data b {
+  display: block;
+  color: #284c36;
+  font-size: 14px;
+}
+#skills-battle {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 10px 0 0;
+}
+.skills-line-cost {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #5d705f;
+  margin: 7px 0 0;
+}
+.skills-rotation {
+  color: #a06a2b;
+  font-weight: 700;
+}
+.skills-line-button {
+  border: 1px solid #afc4a7;
+  border-radius: 4px;
+  padding: 7px 10px;
+  background: #f8fbf5;
+  color: #3d6546;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.skills-line-button[aria-pressed="true"] {
+  background: #d7e7c8;
+}
+.skills-details {
+  margin-top: 12px;
+}
+.skills-details > summary {
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.skills-losses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px 20px;
+  margin: 16px 0;
+}
+.skills-loss > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+.skills-loss > div {
+  height: 5px;
+  background: #d8e1d0;
+  margin-top: 7px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.skills-loss i {
+  display: block;
+  height: 100%;
+  background: #65885a;
+}
+.skills-loss[data-loss="car"] i {
+  background: #a88a55;
+}
+.skills-loss[data-loss="tires"] i {
+  background: #8e9b46;
+}
+.skills-loss[data-loss="traffic"] i {
+  background: #637e91;
+}
+.skills-explanation {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #5d705f;
+}
+.skills-speed-chart {
+  display: block;
+  width: 100%;
+  max-height: 130px;
+}
+.skills-chart-key {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #5b6f5c;
+}
+#skills-execution,
+.skills-report-events {
+  display: flex;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 15px;
+}
+.skills-race-report {
+  padding: 20px;
+  background: #f0f5eb;
+  border: 1px solid #ccdac5;
+  border-radius: 6px;
+  margin: 20px 0;
+  color: #345540;
+}
+.skills-race-report h3 {
+  margin: 7px 0 15px;
+  font-size: 21px;
+}
+.skills-race-report > p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.skills-training-note {
+  font-size: 12px;
+  line-height: 1.7;
+  border-left: 3px solid #77976d;
+  padding-left: 12px;
+}
+.radio-floating .skills-reading {
+  padding: 12px;
+}
+@media (max-width: 600px) {
+  .skills-losses {
+    grid-template-columns: 1fr;
+  }
+  .skills-race-report {
+    padding: 15px;
+  }
+  #skills-corner-data {
+    gap: 9px 12px;
+  }
+  .skills-chart-key {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

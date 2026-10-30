@@ -56,3 +56,7 @@ Completados: tutorial 0.10.1; rotación semanal de 64 referencias, 12 familias d
 ## 0.14.0 · dirección y negociación
 
 Implementados: retransmisión panorámica/ampliada, radio flotante, órdenes combinadas con plazos, maniobras condicionadas por habilidades y espacio, contratos con cuatro perfiles de negociación, concesiones ante mejoras, valoración del conjunto de cláusulas, revisiones salariales por resultados/progresión y confianza que afecta a renovaciones. Se conservan las cláusulas y las opciones firmadas. Esto amplía la IA local de reglas del simulador; no implica que estén terminadas todas las mecánicas pendientes del proyecto.
+
+## 0.15.0 · conducción y combate
+
+Implementados: atribución del tiempo cedido a conducción/coche/gomas/tráfico, distancias y radios distintos por trazada, preparación de adelantamientos con memoria local de referencias, defensa estable, errores ligados a frenada/aceleración, campus de Adelantamiento/Defensa y efecto continuo de Control más visible en velocidad de curva y salida. El muro y los resultados explican los efectos y permiten consultar la trazada prevista. Se conserva la simulación 2D y la compatibilidad exacta de las carreras anteriores. [Reglas y límites](CONDUCCION_Y_COMBATE_0_15.md).

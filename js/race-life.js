@@ -161,6 +161,7 @@
       return m.mode;
     },
     decide(r, a, c, result) {
+      if(r.skillsVersion)return result;
       const m = a.brain.mind;
       if (r.time >= m.nextMoment) {
         m.nextMoment = r.time + 5 + G.random(m) * 7;
