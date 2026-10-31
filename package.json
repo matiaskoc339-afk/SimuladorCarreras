@@ -1,6 +1,6 @@
 {
   "name": "racing-company-simulator",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "private": true,
   "description": "Simulador local de gestión automovilística, sin dependencias de ejecución.",
   "scripts": {

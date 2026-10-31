@@ -33,11 +33,11 @@
     maleNames,
     firstName(state) {
       const roll = G.random(state),
-        male = roll < 0.7;
+        male = roll < 0.9;
       const pool = G.Data.firstNames.filter((name) =>
         (male ? maleNames : femaleNames).has(name),
       );
-      const fraction = male ? roll / 0.7 : (roll - 0.7) / 0.3;
+      const fraction = male ? roll / 0.9 : (roll - 0.9) / 0.1;
       return pool[
         Math.min(pool.length - 1, Math.floor(fraction * pool.length))
       ];
