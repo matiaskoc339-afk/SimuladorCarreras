@@ -60,3 +60,11 @@ Implementados: retransmisión panorámica/ampliada, radio flotante, órdenes com
 ## 0.15.0 · conducción y combate
 
 Implementados: atribución del tiempo cedido a conducción/coche/gomas/tráfico, distancias y radios distintos por trazada, preparación de adelantamientos con memoria local de referencias, defensa estable, errores ligados a frenada/aceleración, campus de Adelantamiento/Defensa y efecto continuo de Control más visible en velocidad de curva y salida. El muro y los resultados explican los efectos y permiten consultar la trazada prevista. Se conserva la simulación 2D y la compatibilidad exacta de las carreras anteriores. [Reglas y límites](CONDUCCION_Y_COMBATE_0_15.md).
+
+## 0.16.0 · habilidades y agenda libre
+
+Implementados: negociación oculta sin ojeador, carreras opcionales sin ventana automática, programas pagados para aprendices rivales y más prioridad a sus mejoras, noticias de la jornada con distintivo de novedades, pinchazo obligatorio al 0 % y límite hasta sustituir gomas, 108 habilidades nuevas y aprendizaje más visible con límites e informe antes/después. Se conserva la progresión económica real de los rivales y la continuidad exacta de las carreras anteriores. [Reglas y compatibilidad](PILOTOS_Y_AGENDA_0_16.md).
+
+## Entregado en 0.17.0
+
+Gran Serie: 60 coches y 192 piezas, plataformas de fábrica conectadas a la física, GT/Prototipos/Fórmula como divisiones anuales de Nacional, tasas y premios crecientes, verificación más exigente, seis equipos de fábrica con recursos reales, preparación y mantenimiento rival por categoría, diseños propios y filtros del concesionario. [Reglas](GRAN_SERIE_0_17.md). No incorpora campeonatos simultáneos separados para las tres divisiones nacionales.

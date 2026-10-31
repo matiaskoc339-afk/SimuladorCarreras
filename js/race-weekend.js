@@ -788,7 +788,10 @@
         }
         return true;
       }
-      const max = p.limiter ? layout.limit : 25;
+      const max = Math.min(
+        p.limiter ? layout.limit : 25,
+        r.abilityVersion && a.puncture ? 5 : Infinity,
+      );
       a.speed = Math.max(0, a.speed + clamp(max - a.speed, -10 * dt, 3 * dt));
       if (u > 0.1 && u < 0.9 && a.speed > layout.limit + 1.1) {
         p.overspeed += dt;

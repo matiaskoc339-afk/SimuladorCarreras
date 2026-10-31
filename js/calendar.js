@@ -15,7 +15,10 @@
       );
       for (let i = 0; i < count; i++) {
         const due = G.nextEvent(s);
-        if (due && due.day <= s.day) return { blocked: true, event: due };
+        if (due && due.day <= s.day) {
+          if (!G.DriverWorld?.enabled(s)) return { blocked: true, event: due };
+          G.Race.skip(s, due.id);
+        }
         s.day++;
         G.Facilities.complete(s);
         G.Economy.daily(s);
@@ -32,6 +35,7 @@
         G.Auctions?.daily(s);
         G.Challenge.daily(s);
         G.AI.daily(s);
+        G.DriverWorld?.daily(s);
         G.Contracts.aiDaily(s);
         G.Economy.assess(s);
         G.Facilities.daily(s);
@@ -46,7 +50,10 @@
             event.id,
           );
         if (s.status !== "active") return { bankrupt: true };
-        if (event && event.day <= s.day) return { blocked: true, event };
+        if (event && event.day <= s.day)
+          return G.DriverWorld?.enabled(s)
+            ? { blocked: false, raceToday: true, event }
+            : { blocked: true, event };
       }
       return { blocked: false };
     },

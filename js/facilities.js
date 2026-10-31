@@ -524,6 +524,9 @@
         track: e.track,
         trackName: G.Data.tracks[e.track].name,
         ...(s.competitions ? { cup: e.cup, final: e.final } : {}),
+        ...(e.grandVersion === 1
+          ? { grandVersion: 1, grandDivision: e.grandDivision }
+          : {}),
         status: e.status,
         results: e.results.map((row) => {
           const d = drivers.get(row.driverId) || {

@@ -110,6 +110,20 @@
       this.raceTheatre = false;
       this.radioFloating = false;
       if (
+        G.DriverWorld.enabled(s) &&
+        !G.GrandTour.enabled(s) &&
+        !s.race &&
+        !G.Auctions.active(s)
+      )
+        G.GrandTour.initialize(s);
+      if (
+        G.RaceSkills.enabled(s) &&
+        !G.DriverWorld.enabled(s) &&
+        !s.race &&
+        !G.Auctions.active(s)
+      )
+        G.DriverWorld.initialize(s);
+      if (
         G.DriverAgency.enabled(s) &&
         !G.RaceSkills.enabled(s) &&
         !s.race &&
@@ -163,6 +177,15 @@
       }
     },
     render() {
+      if (
+        this.state &&
+        this.view === "news" &&
+        !G.Tutorial.active &&
+        G.DriverWorld.unread(this.state)
+      ) {
+        G.DriverWorld.markRead(this.state);
+        this.persist();
+      }
       U.render(this.state, this.view);
       if (this.view === "workshop") U.applyWorkshopFilter?.(this.state);
       this.updateSaveStatus();
@@ -206,6 +229,20 @@
         !G.RaceSkills.enabled(this.state)
       ) {
         G.RaceSkills.initialize(this.state);
+        this.persist();
+      }
+      if (
+        G.RaceSkills.enabled(this.state) &&
+        !G.DriverWorld.enabled(this.state)
+      ) {
+        G.DriverWorld.initialize(this.state);
+        this.persist();
+      }
+      if (
+        G.DriverWorld.enabled(this.state) &&
+        !G.GrandTour.enabled(this.state)
+      ) {
+        G.GrandTour.initialize(this.state);
         this.persist();
       }
       if (
@@ -315,6 +352,10 @@
           );
       } else {
         this.render();
+        if (result.raceToday)
+          U.toast(
+            "Hoy hay carrera opcional. Puedes participar desde Competiciones o seguir gestionando y avanzar el día.",
+          );
         if (program?.calendarVersion && program.report)
           U.modal(
             "Informe del programa",
@@ -341,6 +382,7 @@
         G.DriverAgencyUI.action(this, name, data) ||
         G.RaceCommandUI.action(this, name, data) ||
         G.RaceSkillsUI.action(this, name, data) ||
+        G.GrandTourUI.action(this, name, data) ||
         G.AuctionUI.action(this, name, data) ||
         G.WorkbenchUI.action(this, name, data) ||
         G.DevelopmentUI.action(this, name, data) ||

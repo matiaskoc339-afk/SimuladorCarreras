@@ -91,7 +91,7 @@
       intro:
         "Entrenar e investigar son inversiones por jornadas. La animación no concede progreso por dejarla abierta.",
       tips: [
-        "Elige piloto, entrenador, coche y programa. Consulta días, coste y riesgo antes de reservarlos.",
+        "Elige piloto, entrenador, coche y programa. Consulta días, coste y riesgo antes de reservarlos; sus habilidades especiales también influyen.",
         "El esfuerzo excesivo eleva estrés y riesgo de lesión o accidente. Al terminar recibes un informe.",
         "Un investigador contratado abre el árbol: mejoras pequeñas y permanentes. Más nivel reduce algo el coste y los días.",
       ],
@@ -110,7 +110,7 @@
         "La licencia profesional requiere 24 puntos callejeros y 900 US$. Es obligatoria para Regional y Nacional; la Nacional exige además 12 puntos regionales.",
         "Callejera, Regional y Nacional tienen puntos separados. Cada final pide los de su propia liga; al cerrar el año se archiva la temporada.",
       ],
-      more: "Hay circuitos con distinta dificultad y acceso por copa. El atlas agrupa las pistas por país y permite ver solo las de tu temporada. Al abrir el siguiente año se renuevan las veinte sedes, incluidas las finales; el calendario antiguo se conserva hasta cerrar su temporada. Se comprueban potencia, estado, licencia, contrato y habilidad del piloto. En la calle se permiten contactos; las pruebas profesionales sancionan maniobras evitables. Solo el podio de la gran final regional o nacional concede trofeos y reputación extra; se guardan en Vitrina de trofeos. Una carrera normal no entrega copa. Si cargas una empresa antigua, conserva el reglamento que indica su ficha.",
+      more: "Hay circuitos con distinta dificultad y acceso por copa. El atlas agrupa las pistas por país y permite ver solo las de tu temporada. Al abrir el siguiente año se renuevan las veinte sedes, incluidas las finales; el calendario antiguo se conserva hasta cerrar su temporada. Se comprueban potencia, estado, licencia, contrato y habilidad del piloto. Participar es opcional: el día de carrera recibes un aviso. Si avanzas de día, los rivales la disputan sin ti y puedes seguir entrenando; una inscripción pagada no se devuelve. En la calle se permiten contactos; las pruebas profesionales sancionan maniobras evitables. Solo el podio de la gran final regional o nacional concede trofeos y reputación extra; se guardan en Vitrina de trofeos. Una carrera normal no entrega copa. Si cargas una empresa antigua, conserva el reglamento que indica su ficha.",
     },
     {
       id: "race",
@@ -122,7 +122,7 @@
         "Durante la carrera, tu piloto decide según sus habilidades y la situación. Tú das órdenes y gestionas las paradas.",
       tips: [
         "Atacar gana ritmo con más riesgo y desgaste; Conservar protege el coche y los neumáticos.",
-        "Vigila gomas, combustible, clima, temperatura y daños. Pide boxes con tiempo; cada equipo tiene su puesto.",
+        "Vigila gomas, combustible, clima, temperatura y daños. Al 0 % hay pinchazo y el coche reduce hasta 18 km/h para volver a boxes; cada equipo tiene su puesto.",
         "El mecánico puede hacer el servicio. Sin él, o si falla, tendrás que resolver el cambio manual mientras los demás siguen.",
       ],
       more: "El cambio manual exige elevar el coche, seleccionar cada rueda, aflojar sus tornillos, quitarla, colocar la nueva, apretar y bajar el coche. Completa las cuatro ruedas. El nivel y la rapidez del personal cambian el servicio; el estratega puede ayudar a decidir. Las órdenes y los boxes comparten el muro junto a la pista. Comprueba el plan aplicado: enviar una orden no equivale a que el piloto la haya entendido; concentración, equipo, disciplina y estrés afectan a su respuesta. La bandera amarilla puede impedir atacar. En carreras nuevas, Entiende su conducción explica el tiempo cedido por piloto, coche, gomas o tráfico, las maniobras y los errores. El interior acorta el recorrido; el exterior permite conservar más velocidad con más distancia. Control permite aprovechar las curvas dentro del agarre disponible. Puedes pausar, cambiar velocidad y cámara y consultar la repetición al terminar.",
@@ -181,7 +181,7 @@
       intro:
         "Ya conoces el recorrido. Empieza por un piloto asequible, revisa el coche y prepara una primera carrera que puedas pagar.",
       tips: [
-        "Noticias enlaza con operaciones y acontecimientos reales. El archivo conserva temporadas, resultados y trayectoria.",
+        "Noticias muestra solo el día actual y un contador avisa de novedades sin leer. El archivo conserva temporadas, resultados y trayectoria.",
         "Hay cinco ranuras y guardado automático. Exportar JSON permite conservar y trasladar la partida.",
         "Esta guía no volverá a salir automáticamente al terminar u omitirla. Puedes abrirla desde Partidas y opciones → Cómo jugar.",
       ],

@@ -140,7 +140,7 @@
     return (
       risk.call(this, q) +
       (q.estimatedGain !== undefined
-        ? `<p class="learning-boost"><b>Mejora prevista de ${esc(G.Drivers.labels[q.focus])}: +${q.estimatedGain.toFixed(3)}</b> si completas el programa. Compara entrenador, intensidad y vueltas para elegir tu plan; una interrupción concede solo la parte realizada.</p>`
+        ? `<p class="learning-boost"><b>Mejora prevista de ${esc(G.Drivers.labels[q.focus])}: +${q.estimatedGain.toFixed(q.learningRate > 1.45 ? 2 : 3)}</b> si completas el programa. Compara entrenador, intensidad y vueltas para elegir tu plan; una interrupción concede solo la parte realizada.</p>`
         : "")
     );
   };

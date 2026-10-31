@@ -1103,6 +1103,7 @@
                   ? "attack"
                   : "balanced";
           }
+          if (r.abilityVersion) G.DriverAbilities.before(s, r, a);
           const yellow = this.underYellow(r, a),
             mode = a.mode === "attack" ? 1.037 : a.mode === "save" ? 0.957 : 1;
           const skill =
@@ -1276,7 +1277,16 @@
                 (this.dimensions(a).lateral + this.dimensions(b).lateral) / 2 +
                   0.25,
           );
-          if (beside) {
+          const deliberateContact =
+            r.abilityVersion &&
+            beside &&
+            G.DriverAbilities.has(a, "tramposo") &&
+            a.abilities.dirtyUntil > r.time &&
+            a.abilities.dirtyTarget === beside.carId &&
+            !yellow &&
+            a.directive.plan.risk >= 45 &&
+            !["clean", "follow"].includes(a.directive.plan.tactic);
+          if (beside && !deliberateContact) {
             const buffer =
               (this.dimensions(a).lateral + this.dimensions(beside).lateral) /
                 2 +

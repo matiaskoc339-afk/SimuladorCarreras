@@ -324,7 +324,10 @@
   const start = R.start;
   R.start = function (s, ...args) {
     G.assert(
-      !G.Practice.active(s),
+      !G.Practice.active(s) ||
+        (G.DriverWorld?.enabled(s) &&
+          !!G.Practice.active(s).calendarVersion &&
+          args[1] === true),
       "Termina el entrenamiento antes de disputar una carrera.",
     );
     const r = start.call(this, s, ...args);

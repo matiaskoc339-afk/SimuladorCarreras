@@ -1,0 +1,145 @@
+.grand-market {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: space-between;
+  padding: 25px 28px;
+  background: #e9efdf;
+  border: 1px solid #cad8bc;
+  border-radius: 7px;
+  margin: 0 0 24px;
+  color: #34543c;
+}
+.grand-market h2 {
+  font-size: 28px;
+  margin: 8px 0 12px;
+  letter-spacing: -0.6px;
+}
+.grand-market p {
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 850px;
+  margin: 0;
+}
+.grand-market > .primary {
+  flex-shrink: 0;
+}
+.grand-filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 0 0 25px;
+}
+.grand-filters button {
+  font-size: 11px;
+  padding: 9px 12px;
+}
+.grand-divisions {
+  margin-bottom: 25px;
+  color: #34533d;
+}
+.grand-divisions > summary {
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.7;
+}
+.grand-divisions > p {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+.grand-division-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+.grand-division-grid article {
+  background: #f7f9f2;
+  border: 1px solid #d1dcc8;
+  border-radius: 6px;
+  padding: 20px;
+  min-width: 0;
+}
+.grand-division-grid article.selected {
+  border: 2px solid #72956e;
+  padding: 19px;
+  background: #eaf2e2;
+}
+.grand-division-grid h3 {
+  font-size: 19px;
+  line-height: 1.4;
+  margin: 10px 0 16px;
+  min-height: 52px;
+}
+.grand-prize {
+  display: block;
+  font-size: 27px;
+  letter-spacing: -1px;
+  color: #316346;
+}
+.grand-division-grid small {
+  font-size: 11px;
+  line-height: 1.7;
+  display: block;
+  margin: 5px 0 15px;
+}
+.grand-division-grid dl {
+  margin: 0 0 20px;
+  font-size: 12px;
+}
+.grand-division-grid dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #dce4d4;
+}
+.grand-division-grid dd {
+  font-weight: 700;
+  margin: 0;
+  text-align: right;
+}
+.grand-lock {
+  background: #f6ecd6;
+  border-left: 3px solid #b48a4a;
+  padding: 10px;
+}
+.grand-workshop-note {
+  background: #e7efdf;
+  padding: 15px 20px;
+  border-radius: 6px;
+  margin: 0 0 20px;
+  color: #3b5a3e;
+}
+.grand-workshop-note p {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 7px 0 0;
+}
+@media (max-width: 1000px) {
+  .grand-division-grid {
+    grid-template-columns: 1fr;
+  }
+  .grand-division-grid h3 {
+    min-height: 0;
+  }
+  .grand-market {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .grand-market h2 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 600px) {
+  .grand-market {
+    padding: 20px;
+  }
+  .grand-filters button {
+    flex: 1 1 45%;
+  }
+  .grand-prize {
+    font-size: 25px;
+  }
+}

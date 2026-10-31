@@ -89,6 +89,8 @@ const { chromium } = require("playwright"),
     await p.locator('#entry-form [type="submit"]').click();
     await p.getByRole("button", { name: "Volver al calendario" }).click();
     await p.getByRole("button", { name: /Hasta la próxima prueba/ }).click();
+    if (await p.evaluate(() => !!RCS.App.state.driverWorld))
+      await p.locator('[data-action="event"]').first().click();
     await p.getByRole("button", { name: /Ir a la parrilla/ }).click();
     await p.waitForTimeout(600);
     const dist = await p.evaluate(

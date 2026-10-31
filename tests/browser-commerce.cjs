@@ -25,10 +25,10 @@ const { chromium } = require("playwright"),
     await p.locator('.rail [data-go="workshop"]').click();
     assert.match(await p.locator(".weekly-banner").innerText(), /64 novedades/);
     await p.locator('[data-action="wb-tab"][data-tab="catalog"]').click();
-    assert.equal(await p.locator(".wb-catalog-grid .wb-part-card").count(), 93);
+    assert.equal(await p.locator(".wb-catalog-grid .wb-part-card").count(), 285);
     assert.equal(await p.locator(".weekly-mark").count(), 64);
     await p.locator("#wb-catalog-slot").selectOption("shell");
-    assert.equal(await p.locator(".wb-part-card:visible").count(), 7);
+    assert.equal(await p.locator(".wb-part-card:visible").count(), 19);
     const before = await snapshot();
     await p
       .locator('.wb-part-card:visible [data-action="wb-preview"]')
@@ -64,10 +64,10 @@ const { chromium } = require("playwright"),
         exact: true,
       })
       .click();
-    assert.equal(await p.locator(".market-card").count(), 12);
+    assert.equal(await p.locator(".market-card").count(), 72);
     assert.equal(
       await p.locator('.market-card [data-action="buy-car"]:disabled').count(),
-      12,
+      72,
     );
     assert.match(await p.locator("main").innerText(), /Gama nueva disponible/);
     await p.screenshot({

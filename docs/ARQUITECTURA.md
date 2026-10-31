@@ -1,5 +1,18 @@
 # Arquitectura de Racing Company Simulator
 
+## Gran Serie 0.17
+
+`grand-content.js` añade 60 modelos y 192 definiciones sin alterar el catálogo de las construcciones históricas. `grand-tour.js` inicializa suministro, seis compañías y reglas por evento (`grandVersion`, `grandDivision`), captura la configuración de fábrica en `Performance` y preserva los límites de las carreras anteriores. La elección nacional se bloquea por temporada. La IA evalúa compatibilidad, reserva, categoría y mantenimiento específico. `grand-art.js` integra SVG superior/lateral y Canvas para Fórmula/Prototipos con sus anclajes de taller; `ui-grand-tour.js` añade filtros y selección informada. Las validaciones comprueban referencias y plataformas capturadas. Los trofeos y el archivo conservan la división de cada final.
+
+
+## Habilidades y agenda · 0.16
+
+`driver-abilities.js` contiene 108 definiciones, asignación determinista, condiciones, atributos efectivos y ejecución de habilidades especiales. El bucle de carrera aplica sus efectos desde atributos base guardados; los bonos temporales no se liquidan como entrenamiento. `driver-world.js` versiona la empresa, los programas rivales, preferencias de lectura y las carreras nuevas. Reutiliza gasto, contratos, personal, taller y simulación de pruebas.
+
+`Calendar` mantiene el aviso al llegar a una prueba, pero permite avanzar y simularla sin el jugador. La exclusión de prácticas de `PitCrew.start` admite esa renuncia con rivales mientras sigue un programa por días. Los límites por pinchazo se aplican después de las decisiones y también en la integración de boxes. `Camps` guarda la nueva tasa de aprendizaje; los programas existentes conservan la anterior.
+
+`ui-driver-world.js` muestra habilidades, enciclopedia, desarrollo rival y activaciones en carrera. El perfil de negociación y su orientación dependen del ojeador. `App.render` marca noticias leídas solo al mostrar realmente el diario, fuera del tutorial; las vistas son consultas sin efectos. El constructor `createV150Game` y una fixture auténtica mantienen la regresión anterior. [Reglas](PILOTOS_Y_AGENDA_0_16.md).
+
 ## Conducción y combate · 0.15
 
 `race-skills.js` añade `s.raceSkills` y marca las nuevas carreras con `skillsVersion = 1`. Construye una envolvente de velocidad con Control continuo, techo físico independiente y anticipación de frenada; transforma distancia física en avance por la línea escogida. `race.js` integra esa envolvente, la ejecución y la distancia lateral en su paso fijo. Los errores antiguos sin contexto quedan fuera de estas carreras, conservándose para las anteriores.

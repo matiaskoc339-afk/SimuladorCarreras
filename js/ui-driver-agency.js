@@ -6,6 +6,8 @@
     esc = U.escape.bind(U);
   const UI = (G.DriverAgencyUI = {
     identity(s, d) {
+      if (!G.DriverWorld.scout(s))
+        return '<section class="agency-personality agency-hidden"><span class="eyebrow">SU FORMA DE NEGOCIAR</span><h3>Perfil desconocido</h3><p>Contrata un ojeador para conocer su estilo de negociación. Sin informe, tendrás que interpretar sus respuestas y contraofertas.</p></section>';
       const p = A.persona(s, d),
         r = A.profile(s, d);
       return `<section class="agency-personality"><span class="eyebrow">SU FORMA DE NEGOCIAR</span><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p>${r ? `<small>Confianza en el equipo: ${Math.round(r.loyalty)}/100 · ${d.wins - r.wins} victorias desde la última revisión.</small>` : ""}</section>`;
@@ -148,6 +150,12 @@
           ? `Pide una pausa hasta el ${U.date(n.cooldown)}. Cuando vuelva a estar disponible podrás retomar la conversación.`
           : "Esta propuesta corresponde a estas condiciones. Cambiar duración, rol o primas puede cambiar su respuesta.";
     const update = () => {
+      if (!G.DriverWorld.scout(s)) {
+        form.querySelector(".deal-verdict").className = "deal-verdict";
+        form.querySelector(".deal-verdict").textContent =
+          "Propuesta preparada. Envía la oferta para conocer su respuesta. Un ojeador puede orientarte sobre sus preferencias; sin él no conoces su forma de negociar.";
+        return;
+      }
       const salary = Number(form.elements.salary.value),
         months = Number(form.elements.months.value),
         bonus = Number(form.elements.bonus.value),
@@ -178,7 +186,7 @@
     return A.enabled(s)
       ? html.replace(
           "</article>",
-          `<p class="driver-personality-note">Contrato: ${esc(A.persona(s, d).name.toLowerCase())}${A.profile(s, d)?.demand?.status === "pending" ? " · Quiere hablar de su sueldo" : ""}</p></article>`,
+          `<p class="driver-personality-note">Contrato: ${G.DriverWorld.scout(s) ? esc(A.persona(s, d).name.toLowerCase()) : "estilo desconocido · requiere ojeador"}${A.profile(s, d)?.demand?.status === "pending" ? " · Quiere hablar de su sueldo" : ""}</p></article>`,
         )
       : html;
   };

@@ -875,6 +875,7 @@
       for (let i = 40; i < G.Data.models.length; i++)
         if (
           !G.Data.models[i].auctionOnly &&
+          !G.Data.models[i].grandFamily &&
           !s.cars.some((c) => c.modelIndex === i)
         ) {
           const car = G.makeCar(

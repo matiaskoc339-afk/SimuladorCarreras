@@ -98,7 +98,9 @@
         severeRisk:
           (((1 - safe) * 0.01 * stress) / 100) * (1 - q.level * 0.04) * 100,
         learningBonus: R.effect(s, "training"),
-        learningRate: G.TeamLife?.trainingRate(s) || 1,
+        learningRate: G.DriverWorld?.enabled(s)
+          ? G.DriverWorld.learningRate(s, q.driver, q.focus, q.level)
+          : G.TeamLife?.trainingRate(s) || 1,
         estimatedGain: Math.max(
           0,
           Math.min(
@@ -108,7 +110,9 @@
               q.ability,
               q.intensity,
               R.effect(s, "training"),
-              G.TeamLife?.trainingRate(s) || 1,
+              G.DriverWorld?.enabled(s)
+                ? G.DriverWorld.learningRate(s, q.driver, q.focus, q.level)
+                : G.TeamLife?.trainingRate(s) || 1,
             ),
           ),
         ),
@@ -477,7 +481,9 @@
             j.cost === 80 + j.laps * 4 + j.days * 10 &&
             num(j.gain, 0, 100) &&
             num(j.learningBonus, 0, 0.151) &&
-            (j.trainingRate === undefined || j.trainingRate === 1.45) &&
+            (j.trainingRate === undefined ||
+              j.trainingRate === 1.45 ||
+              (G.DriverWorld?.enabled(s) && num(j.trainingRate, 1.45, 13))) &&
             int(j.recoveryDays, 0, 21) &&
             [null, "injury", "career-end", "mechanical"].includes(j.incident) &&
             typeof j.stopReason === "string" &&

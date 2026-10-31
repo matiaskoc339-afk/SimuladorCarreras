@@ -1,0 +1,122 @@
+.news-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 12px;
+  background: #e3543e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px #243538;
+}
+.rail-button {
+  position: relative;
+}
+.ability-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 9px 0;
+}
+.ability-badges > span {
+  font-size: 10px;
+  line-height: 1.6;
+  background: #e7efdf;
+  color: #39513c;
+  border: 1px solid #cbd9c2;
+  border-radius: 4px;
+  padding: 4px 7px;
+  max-width: 100%;
+}
+.driver-abilities {
+  border-top: 1px solid #dce5d6;
+  margin-top: 20px;
+  padding-top: 18px;
+}
+.driver-abilities > article,
+.rival-development > article {
+  border-left: 3px solid #94a97e;
+  padding: 8px 12px;
+  margin: 10px 0;
+  background: #f2f6ed;
+}
+.driver-abilities p,
+.ability-index p,
+.rival-development p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.driver-abilities h3 {
+  margin: 8px 0;
+}
+.ability-encyclopedia {
+  margin-top: 24px;
+}
+.ability-encyclopedia > summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.ability-index {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+.ability-index article {
+  border: 1px solid #d9e3d1;
+  border-radius: 5px;
+  padding: 14px;
+  background: #f7f9f3;
+}
+.ability-index b {
+  font-size: 13px;
+  color: #3c5b40;
+}
+.ability-index p {
+  margin: 7px 0 0;
+}
+.rival-development {
+  margin-top: 24px;
+}
+#ability-live {
+  margin-top: 12px;
+}
+#ability-live small {
+  font-size: 11px;
+}
+.puncture-alert {
+  padding: 9px;
+  border-left: 3px solid #bb5a35;
+  background: #fff1df;
+  color: #7d412d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.agency-hidden {
+  border-style: dashed;
+}
+.camp-stat-before {
+  display: block;
+  font-size: 11px;
+  color: #64735f;
+  margin-top: 4px;
+}
+@media (max-width: 700px) {
+  .ability-index {
+    grid-template-columns: 1fr;
+  }
+  .news-badge {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    margin: 0;
+  }
+  .ability-badges > span {
+    font-size: 10px;
+  }
+}

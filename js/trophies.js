@@ -41,6 +41,7 @@
         s.trophyRoom.awards.push({
           year: s.season.year,
           cup: e.cup,
+          ...(e.grandVersion === 1 ? { grandDivision: e.grandDivision } : {}),
           eventId: e.id,
           day: s.day,
           track: e.track,
@@ -103,6 +104,7 @@
         G.assert(
           event?.final &&
             event.cup === t.cup &&
+            t.grandDivision === event.grandDivision &&
             event.track === t.track &&
             event.status !== "scheduled" &&
             event.results.some(

@@ -450,6 +450,8 @@
       G.DriverAgency?.validate(s);
       G.RaceDirector?.validate(s);
       G.RaceSkills?.validate(s);
+      G.DriverWorld?.validate(s);
+      G.GrandTour?.validate(s);
       G.Performance?.validate(s);
       G.Contracts.validate(s);
       G.assert(safeLogo(s.logo), "Logotipo inválido.");

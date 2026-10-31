@@ -153,11 +153,11 @@ const { chromium } = require("playwright"),
     );
     await p.locator("#wb-search").fill("");
     await tab("catalog");
-    assert.equal(await p.locator(".wb-catalog-grid .wb-part-card").count(), 93);
+    assert.equal(await p.locator(".wb-catalog-grid .wb-part-card").count(), 285);
     await p.locator("#wb-catalog-slot").selectOption("engine");
     assert.equal(
       await p.locator(".wb-catalog-grid .wb-part-card:visible").count(),
-      7,
+      19,
     );
     await p.locator("#wb-search").fill("Etapa 3");
     assert.equal(
@@ -303,10 +303,13 @@ const { chromium } = require("playwright"),
           .filter((d) => !d.companyId && G.Professionals.available(s, d))
           .sort((a, b) => a.ask - b.ask)[0],
         e = G.nextEvent(s);
+      // Preparar el taller puede haber pasado la primera fecha: nunca retroceder
+      // el calendario por debajo de contratos y trabajos ya realizados.
+      if (e.day < s.day) e.day = s.day;
       const agreement = G.Drivers.offer(s, d.id, d.ask, 12);
       if (!agreement.accepted) G.Drivers.offer(s, d.id, agreement.salary, 12);
       d.contract.end = e.day + 365;
-      s.day = e.day;
+      G.Calendar.advance(s, e.day - s.day);
       G.Auctions?.daily(s);
       G.Commerce?.refresh(s);
       G.Race.register(s, e.id, d.id, car.id);

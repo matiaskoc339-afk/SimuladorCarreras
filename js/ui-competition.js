@@ -203,8 +203,8 @@
     let content = "";
     if (tab === "tracks") content = G.WorldCircuitUI.atlas(s);
     else {
-      const rule = C.rules[tab],
-        events = s.season.events.filter((e) => e.cup === tab),
+      const events = s.season.events.filter((e) => e.cup === tab),
+        rule = events.length ? C.rule(events[0]) : C.rules[tab],
         board = C.board(s, tab).filter(
           (v) =>
             v.company.id === s.playerId ||
@@ -221,7 +221,7 @@
         })
         .join(
           "",
-        )}</div></section><section class="panel padded"><span class="eyebrow">PUNTOS SEPARADOS POR LIGA</span><h2>${U.escape(rule.name)} · ${s.season.year}</h2><p>La final exige ${rule.qualify} puntos en clasificatorias.${tab === "national" ? ` Acceso a la copa: 12 puntos regionales acumulados, piloto 24 y verificación nacional. Tasas desde ${U.money(rule.fee + rule.transport)}.` : ""}</p><div class="league-standings">${board.map((v, i) => `<div class="${v.company.id === s.playerId ? "my-team" : ""}"><span>${i + 1}</span><b>${U.escape(v.company.name)}</b><span>${v.points} pt<small>${v.qualifying} para su final</small></span></div>`).join("")}</div>${s.season.cups[tab].champion ? `<p class="onboarding-note">Campeón de la final: <b>${U.escape(s.companies.find((c) => c.id === s.season.cups[tab].champion).name)}</b></p>` : ""}</section></div>`;
+        )}</div></section><section class="panel padded"><span class="eyebrow">PUNTOS SEPARADOS POR LIGA</span><h2>${U.escape(rule.name)} · ${s.season.year}</h2><p>La final exige ${rule.qualify} puntos en clasificatorias.${tab === "national" ? ` Acceso a la copa: 12 puntos regionales acumulados, piloto ${rule.rating || 24} y verificación nacional. Tasas desde ${U.money(rule.fee + rule.transport)}.` : ""}</p><div class="league-standings">${board.map((v, i) => `<div class="${v.company.id === s.playerId ? "my-team" : ""}"><span>${i + 1}</span><b>${U.escape(v.company.name)}</b><span>${v.points} pt<small>${v.qualifying} para su final</small></span></div>`).join("")}</div>${s.season.cups[tab].champion ? `<p class="onboarding-note">Campeón de la final: <b>${U.escape(s.companies.find((c) => c.id === s.season.cups[tab].champion).name)}</b></p>` : ""}</section></div>`;
     }
     const next = G.nextEvent(s);
     return (
@@ -272,7 +272,11 @@
   U.race = function (s) {
     let html = race.call(this, s);
     if (!s.race?.competitionVersion) return html;
-    html = html.replace("COPA CLUB", C.rules[s.race.cup].name.toUpperCase());
+    const event = s.season.events.find((e) => e.id === s.race.eventId);
+    html = html.replace(
+      "COPA CLUB",
+      (event ? C.rule(event) : C.rules[s.race.cup]).name.toUpperCase(),
+    );
     return (
       `<div class="competition-rule race-regulation ${s.race.cup}">${s.race.cup === "street" ? "LIGA CALLEJERA · Contactos admitidos, muros próximos y daños persistentes. Atacar aumenta el riesgo para ambos coches." : "COPA PROFESIONAL · Las colisiones evitables se sancionan. La clasificación para la final depende de tus puntos."} Boxes con puestos individuales: los equipos trabajan al mismo tiempo.</div>` +
       html

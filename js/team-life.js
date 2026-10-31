@@ -3,7 +3,12 @@
   const G = RCS;
   const L = (G.TeamLife = {
     enabled: (s) => s?.teamLife?.version === 1,
-    trainingRate: (s) => (L.enabled(s) ? 1.45 : 1),
+    trainingRate: (s, d, focus) =>
+      G.DriverWorld?.enabled(s)
+        ? G.DriverWorld.learningRate(s, d, focus)
+        : L.enabled(s)
+          ? 1.45
+          : 1,
     initialize(s) {
       if (s.teamLife !== undefined) {
         G.assert(L.enabled(s), "Versión de gestión del equipo incompatible.");

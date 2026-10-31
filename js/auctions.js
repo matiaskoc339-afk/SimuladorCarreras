@@ -95,8 +95,9 @@
           .map((m, i) => i)
           .filter(
             (i) =>
-              G.Competition.enabled(s) ||
-              (G.Data.models[i].hp <= 210 && G.Data.models[i].weight >= 850),
+              !G.Data.models[i].grandFamily &&
+              (G.Competition.enabled(s) ||
+                (G.Data.models[i].hp <= 210 && G.Data.models[i].weight >= 850)),
           ),
         special = models.filter((i) => G.Data.models[i].auctionOnly),
         round = x.round++;
@@ -115,7 +116,7 @@
                     ? 34 + (round % 3)
                     : (round * 17 + i * 7) % C.families.length;
           const model =
-            i === 0 && own && round % 2 === 0
+            i === 0 && own && !own.grandFamily && round % 2 === 0
               ? own.modelIndex
               : this.pick(x, models);
           blueprint = {

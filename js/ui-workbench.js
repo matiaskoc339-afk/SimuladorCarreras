@@ -325,8 +325,16 @@
       const limits = G.Competition.enabled(s)
         ? [
             ["Calle", G.Competition.rules.street.maxHP],
-            ["Regional", G.Competition.rules.pro.maxHP],
-            ["Nacional", G.Competition.rules.national.maxHP],
+            [
+              "Regional",
+              G.GrandTour?.enabled(s) ? 350 : G.Competition.rules.pro.maxHP,
+            ],
+            [
+              "Nacional",
+              G.GrandTour?.enabled(s)
+                ? G.GrandTour.divisions[s.grandTour.division].maxHP
+                : G.Competition.rules.national.maxHP,
+            ],
           ]
         : [["Copa Club", 210]];
       return `<aside class="wb-stats panel"><div class="wb-stats-heading"><span class="eyebrow">FICHA DINÁMICA</span><h2>${preview ? "Así quedaría" : "Así está tu coche"}</h2><p>${preview ? esc(preview.def.name) : "Configuración y estado de las piezas instaladas"}</p>${preview ? button("Volver al estado actual", "wb-clear", "text-button") : ""}</div><div class="wb-main-stats">${metrics.map(row).join("")}</div><div class="wb-structure"><span>Chasis <b>${spec.chassisTier ? "Nivel " + spec.chassisTier : "De serie"}</b></span><span>Preparación nominal <b>Hasta ${Math.round(spec.powerLimit)} CV</b></span><span>Espacio en aletas <b>Hasta ${spec.maxRim}″</b></span><span>Llantas <b>${spec.rim}″</b></span></div><details class="wb-stat-details"><summary>Temperatura, desgaste y transmisión</summary>${details.map(row).join("")}</details><div class="wb-homologation"><b>Límites de potencia por competición</b><p>${limits

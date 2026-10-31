@@ -18,6 +18,16 @@ const { chromium } = require("playwright"),
     await p.goto(process.env.GAME_URL || "http://127.0.0.1:4173");
     const id = await p.evaluate(() => {
       const s = RCS.createGame("Conversaciones reales", "", 1470);
+      // El análisis del contrato requiere un ojeador; esta ruta cubre el caso informado.
+      RCS.player(s).balance = 100000;
+      const scout = s.employees
+        .filter((e) => e.role === "scout")
+        .sort((a, b) => a.ask - b.ask)[0];
+      RCS.Staff.offer(s, scout.id, {
+        salary: Math.ceil(scout.ask * 1.15),
+        months: 12,
+        bonus: 0,
+      });
       RCS.App.setState(s, 1);
       RCS.App.go("team");
       return s.drivers

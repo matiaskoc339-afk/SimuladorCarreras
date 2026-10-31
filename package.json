@@ -1,13 +1,13 @@
 {
   "name": "racing-company-simulator",
-  "version": "0.15.0",
+  "version": "0.17.0",
   "private": true,
   "description": "Simulador local de gestión automovilística, sin dependencias de ejecución.",
   "scripts": {
     "start": "node scripts/server.cjs",
     "test": "node --test tests/*.test.cjs",
-    "test:browser": "node tests/browser-smoke.cjs && node tests/browser-business.cjs && node tests/browser-workshop.cjs && node tests/browser-presentation.cjs && node tests/browser-contracts.cjs && node tests/browser-race-weekend.cjs && node tests/browser-facilities.cjs && node tests/browser-staff.cjs && node tests/browser-professionals.cjs && node tests/browser-operations.cjs && node tests/browser-challenge.cjs && node tests/browser-competition.cjs && node tests/browser-development.cjs && node tests/browser-workbench.cjs && node tests/browser-auctions.cjs && node tests/browser-tutorial.cjs && node tests/browser-commerce.cjs && node tests/browser-world-circuits.cjs && node tests/browser-feedback.cjs && node tests/browser-team-life.cjs && node tests/browser-league-points.cjs && node tests/browser-director.cjs && node tests/browser-skills.cjs",
-    "test:balance": "node scripts/check-balance-v150.cjs",
+    "test:browser": "node tests/browser-smoke.cjs && node tests/browser-business.cjs && node tests/browser-workshop.cjs && node tests/browser-presentation.cjs && node tests/browser-contracts.cjs && node tests/browser-race-weekend.cjs && node tests/browser-facilities.cjs && node tests/browser-staff.cjs && node tests/browser-professionals.cjs && node tests/browser-operations.cjs && node tests/browser-challenge.cjs && node tests/browser-competition.cjs && node tests/browser-development.cjs && node tests/browser-workbench.cjs && node tests/browser-auctions.cjs && node tests/browser-tutorial.cjs && node tests/browser-commerce.cjs && node tests/browser-world-circuits.cjs && node tests/browser-feedback.cjs && node tests/browser-team-life.cjs && node tests/browser-league-points.cjs && node tests/browser-director.cjs && node tests/browser-skills.cjs && node tests/browser-driver-world.cjs && node tests/browser-grand-tour.cjs",
+    "test:balance": "node scripts/check-balance-v170.cjs",
     "test:balance:v64": "node scripts/check-balance-v64.cjs",
     "test:leagues": "node --test tests/competition.test.cjs",
     "test:balance:v70": "node scripts/check-balance-v70.cjs",
@@ -35,6 +35,12 @@
     "test:balance:v130": "node scripts/check-balance-v130.cjs",
     "test:balance:v140": "node scripts/check-balance-v140.cjs",
     "test:skills": "node --test tests/skills.test.cjs tests/skills-compat.test.cjs",
-    "test:skills:browser": "node tests/browser-skills.cjs"
+    "test:skills:browser": "node tests/browser-skills.cjs",
+    "test:balance:v150": "node scripts/check-balance-v150.cjs",
+    "test:driver-world": "node --test tests/driver-world.test.cjs",
+    "test:driver-world:browser": "node tests/browser-driver-world.cjs",
+    "test:balance:v160": "node scripts/check-balance-v160.cjs",
+    "test:grand-tour": "node --test tests/grand-tour.test.cjs",
+    "test:grand-tour:browser": "node tests/browser-grand-tour.cjs"
   }
 }

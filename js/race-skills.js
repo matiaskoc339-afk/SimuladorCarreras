@@ -60,8 +60,8 @@
       const utilization = E.controlFactor(a.stats.control, a.fatigue) / 1.88,
         reaction = F.effect(a).reaction,
         physicalBrakes = E.brakes(r, a, true);
-      let physical = 75,
-        driver = 75,
+      let physical = r.grandVersion ? 120 : 75,
+        driver = r.grandVersion ? 120 : 75,
         cornerDistance = 0,
         apex = 75,
         turn = 0;
@@ -106,6 +106,7 @@
           Object.keys(a.components).map((k) => [k, 100]),
         ),
         tires: 100,
+        ...(a.abilities ? { puncture: false } : {}),
         thermal: 90,
         condition: 100,
         fatigue: 0,
@@ -146,7 +147,13 @@
           best = W.bestCompound(r);
         healthy.compound = best;
         healthy.tyreTemp = 65;
-        const fresh = { ...a, tires: 100, compound: best, tyreTemp: 65 };
+        const fresh = {
+          ...a,
+          tires: 100,
+          compound: best,
+          tyreTemp: 65,
+          ...(r.abilityVersion ? { puncture: false } : {}),
+        };
         const ideal = E.envelope(r, healthy, E.brakes(r, healthy), false),
           car = E.envelope(r, fresh, E.brakes(r, fresh), false);
         t.reference = Math.min(healthy.top / 3.6, ideal.physical);
@@ -475,7 +482,9 @@
         (a.top / 3.6) * (1.01 + a.stats.pace / 1000),
       );
       a.skills.trafficTarget = result.target;
-      return result;
+      return r.abilityVersion
+        ? G.DriverAbilities.tactic(r, a, c, result)
+        : result;
     },
     motion(r, a, target, brakes, accel, corner, yellow) {
       const t = a.skills,
@@ -586,7 +595,7 @@
         t.phase === "exit" &&
         a.speed > 8 &&
         target > a.speed + 0.5 &&
-        a.stats.control >= 78 &&
+        a.stats.control >= (G.DriverAbilities?.has(a, "drifting") ? 45 : 78) &&
         plan.pace >= 55 &&
         plan.risk >= 35 &&
         plan.risk <= 80 &&
@@ -597,7 +606,14 @@
         !yellow
       ) {
         t.rotation =
-          Math.sign(now.curvature) * (0.035 + (a.stats.control - 78) * 0.0018);
+          Math.sign(now.curvature) *
+          Math.min(
+            0.09,
+            0.035 +
+              (a.stats.control -
+                (G.DriverAbilities?.has(a, "drifting") ? 45 : 78)) *
+                (G.DriverAbilities?.has(a, "drifting") ? 0.0012 : 0.0018),
+          );
         if (!t.rotating) {
           t.analysis.rotations++;
           t.rotating = true;
@@ -732,9 +748,11 @@
                 ? "Motor o transmisión limitan la entrega"
                 : "Desgaste mecánico limita el rendimiento"
             : cause === "tires"
-              ? a.tires < 40
-                ? "Neumáticos gastados reducen el agarre"
-                : "El compuesto y la pista limitan el agarre"
+              ? r.abilityVersion && a.puncture
+                ? "Pinchazo: reduce la marcha y vuelve a boxes para cambiar las gomas"
+                : a.tires < 40
+                  ? "Neumáticos gastados reducen el agarre"
+                  : "El compuesto y la pista limitan el agarre"
               : cause === "traffic"
                 ? a.brain.intent
                 : t.execution.until > r.time

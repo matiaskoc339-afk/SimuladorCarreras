@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.15.0
+# Racing Company Simulator · 0.17.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,28 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades de la 0.17.0 · del GT al monoplaza
+
+- **60 coches nuevos en diez familias**, de urbanos y rally a gran turismo de lujo, hiperdeportivos, GT, prototipos y seis monoplazas de 650–1050 CV. El mundo suma 148 modelos. Filtros de concesionario y diseños propios de Fórmula y Prototipos en taller y carrera.
+- **192 piezas nuevas** para los dieciséis alojamientos: Club avanzado, GT Motorsport, Endurance P y Fórmula GP, con enfoques de Resistencia, Equilibrio y Ataque. Compatibilidad, costes, plazos y efectos físicos reales.
+- **Categorías superiores más caras y mejor remuneradas**: Regional, GT, Prototipos y Fórmula. Las tres últimas son divisiones de la Nacional que eliges para toda la temporada. La licencia, los puntos previos y la verificación técnica siguen siendo obligatorios.
+- **Seis equipos de fábrica** con flotas, pilotos, contratos y presupuesto propio. La IA conserva preparaciones legales y mantiene el coche que va a competir.
+- Se conservan el inicio de 4.200 US$ y las partidas anteriores; un monoplaza cuesta desde 650.000 US$ y requiere una estructura deportiva capaz de mantenerlo.
+
+[Vehículos, piezas, categorías y compatibilidad](docs/GRAN_SERIE_0_17.md).
+
+## Novedades de la 0.16.0 · personalidad, aprendizaje y una agenda libre
+
+- **Negociación desconocida sin ojeador**: se ocultan estilo y preferencias en CV, fichas y contratos. Un ojeador contratado permite consultar el perfil y orienta la propuesta.
+- **Carreras opcionales**: llegar a la fecha muestra un aviso y conserva tu pantalla. Puedes participar desde Competiciones o avanzar de día; los rivales corren sin ti mientras sigues gestionando y entrenando. Una inscripción ya pagada no se devuelve.
+- **108 habilidades nuevas**, con una a tres por piloto y efectos situacionales reales. Incluyen Motivador, Autónomo, Tramposo, Mal perdedor, Testarudo y Drifting. Las fichas explican sus condiciones y la carrera muestra las activas.
+- **Entrenamiento más visible**: aprendizaje básico multiplicado por cinco respecto a 0.15, límites de programa y potencial, previsión y comparación de atributos antes/después. Autónomo puede mejorar el aprendizaje hasta un 35 % adicional.
+- **Rivales que se desarrollan**: programas pagados para sus pilotos, jornadas, descansos y compra/montaje de piezas con su propia caja.
+- **Diario del día con contador de novedades**. Leerlas limpia el contador y la lectura se conserva al guardar.
+- **0 % de neumáticos implica pinchazo**: el coche frena hasta un máximo de 18 km/h, también en el carril de boxes, hasta montar un juego sano.
+
+[Reglas y compatibilidad](docs/PILOTOS_Y_AGENDA_0_16.md) · [catálogo de las 108 habilidades](docs/HABILIDADES_0_16.md).
 
 ## Novedades de la 0.15.0 · entiende y mejora la conducción
 
@@ -311,7 +333,11 @@ npm test
 
 Pruebas del motor con el runner incluido en Node: negociación, duplicados, capacidad, vencimientos, gastos y nóminas, revisiones, neumáticos, bloqueo de fechas, órdenes, determinismo a diferentes velocidades, reanudación en carrera, temporada completa, contabilidad rival, noticias, corrupción/recuperación y bancarrota. Las nuevas pruebas del taller comprueban montaje con plazo, compatibilidad/requisitos, inventario, recuperación, reparación focal, refrigeración y rendimiento real en pista.
 
-`npm run test:skills` comprueba conducción, combate, los dos programas nuevos y continuidad exacta de una carrera auténtica 0.14. `npm run test:skills:browser` recorre sus controles y resultados. La ruta financiera principal usa la conducción 0.15; `npm run test:balance:v140` conserva la anterior.
+`npm run test:skills` comprueba conducción, combate, los dos programas nuevos y continuidad exacta de una carrera auténtica 0.14. `npm run test:skills:browser` recorre sus controles y resultados. `npm run test:balance:v140` conserva la ruta financiera 0.14.
+
+`npm run test:grand-tour` comprueba modelos, piezas, plataformas, compra/montaje, rivales, categorías, carreras completas y continuidad auténtica 0.16. `npm run test:grand-tour:browser` recorre el concesionario, taller y categorías en escritorio/móvil.
+
+`npm run test:driver-world` comprueba habilidades, agenda opcional, noticias, pinchazos, formación y rivales. `npm run test:driver-world:browser` recorre la negociación con/sin ojeador y los controles nuevos. La ruta financiera principal usa 0.17; `test:balance:v160` y `test:balance:v150` conservan las anteriores.
 
 Comprobación opcional de navegador con Playwright disponible y el servidor iniciado:
 

@@ -626,6 +626,10 @@
     c.save();
     c.translate(position.x, position.y);
     c.rotate(position.angle + slip);
+    if (G.GrandArt?.race(c, a, length, width, number, logo, position.steering || 0)) {
+      c.restore();
+      return;
+    }
     // La silueta y las proporciones son métricas y no varían con el tamaño del viewport.
     c.fillStyle = "#08100f46";
     c.beginPath();

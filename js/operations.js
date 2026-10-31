@@ -628,7 +628,7 @@
               d.potential,
               before +
                 0.015 *
-                  (G.TeamLife?.trainingRate(s) || 1) *
+                  (G.TeamLife?.trainingRate(s, d, c.focus) || 1) *
                   (d.age < 25 ? 1 : 0.5) *
                   S.training(s, s.playerId),
             ),
