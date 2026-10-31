@@ -18,9 +18,32 @@
     for (const c of String(str)) n = Math.imul(n ^ c.charCodeAt(0), 16777619);
     return n >>> 0;
   };
+  const femaleNames = new Set(
+    "Elena Inés Valentina Lucía Camila Alba Sofía Julia Valeria Paula Isabel Aitana Sara Emma Noelia Daniela Olivia Carla Renata Maya Abril Amelia Celeste Natalia Elisa Alicia Aurora Brenda María Ana Laura Andrea Marta Victoria Rocío".split(
+      " ",
+    ),
+  );
+  const maleNames = new Set(
+    "Lucas Mateo Diego Bruno Adrián Nicolás Rafael Marco Andrés Tomás Samuel Gabriel Martín Héctor Álex Omar Leo Iván Joaquín Enzo Joel Gael Tiago Santiago Dante Simón Julián Cristian".split(
+      " ",
+    ),
+  );
+  const appearance = (G.DriverAppearance = {
+    femaleNames,
+    maleNames,
+    gender(d) {
+      const first = String(d.name || "")
+        .trim()
+        .split(/\s+/)[0];
+      if (femaleNames.has(first)) return "female";
+      if (maleNames.has(first)) return "male";
+      return ["female", "mujer", "f"].includes(d.gender) ? "female" : "male";
+    },
+  });
   const A = (G.Art = {
     hash,
     portrait(d) {
+      const female = appearance.gender(d) === "female";
       const seed = d.identity ?? hash(d.id + ":" + d.name);
       let n = seed;
       const pick = (max) => {
@@ -75,16 +98,16 @@
           "#d1b5c9",
           "#a7be81",
         ][pick(6)];
-      const rx = 20 + pick(7),
-        ry = 25 + pick(7),
+      const rx = female ? 18 + pick(5) : 20 + pick(7),
+        ry = female ? 26 + pick(5) : 25 + pick(7),
         eyeY = 46 + pick(6),
         eyeW = 2 + pick(3),
         nose = pick(6),
         mouth = pick(5),
-        style = pick(10),
+        style = pick(female ? 8 : 7),
         old = d.age > 34,
         glasses = pick(9) === 0,
-        beard = style < 6 && pick(4) === 0,
+        beard = !female && style < 6 && pick(4) === 0,
         detail = pick(3);
       const hairPaths = [
         "M25 39V25Q29 7 52 10Q75 10 76 34L68 37L62 23L35 29L30 42Z",
@@ -98,7 +121,29 @@
         "M20 70L22 29Q25 6 52 8Q77 9 79 32L82 76L69 72L66 25L33 28L31 73Z",
         "M25 40Q22 16 40 13Q51 5 68 16L78 31L71 50L64 27Q44 35 29 44Z",
       ];
-      return `<svg class="portrait" data-portrait="${seed.toString(16)}" viewBox="0 0 100 115" role="img" aria-label="Retrato ilustrado de ${esc(d.name)}"><rect width="100" height="115" rx="4" fill="${bg}"/><path d="M0 75L100 23V115H0Z" fill="#f2eee5" opacity=".09"/><path d="M3 115Q5 82 37 79H64Q93 83 98 115" fill="${suit}"/><path d="M39 70V85L50 95L62 84V69" fill="${skin}"/><path d="M36 80L50 94L40 101L27 86M63 80L50 94L60 101L75 87" fill="${accent}"/><ellipse cx="26" cy="51" rx="4" ry="7" fill="${skin}"/><ellipse cx="74" cy="51" rx="4" ry="7" fill="${skin}"/><ellipse cx="50" cy="48" rx="${rx}" ry="${ry}" fill="${skin}"/><path d="M29 43Q48 32 72 43" fill="none" stroke="#ffe4c9" opacity=".15" stroke-width="5"/><path d="${hairPaths[style]}" fill="${hair}"/>${old ? '<path d="M35 35H43M56 35H65M30 54L34 55M66 55L71 54" stroke="#865c4d" opacity=".4" fill="none"/>' : ""}<path d="M34 ${eyeY - 6}L44 ${eyeY - 7 + (d.trait % 3)}M56 ${eyeY - 7 + (d.trait % 3)}L67 ${eyeY - 6}" stroke="${hair}" stroke-width="2" stroke-linecap="round"/><ellipse cx="39" cy="${eyeY}" rx="${eyeW}" ry="1.9" fill="#26302f"/><ellipse cx="61" cy="${eyeY}" rx="${eyeW}" ry="1.9" fill="#26302f"/><circle cx="40" cy="${eyeY - 0.6}" r=".6" fill="#f4f3e4"/><circle cx="62" cy="${eyeY - 0.6}" r=".6" fill="#f4f3e4"/><path d="M50 ${eyeY + 1}L${47 + nose} 60L54 61" fill="none" stroke="#855b48" opacity=".55" stroke-width="1.2"/>${beard ? `<path d="M29 57Q32 77 49 80Q69 78 72 56L67 69L52 74L37 69Z" fill="${hair}" opacity=".65"/>` : ""}<path d="M42 67Q50 ${65 + mouth * 2} 59 67" fill="none" stroke="#825448" stroke-width="1.5" stroke-linecap="round"/>${glasses ? '<g fill="none" stroke="#273b3f" stroke-width="1.6"><rect x="30" y="43" width="17" height="12" rx="4"/><rect x="53" y="43" width="17" height="12" rx="4"/><path d="M47 47H53"/></g>' : ""}<path d="M13 112V96M87 112V96M50 99V115" stroke="${accent}" stroke-width="2"/>${detail === 0 ? `<path d="M17 104H33M67 104H83" stroke="${accent}" stroke-width="4"/>` : detail === 1 ? '<path d="M18 105H23V110H18ZM24 100H29V105H24ZM71 100H76V105H71ZM77 105H82V110H77Z" fill="#ebe8d8"/>' : `<path d="M16 93L30 108M84 93L70 108" stroke="${accent}" stroke-width="3"/>`}<text x="79" y="111" fill="#e7e8dc" font-size="8" font-family="monospace">${d.age}</text></svg>`;
+      const feminineHair = [
+        "M27 45Q20 18 40 12Q66 4 75 29L72 49L65 29Q48 28 35 22L29 49Z",
+        "M24 59V31Q26 8 51 9Q78 11 77 36V63L68 65L66 28Q48 37 32 27L32 66Z",
+        "M24 45Q19 19 39 12Q65 2 77 27L71 49L65 25Q48 20 29 39Z",
+        "M22 55Q17 36 24 25Q19 16 32 15Q38 4 48 11Q62 4 69 14Q82 13 79 27Q85 40 76 55L69 48L65 27Q48 32 34 26L30 54Z",
+        "M26 46Q18 16 43 11Q69 5 76 30L70 43L64 24Q51 31 33 28L29 49Z",
+        "M23 43Q21 14 47 9Q72 6 78 30L72 54L66 26Q57 21 46 23L32 41L29 59Z",
+        "M24 44Q19 21 35 14Q53 4 70 16L77 33L72 51L66 27L55 33L42 26L30 44Z",
+        "M26 45Q21 18 40 12Q64 4 77 29L73 49L66 29Q49 18 32 35L29 51Z",
+      ];
+      const backHair = !female
+        ? ""
+        : [
+            "M69 25Q91 21 89 49L83 81L73 84L77 47Z",
+            "M25 30Q16 48 23 77L36 82L35 39ZM68 32L65 79L80 75Q84 50 74 29Z",
+            "M71 24Q94 27 86 57L80 89L71 83L78 45Z",
+            "M24 35Q12 50 22 72L34 77L33 42ZM72 33Q86 44 81 72L67 79L68 43Z",
+            "M69 27Q87 30 83 53L75 70L71 61L77 42Z",
+            "M24 30Q17 49 23 82L34 86L33 40ZM70 28L67 84L80 81Q86 46 74 26Z",
+            "M26 33Q16 45 24 65L32 69L32 41ZM70 29Q84 38 78 65L68 70L68 42Z",
+            "M73 30Q87 32 82 44L86 51L79 58L82 66L75 76L70 73L75 60L73 49L77 40Z",
+          ][style];
+      return `<svg class="portrait" data-portrait="${seed.toString(16)}" data-gender="${female ? "female" : "male"}" data-hair-style="${style}" data-beard="${beard}" viewBox="0 0 100 115" role="img" aria-label="Retrato ilustrado de ${esc(d.name)}"><rect width="100" height="115" rx="4" fill="${bg}"/><path d="M0 75L100 23V115H0Z" fill="#f2eee5" opacity=".09"/><path d="M3 115Q5 82 37 79H64Q93 83 98 115" fill="${suit}"/><path d="M39 70V85L50 95L62 84V69" fill="${skin}"/><path d="M36 80L50 94L40 101L27 86M63 80L50 94L60 101L75 87" fill="${accent}"/>${backHair ? `<path d="${backHair}" fill="${hair}"/>` : ""}<ellipse cx="26" cy="51" rx="4" ry="7" fill="${skin}"/><ellipse cx="74" cy="51" rx="4" ry="7" fill="${skin}"/><ellipse cx="50" cy="48" rx="${rx}" ry="${ry}" fill="${skin}"/><path d="M29 43Q48 32 72 43" fill="none" stroke="#ffe4c9" opacity=".15" stroke-width="5"/><path d="${female ? feminineHair[style] : hairPaths[style]}" fill="${hair}"/>${old ? '<path d="M35 35H43M56 35H65M30 54L34 55M66 55L71 54" stroke="#865c4d" opacity=".4" fill="none"/>' : ""}<path d="M34 ${eyeY - 6}L44 ${eyeY - 7 + (d.trait % 3)}M56 ${eyeY - 7 + (d.trait % 3)}L67 ${eyeY - 6}" stroke="${hair}" stroke-width="2" stroke-linecap="round"/><ellipse cx="39" cy="${eyeY}" rx="${eyeW}" ry="1.9" fill="#26302f"/><ellipse cx="61" cy="${eyeY}" rx="${eyeW}" ry="1.9" fill="#26302f"/><circle cx="40" cy="${eyeY - 0.6}" r=".6" fill="#f4f3e4"/><circle cx="62" cy="${eyeY - 0.6}" r=".6" fill="#f4f3e4"/><path d="M50 ${eyeY + 1}L${47 + nose} 60L54 61" fill="none" stroke="#855b48" opacity=".55" stroke-width="1.2"/>${beard ? `<path d="M29 57Q32 77 49 80Q69 78 72 56L67 69L52 74L37 69Z" fill="${hair}" opacity=".65"/>` : ""}<path d="M42 67Q50 ${65 + mouth * 2} 59 67" fill="none" stroke="${female ? "#9d5a58" : "#825448"}" stroke-width="${female ? 2 : 1.5}" stroke-linecap="round"/>${glasses ? '<g fill="none" stroke="#273b3f" stroke-width="1.6"><rect x="30" y="43" width="17" height="12" rx="4"/><rect x="53" y="43" width="17" height="12" rx="4"/><path d="M47 47H53"/></g>' : ""}<path d="M13 112V96M87 112V96M50 99V115" stroke="${accent}" stroke-width="2"/>${detail === 0 ? `<path d="M17 104H33M67 104H83" stroke="${accent}" stroke-width="4"/>` : detail === 1 ? '<path d="M18 105H23V110H18ZM24 100H29V105H24ZM71 100H76V105H71ZM77 105H82V110H77Z" fill="#ebe8d8"/>' : `<path d="M16 93L30 108M84 93L70 108" stroke="${accent}" stroke-width="3"/>`}<text x="79" y="111" fill="#e7e8dc" font-size="8" font-family="monospace">${d.age}</text></svg>`;
     },
     carProfile(car) {
       const index =

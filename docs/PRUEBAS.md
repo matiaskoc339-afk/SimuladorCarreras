@@ -1,3 +1,7 @@
+# Retratos 0.18.1
+
+Cuatro pruebas comprueban todos los nombres del catálogo, doscientos CV nuevos de ambos géneros, ocho estilos femeninos, ciento cincuenta retratos distintos y reproducibles, ausencia de cambios de estado al dibujar y corrección de la apariencia de nombres antiguos. Navegador: doce CV visibles, ocho retratos femeninos y cuatro masculinos, sin errores de página ni retratos femeninos con barba. La corrección es visual y conserva los nombres y la simulación.
+
 # Habilidades 0.18.0
 
 Ocho pruebas específicas comprueban las 108 descripciones sin cifras, nombres únicos, defectos, ocho comportamientos situacionales, distribución reproducible sin consumir RNG del mundo, migración conservando primera habilidad/caja/contratos/coches, ausencia de bonificaciones planas en los rasgos nuevos, comportamiento antiguo conservado, ahorro de gomas con pérdida de ritmo, nerviosismo, adelantamiento seguro y orden de seguir, amarillas/pinchazos/límites físicos y reanudación exacta de una carrera completa. En una muestra de diez mil pilotos: 9007 tienen una habilidad, 936 dos y 57 tres.

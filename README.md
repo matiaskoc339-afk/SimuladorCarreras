@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.18.0
+# Racing Company Simulator · 0.18.1
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,10 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Corrección 0.18.1 · retratos coherentes
+
+Las pilotos tienen retratos femeninos con ocho peinados y variedad de rostros, tonos y edades. La apariencia corresponde al nombre del catálogo, también en partidas anteriores. Los retratos masculinos usan su propia gama; dibujarlos no modifica los datos del piloto ni consume azar de la simulación.
 
 ## Novedades 0.18.0 · habilidades con carácter
 
