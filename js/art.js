@@ -31,6 +31,17 @@
   const appearance = (G.DriverAppearance = {
     femaleNames,
     maleNames,
+    firstName(state) {
+      const roll = G.random(state),
+        male = roll < 0.7;
+      const pool = G.Data.firstNames.filter((name) =>
+        (male ? maleNames : femaleNames).has(name),
+      );
+      const fraction = male ? roll / 0.7 : (roll - 0.7) / 0.3;
+      return pool[
+        Math.min(pool.length - 1, Math.floor(fraction * pool.length))
+      ];
+    },
     gender(d) {
       const first = String(d.name || "")
         .trim()

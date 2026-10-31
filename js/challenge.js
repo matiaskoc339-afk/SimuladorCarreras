@@ -201,7 +201,7 @@
       let name;
       for (let i = 0; i < 50; i++) {
         name =
-          G.Data.firstNames[G.integer(x, 0, G.Data.firstNames.length - 1)] +
+          G.DriverAppearance.firstName(x) +
           " " +
           G.Data.lastNames[G.integer(x, 0, G.Data.lastNames.length - 1)];
         if (!names.has(name)) break;

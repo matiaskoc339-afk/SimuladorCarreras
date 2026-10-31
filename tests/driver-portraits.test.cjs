@@ -32,7 +32,7 @@ test("Los CV nuevos incluyen ambos géneros y mantienen el nombre y la imagen em
     else male++;
     assert.ok(G.Art.portrait(d).includes(`data-gender="${gender}"`));
   }
-  assert.ok(female > 50 && male > 50);
+  assert.ok(female > 30 && male > 100);
 });
 test("Las mujeres tienen distintos retratos y ocho peinados, sin modificar la partida al dibujarlas", () => {
   const { G } = engine({ traits: true }),
@@ -71,4 +71,14 @@ test("La corrección visual se aplica a nombres de guardados anteriores sin reno
   assert.equal(G.DriverAppearance.gender(d), "female");
   assert.ok(G.Art.portrait(d).includes('data-gender="female"'));
   assert.equal(JSON.stringify(d), before);
+});
+
+test("La generación favorece hombres sin excluir mujeres", () => {
+  const { G } = engine({ traits: true }),
+    s = G.createGame("Proporción", "", 1470);
+  let men = 0;
+  for (let i = 0; i < 1000; i++)
+    if (G.DriverAppearance.gender(G.Drivers.generate(s, null)) === "male")
+      men++;
+  assert.ok(men > 650 && men < 750, String(men));
 });
