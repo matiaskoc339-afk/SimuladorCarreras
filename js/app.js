@@ -107,6 +107,13 @@
     },
     setState(s, slot, { created = false } = {}) {
       this.state = s;
+      if (
+        G.GrandTour.enabled(s) &&
+        !G.DriverTraits.enabled(s) &&
+        !s.race &&
+        !G.Auctions.active(s)
+      )
+        G.DriverTraits.initialize(s);
       this.raceTheatre = false;
       this.radioFloating = false;
       if (
@@ -243,6 +250,15 @@
         !G.GrandTour.enabled(this.state)
       ) {
         G.GrandTour.initialize(this.state);
+        this.persist();
+      }
+      if (
+        G.GrandTour.enabled(this.state) &&
+        !G.DriverTraits.enabled(this.state) &&
+        !this.state.race &&
+        !G.Auctions.active(this.state)
+      ) {
+        G.DriverTraits.initialize(this.state);
         this.persist();
       }
       if (

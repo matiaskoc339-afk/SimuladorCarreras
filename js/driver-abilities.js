@@ -256,7 +256,7 @@
       for (const id of x.ids) {
         const ability = B.byId[id];
         if (ability.kind === "situational" && c[ability.condition]) {
-          add(ability.stat, ability.amount);
+          if (!r.traitVersion) add(ability.stat, ability.amount);
           active.push(id);
         }
         if (id === "motivador" && c.worn) {

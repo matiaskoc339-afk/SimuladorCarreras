@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.17.1
+# Racing Company Simulator · 0.18.0
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,12 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Novedades 0.18.0 · habilidades con carácter
+
+Las **108 habilidades** se explican con relatos de lo que hace el piloto, sin listas de incrementos numéricos. Las situacionales cambian trazadas, ataques, paciencia, defensa y cuidado de gomas: hay talentos con contrapartidas y defectos como vacilar bajo presión, confiarse al liderar o desgastar el coche por impaciencia. Las habilidades originales de aprendizaje y conducción conservan sus funciones, con explicaciones más naturales.
+
+Lo habitual es **una habilidad**; dos son raras y tres excepcionales. La distribución de generación es 90 % / 9,5 % / 0,5 %. Las plantillas anteriores se actualizan fuera de carreras y subastas en directo, conservando la primera habilidad. Las carreras guardadas mantienen su comportamiento anterior. [Catálogo completo](docs/HABILIDADES_0_18.md).
 
 ## Corrección 0.17.1 · desgaste y rivales sostenibles
 

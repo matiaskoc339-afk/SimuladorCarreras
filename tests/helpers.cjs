@@ -14,7 +14,9 @@ function engine({
   skills = false,
   evolution = false,
   grand = false,
+  traits = false,
 } = {}) {
+  if (traits) grand = true;
   if (grand) evolution = true;
   if (evolution) skills = true;
   if (skills) director = true;
@@ -92,12 +94,14 @@ function engine({
     "driver-world",
     "grand-content",
     "grand-tour",
+    "driver-traits",
   ])
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "../js/" + f + ".js"), "utf8"),
       context,
       { filename: f + ".js" },
     );
+  if (!traits) context.RCS.createGame = context.RCS.createV171Game;
   if (!grand) {
     context.RCS.createGame = context.RCS.createV160Game;
     context.RCS.Data.models.length = 88;

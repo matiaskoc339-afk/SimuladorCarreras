@@ -110,6 +110,10 @@ const { chromium } = require("playwright"),
       return e.id;
     }, id);
     assert.equal(await p.locator(".ability-index article").count(), 108);
+    assert.doesNotMatch(
+      await p.locator(".ability-index").innerText(),
+      /[0-9%]/,
+    );
     assert.match(
       await p.locator(".ability-encyclopedia>summary").innerText(),
       /108/,
@@ -117,7 +121,7 @@ const { chromium } = require("playwright"),
     await p.locator(`[data-action="driver-detail"][data-id="${id}"]`).click();
     assert.match(
       await p.locator(".driver-abilities").innerText(),
-      /Autónomo.*35 %/s,
+      /Autónomo.*saca más partido/s,
     );
     await p.locator('[data-action="close"]').last().click();
     await p.evaluate(() => RCS.App.go("practice"));

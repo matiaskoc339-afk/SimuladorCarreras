@@ -1,3 +1,9 @@
+# Habilidades 0.18.0
+
+Ocho pruebas específicas comprueban las 108 descripciones sin cifras, nombres únicos, defectos, ocho comportamientos situacionales, distribución reproducible sin consumir RNG del mundo, migración conservando primera habilidad/caja/contratos/coches, ausencia de bonificaciones planas en los rasgos nuevos, comportamiento antiguo conservado, ahorro de gomas con pérdida de ritmo, nerviosismo, adelantamiento seguro y orden de seguir, amarillas/pinchazos/límites físicos y reanudación exacta de una carrera completa. En una muestra de diez mil pilotos: 9007 tienen una habilidad, 936 dos y 57 tres.
+
+También se comprobaron los 44 escenarios existentes de desarrollo de pilotos y Gran Serie. El recorrido de navegador verifica ahora las 108 descripciones narrativas, sin porcentajes ni bonificaciones, además de negociación, entrenamiento, carrera opcional, noticias, pinchazo y adaptación a pantalla.
+
 # Corrección 0.17.1
 
 24 escenarios específicos de Gran Serie y su recorrido de navegador comprobados. Se añadieron verificaciones del desgaste de refrigeración/aerodinámica, conservación de la física anterior sin marcador de desgaste, preparación de la categoría activa, exceso nominal de potencia tras reparar y gasto anual persistente de subastas con rechazo de datos corruptos. La suite completa de 471 escenarios y los 25 recorridos de la entrega 0.17 permanecen como referencia anterior.

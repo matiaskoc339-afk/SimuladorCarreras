@@ -11,10 +11,10 @@
       const list = B.list(s, d);
       return compact
         ? `<div class="ability-badges">${list.map((x) => `<span title="${esc(x.description)}">${esc(x.name)}</span>`).join("")}</div>`
-        : `<section class="driver-abilities"><span class="eyebrow">SUS HABILIDADES</span><h3>Su manera de competir y aprender.</h3><p>Son ventajas situacionales, no puntos permanentes. Se combinan con sus atributos, las órdenes y el coche.</p>${list.map((x) => `<article><b>${esc(x.name)}</b><p>${esc(x.description)}</p></article>`).join("")}</section>`;
+        : `<section class="driver-abilities"><span class="eyebrow">SUS HABILIDADES</span><h3>Su manera de competir y aprender.</h3><p>Son talentos, manías y defectos: cambian cómo se comporta, con ventajas y contrapartidas. Sus atributos, tus órdenes y el coche siguen siendo decisivos.</p>${list.map((x) => `<article><b>${esc(x.name)}</b><p>${esc(x.description)}</p></article>`).join("")}</section>`;
     },
     guide() {
-      return `<details class="ability-encyclopedia panel padded"><summary>Conocer las ${B.catalog.length} habilidades de los pilotos</summary><p>Cada piloto tiene entre una y tres. Los efectos de carrera modifican atributos efectivos; no aumentan la potencia del coche ni reparan neumáticos. Los CV nuevos pueden traer otras combinaciones.</p><div class="ability-index">${B.catalog.map((x) => `<article><b>${esc(x.name)}</b><p>${esc(x.description)}</p></article>`).join("")}</div></details>`;
+      return `<details class="ability-encyclopedia panel padded"><summary>Conocer las ${B.catalog.length} habilidades de los pilotos</summary><p>Lo habitual es tener una habilidad. Encontrar dos es raro; tres, excepcional. Hay virtudes, defectos y talentos que salen caros: lee cómo se comporta cada piloto. Los rasgos no inventan agarre ni reparan el coche.</p><div class="ability-index">${B.catalog.map((x) => `<article><b>${esc(x.name)}</b><p>${esc(x.description)}</p></article>`).join("")}</div></details>`;
     },
     rivals(s) {
       if (!N.enabled(s)) return "";

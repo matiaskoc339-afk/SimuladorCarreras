@@ -1,6 +1,6 @@
 {
   "name": "racing-company-simulator",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "private": true,
   "description": "Simulador local de gestión automovilística, sin dependencias de ejecución.",
   "scripts": {
@@ -41,6 +41,7 @@
     "test:driver-world:browser": "node tests/browser-driver-world.cjs",
     "test:balance:v160": "node scripts/check-balance-v160.cjs",
     "test:grand-tour": "node --test tests/grand-tour.test.cjs",
-    "test:grand-tour:browser": "node tests/browser-grand-tour.cjs"
+    "test:grand-tour:browser": "node tests/browser-grand-tour.cjs",
+    "test:traits": "node --test tests/driver-traits.test.cjs"
   }
 }
