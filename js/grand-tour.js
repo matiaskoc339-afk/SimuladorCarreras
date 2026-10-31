@@ -301,6 +301,31 @@
       );
       return s;
     },
+    nominalHP(s, car, installed = car.installed) {
+      return (
+        car.base.hp +
+        Object.values(installed).reduce(
+          (n, id) =>
+            n +
+            (G.Parts.definition(s.parts.find((p) => p.id === id)?.definitionId)
+              ?.effects.hp || 0),
+          0,
+        )
+      );
+    },
+    auctionBudget(s, c) {
+      const record = s.grandTour.auctionSpend?.[c.id],
+        spent = record?.year === s.season.year ? record.spent : 0;
+      return Math.max(
+        0,
+        Math.min(
+          (4500000 + c.grandIndex * 650000) * 0.06 - spent,
+          c.balance -
+            G.Companies.monthly(s, c.id) * 3 -
+            divisions[s.grandTour.division].fee * 3,
+        ),
+      );
+    },
     validate(s) {
       if (s.grandTour === undefined) {
         G.assert(
@@ -328,6 +353,22 @@
           ),
         "Formato de Gran Serie inválido.",
       );
+      if (x.auctionSpend !== undefined)
+        G.assert(
+          x.auctionSpend &&
+            typeof x.auctionSpend === "object" &&
+            !Array.isArray(x.auctionSpend) &&
+            Object.entries(x.auctionSpend).every(
+              ([id, r]) =>
+                x.teams.includes(id) &&
+                Number.isInteger(r.year) &&
+                r.year >= 2026 &&
+                r.year <= s.season.year &&
+                Number.isFinite(r.spent) &&
+                r.spent >= 0,
+            ),
+          "Presupuesto de subastas inválido.",
+        );
       for (const e of s.season.events)
         if (e.grandVersion !== undefined)
           G.assert(
@@ -349,8 +390,10 @@
       if (s.race?.grandVersion === 1)
         for (const a of s.race.entrants)
           G.assert(
-            JSON.stringify(a.performance?.factory || null) ===
-              JSON.stringify(C.factory(a)),
+            (a.performance?.factoryWearVersion === undefined ||
+              a.performance.factoryWearVersion === 1) &&
+              JSON.stringify(a.performance?.factory || null) ===
+                JSON.stringify(C.factory(a)),
             "Plataforma de fábrica de carrera inválida.",
           );
     },
@@ -525,7 +568,10 @@
   G.Performance.capture = function (s, car) {
     const p = capture.call(this, s, car),
       f = T.enabled(s) && C.factory(car);
-    if (f) p.factory = G.clone(f);
+    if (f) {
+      p.factory = G.clone(f);
+      p.factoryWearVersion = 1;
+    }
     return p;
   };
   const refresh = G.Performance.refresh;
@@ -533,9 +579,17 @@
     refresh.call(this, a);
     const f = a.performance?.factory;
     if (f) {
-      a.cooling += f.cooling - 1;
+      a.cooling +=
+        (f.cooling - 1) *
+        (a.performance.factoryWearVersion === 1
+          ? 0.55 + a.components.cooling * 0.0045
+          : 1);
       a.acceleration *= f.acceleration;
-      a.performance.downforce += f.downforce;
+      a.performance.downforce +=
+        f.downforce *
+        (a.performance.factoryWearVersion === 1
+          ? G.clamp(a.components.body / 100, 0, 1)
+          : 1);
     }
   };
   const brakes = G.Performance.brakeFactor;
@@ -568,7 +622,8 @@
     const original = upgrades.call(this, s, c, budget, days, profile);
     if (!T.enabled(s)) return original;
     const rows = original.filter(
-      (q) => !["repuesto", "instalación"].includes(q.action),
+      (q) =>
+        !["repuesto", "instalación", "instalación de lote"].includes(q.action),
     );
     if (
       days <= 4 ||
@@ -576,7 +631,12 @@
       G.Facilities.workload(s, c.id) >= G.Facilities.bays(s, c.id)
     )
       return rows;
-    const definitions = G.WeeklyContent.definitions(s),
+    const definitions = [
+        ...G.WeeklyContent.definitions(s),
+        ...W.inventory(s, c.id)
+          .map((p) => G.Parts.definition(p.definitionId))
+          .filter((d) => d.auctionOnly),
+      ],
       free = new Map(),
       stored = new Map();
     for (const p of s.parts)
@@ -593,6 +653,9 @@
     for (const car of G.ownedCars(s, c.id).filter(
       (car) =>
         !car.repair &&
+        (!c.grandTeam ||
+          C.family(car) === "rally" ||
+          C.family(car) === s.grandTour.division) &&
         !G.Market.listed(s, car.id) &&
         !G.Market.locked(s, car.id),
     )) {
@@ -629,7 +692,11 @@
           ...car.installed,
           [d.slot]: unit.id,
         });
-        if (after.hp > max) continue;
+        if (
+          T.nominalHP(s, car, { ...car.installed, [d.slot]: unit.id }) >
+          max + 0.0001
+        )
+          continue;
         const gain =
           (after.hp / after.weight - before.hp / before.weight) * 120 +
           (after.grip - before.grip) * 0.45 +
@@ -683,17 +750,51 @@
       G.Facilities.workload(s, c.id) >= G.Facilities.bays(s, c.id)
     )
       return [];
-    const r = L.rule(next),
-      car = G.ownedCars(s, c.id)
-        .filter(
-          (car) =>
-            !car.repair &&
-            !G.Market.listed(s, car.id) &&
-            car.hp <= r.maxHP &&
-            (!r.minHP || car.hp >= r.minHP) &&
-            (!r.families || r.families.includes(C.family(car))),
-        )
-        .sort((a, b) => G.Companies.carRating(b) - G.Companies.carRating(a))[0];
+    const r = L.rule(next);
+    const illegal = G.ownedCars(s, c.id).find(
+      (car) =>
+        !car.repair &&
+        !G.Market.listed(s, car.id) &&
+        !G.Market.locked(s, car.id) &&
+        (!r.families || r.families.includes(C.family(car))) &&
+        T.nominalHP(s, car) > r.maxHP &&
+        Object.keys(car.installed).length,
+    );
+    if (illegal && W.occupied(s, c.id) < c.sparesCapacity) {
+      const part = Object.values(illegal.installed)
+        .map((id) => s.parts.find((p) => p.id === id))
+        .filter((p) => (G.Parts.definition(p.definitionId).effects.hp || 0) > 0)
+        .sort(
+          (a, b) =>
+            G.Parts.definition(b.definitionId).effects.hp -
+            G.Parts.definition(a.definitionId).effects.hp,
+        )[0];
+      if (part) {
+        const d = G.Parts.definition(part.definitionId),
+          cost = Math.round(d.labor * 0.6);
+        if (c.balance >= cost + L.fee(next))
+          return [
+            {
+              action: "verificación técnica",
+              utility: 135,
+              reason: "Retirar potencia excedente antes de reparar y competir.",
+              targetId: illegal.id,
+              cost,
+              run: () => W.remove(s, illegal.id, d.slot, c.id),
+            },
+          ];
+      }
+    }
+    const car = G.ownedCars(s, c.id)
+      .filter(
+        (car) =>
+          !car.repair &&
+          !G.Market.listed(s, car.id) &&
+          car.hp <= r.maxHP &&
+          (!r.minHP || car.hp >= r.minHP) &&
+          (!r.families || r.families.includes(C.family(car))),
+      )
+      .sort((a, b) => G.Companies.carRating(b) - G.Companies.carRating(a))[0];
     if (!car) return [];
     const component =
       car.components.brakes < Math.min(100, (r.brakes || 77) + 3)
@@ -729,5 +830,61 @@
             : W.repair(s, car.id, component, c.id),
       },
     ];
+  };
+  const bidders = G.Auctions.bidders;
+  G.Auctions.bidders = function (s, lot) {
+    const rows = bidders.call(this, s, lot);
+    if (!T.enabled(s)) return rows;
+    const asset = this.preview(s, lot),
+      d = lot.kind === "part" ? G.Parts.definition(asset.definitionId) : null;
+    return rows.filter((b) => {
+      const c = s.companies.find((c) => c.id === b.id);
+      if (!c?.grandTeam) return true;
+      const cars = G.ownedCars(s, c.id).filter(
+        (car) =>
+          C.family(car) === "rally" || C.family(car) === s.grandTour.division,
+      );
+      const useful = d
+        ? cars.some((car) => {
+            const temp = {
+                ...s,
+                parts: [...s.parts, { ...asset, id: "grand-auction-preview" }],
+              },
+              installed = {
+                ...car.installed,
+                [d.slot]: "grand-auction-preview",
+              },
+              max =
+                C.family(car) === "rally"
+                  ? 350
+                  : divisions[s.grandTour.division].maxHP;
+            return (
+              !W.fit(temp, car, temp.parts.at(-1)) &&
+              T.nominalHP(temp, car, installed) <= max
+            );
+          })
+        : C.family(asset) === s.grandTour.division;
+      b.budget = Math.min(b.budget, Math.floor(T.auctionBudget(s, c)));
+      b.value = Math.min(b.value, b.budget);
+      return useful && b.budget >= lot.opening;
+    });
+  };
+  const transact = G.Economy.transact;
+  G.Economy.transact = function (s, id, amount, category, ...args) {
+    const result = transact.call(this, s, id, amount, category, ...args);
+    if (
+      T.enabled(s) &&
+      amount < 0 &&
+      category === "Subastas" &&
+      s.companies.some((c) => c.id === id && c.grandTeam)
+    ) {
+      const records = (s.grandTour.auctionSpend ||= {}),
+        before = records[id];
+      records[id] = {
+        year: s.season.year,
+        spent: (before?.year === s.season.year ? before.spent : 0) - amount,
+      };
+    }
+    return result;
   };
 })();

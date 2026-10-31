@@ -1,3 +1,9 @@
+# Corrección 0.17.1
+
+24 escenarios específicos de Gran Serie y su recorrido de navegador comprobados. Se añadieron verificaciones del desgaste de refrigeración/aerodinámica, conservación de la física anterior sin marcador de desgaste, preparación de la categoría activa, exceso nominal de potencia tras reparar y gasto anual persistente de subastas con rechazo de datos corruptos. La suite completa de 471 escenarios y los 25 recorridos de la entrega 0.17 permanecen como referencia anterior.
+
+La temporada financiera vuelve a completar veinte fechas y abre 2027 con licencia, entrenamiento, investigación y **6.608 US$**, sin dinero ni atributos inyectados. Las cinco parrillas nacionales conservan **seis equipos**; los equipos pagan sus mejoras, subastas y obligaciones con su propio presupuesto. [Registro 0.17.1](BALANCE_0_17_1_1470.json).
+
 # Validación 0.17.0
 
 **471/471 escenarios de motor y 25 recorridos de navegador aprobados**, incluidos 22 escenarios nuevos de Gran Serie. Sintaxis de 149 archivos JS/CJS y 96 recursos locales verificados. Las fixtures anteriores se mantienen.

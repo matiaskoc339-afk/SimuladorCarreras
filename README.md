@@ -1,4 +1,4 @@
-# Racing Company Simulator · 0.17.0
+# Racing Company Simulator · 0.17.1
 
 Una temporada jugable de gestión automovilística con compañías rivales que administran sus recursos. HTML, CSS y JavaScript sin dependencias de ejecución, recursos remotos, cuentas ni conexión permanente. No conduces el coche: diriges la empresa y das órdenes a tu piloto.
 
@@ -13,6 +13,12 @@ npm start
 El servidor usa el puerto **4173** (configurable con `PORT`). No hace falta ejecutar `npm install`. También puedes servir la carpeta con `python3 -m http.server 4173`.
 
 Los scripts clásicos y recursos relativos permiten abrir `index.html` directamente en navegadores que admitan archivos locales y almacenamiento local. La política de Chromium del entorno de desarrollo bloquea `file://`, por lo que allí se ha validado el servidor HTTP. Usa siempre el mismo origen para conservar tus ranuras; exporta/importa para trasladarlas entre orígenes o equipos.
+
+## Corrección 0.17.1 · desgaste y rivales sostenibles
+
+- Los daños reducen la refrigeración y el apoyo aerodinámico de fábrica en carreras nuevas. Las carreras guardadas anteriores conservan su física.
+- Los equipos de fábrica preparan su categoría actual, comprueban la potencia nominal con piezas al 100 % y retiran mejoras que excedan el reglamento.
+- Las subastas respetan un presupuesto por temporada, tres meses de reserva salarial y la utilidad de la pieza para sus coches; el gasto se conserva al guardar.
 
 ## Novedades de la 0.17.0 · del GT al monoplaza
 

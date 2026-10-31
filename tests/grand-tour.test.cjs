@@ -201,6 +201,15 @@ test("La preparación rival conserva el límite de su categoría y protege sus c
     c = s.companies.find((c) => c.id === id);
   const candidates = G.Workshop.aiCandidates(s, c, 100000, 20, { car: 2 });
   assert.ok(candidates.length);
+  assert.ok(
+    candidates
+      .filter((q) => ["repuesto", "instalación"].includes(q.action))
+      .every((q) =>
+        ["rally", "gt"].includes(
+          G.GrandContent.family(s.cars.find((car) => car.id === q.targetId)),
+        ),
+      ),
+  );
   for (const q of candidates.filter((q) => q.action === "repuesto")) {
     const car = s.cars.find((c) => c.id === q.targetId);
     assert.ok(car);
@@ -258,6 +267,16 @@ test("La refrigeración y frenada de fábrica se aplican una vez y se conservan 
   G.Performance.refresh(a);
   assert.deepEqual(json(a), initial);
   assert.ok(G.Performance.brakeFactor(a) > 1);
+  a.components.cooling = 50;
+  a.components.body = 50;
+  G.Performance.refresh(a);
+  assert.ok(Math.abs(a.cooling - config.cooling * 0.775) < 1e-9);
+  assert.equal(a.performance.downforce, a.performance.factory.downforce / 2);
+  const legacy = json(a);
+  delete legacy.performance.factoryWearVersion;
+  G.Performance.refresh(legacy);
+  assert.ok(Math.abs(legacy.cooling - (0.775 + 2.2)) < 1e-9);
+  assert.equal(legacy.performance.downforce, 15);
 });
 test("Un guardado manipulado no puede quitar la versión ni inventar una categoría", () => {
   const { G, s } = game();
@@ -389,4 +408,42 @@ test("La plataforma de fábrica del guardado de carrera no puede falsificarse", 
   const copy = json(s);
   copy.race.entrants[0].performance.factory.acceleration = 100;
   assert.throws(() => G.Storage.validate(copy), /Plataforma de fábrica/);
+});
+
+test("La IA retira potencia que excedería el reglamento al reparar una pieza gastada", () => {
+  const { G, s } = game(),
+    id = s.grandTour.teams[5],
+    c = s.companies.find((c) => c.id === id),
+    car = factory(G, s, "gt", 5),
+    unit = G.Workshop.stock(s, "grand-gt-engine-2")[0];
+  unit.companyId = id;
+  unit.carId = car.id;
+  unit.condition = 10;
+  car.installed.engine = unit.id;
+  G.Workshop.recalculate(s, car);
+  assert.ok(car.hp < 650);
+  assert.ok(G.GrandTour.nominalHP(s, car) > 650);
+  const e = s.season.events.find((e) => e.cup === "national");
+  s.day = e.day - 13;
+  for (const previous of s.season.events)
+    if (previous.day < s.day) previous.status = "skipped";
+  const rows = G.Competition.maintenance(s, c);
+  assert.equal(rows.length, 1);
+  rows[0].run();
+  assert.equal(car.repair.type, "remove");
+  assert.equal(car.repair.partId, unit.id);
+});
+test("Las compras en subasta respetan presupuesto anual persistente y reserva salarial", () => {
+  const { G, s } = game(),
+    c = s.companies.find((c) => c.id === s.grandTour.teams[0]),
+    before = G.GrandTour.auctionBudget(s, c);
+  assert.equal(before, 270000);
+  G.Economy.transact(s, c.id, -50000, "Subastas", "Prueba de adjudicación");
+  assert.equal(G.GrandTour.auctionBudget(s, c), before - 50000);
+  G.Storage.validate(s);
+  const copy = json(s);
+  G.Storage.validate(copy);
+  assert.equal(G.GrandTour.auctionBudget(copy, c), before - 50000);
+  copy.grandTour.auctionSpend[c.id].spent = -1;
+  assert.throws(() => G.Storage.validate(copy), /Presupuesto de subastas/);
 });

@@ -44,3 +44,11 @@ Seis equipos de fábrica tienen presupuestos iniciales propios, cuatro coches po
 La IA prepara coches dentro del límite de su categoría, protege su flota de competición y programa mantenimiento del vehículo que va a usar. Siguen existiendo lesiones, descanso, errores y problemas de caja: no hay una parrilla garantizada artificialmente ni resultados prefijados.
 
 Se conservan partidas anteriores. La ampliación se activa fuera de una carrera o subasta en directo. No cambia dinero, coche, contrato ni RNG del jugador, y respeta la temporada nacional ya empezada o inscrita hasta el siguiente año. Una carrera antigua en curso mantiene su física y sus reglas exactas. Las nuevas carreras habilitan el margen físico para velocidades de élite; las antiguas conservan su límite anterior.
+
+## Corrección 0.17.1
+
+En carreras nuevas, los daños reducen también la refrigeración y el apoyo aerodinámico de fábrica. La instantánea `factoryWearVersion` conserva el comportamiento de las carreras ya guardadas.
+
+Los equipos de fábrica preparan la categoría elegida y su coche regional. La potencia se comprueba como si todas las piezas estuvieran reparadas al 100 %; una pieza gastada no permite instalar mejoras que luego excedan el reglamento. Si una preparación anterior ya excede ese límite, la IA programa el desmontaje de potencia antes de volver a competir.
+
+Las pujas de estos seis equipos requieren utilidad deportiva y reservan tres meses de nóminas y tres inscripciones. El gasto de subastas se limita por temporada al 6 % del capital inicial del equipo, se registra al pagar y se conserva al cargar. Se respetan las pujas vinculantes anteriores. Los coleccionistas y los demás rivales mantienen sus reglas.
